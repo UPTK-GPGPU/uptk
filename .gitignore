@@ -1,0 +1,22 @@
+# Hidden files
+.*
+!.gitignore
+
+# Compiled binary files
+*.exe
+*.out
+*.app
+*.o
+*.obj
+
+# CMake-generated folders and files
+build/
+
+# IDE configurations and environment files
+.vscode/
+.idea/
+*.code-workspace
+
+# System-generated files
+.DS_Store
+Thumbs.db
