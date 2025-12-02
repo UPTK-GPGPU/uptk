@@ -18,6 +18,13 @@ extern "C"
     /** \cond impl_private */
 #if !defined(__dv)
 
+#if defined(__NVCC__)
+#define UPTKStream_t cudaStream_t
+#endif 
+#if defined(__HIPCC__)
+#define UPTKStream_t hipStream_t
+#endif 
+
 #if defined(__cplusplus)
 
 #define __dv(v) \
@@ -2807,7 +2814,7 @@ struct  UPTKDeviceProp
  /**
   * UPTK stream
   */
-typedef  struct UPTKstream_st *UPTKStream_t;
+// typedef  struct UPTKstream_st *UPTKStream_t;
 
  
  /**
@@ -3227,8 +3234,8 @@ struct  UPTKGraphNodeParams {
     extern __host__ UPTKError_t UPTKMemcpy(void *dst, const void *src, size_t count, enum UPTKMemcpyKind kind);
     extern __host__ UPTKError_t UPTKDeviceSynchronize(void);
     extern __host__ UPTKError_t UPTKFree(void *devPtr);
-    // extern UPTKError_t __UPTKPushCallConfiguration(dim3 gridDim, dim3 blockDim, size_t sharedMem, UPTKStream_t stream);
-    // extern UPTKError_t __UPTKPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, UPTKStream_t *stream);
+    extern UPTKError_t __UPTKPushCallConfiguration(dim3 gridDim, dim3 blockDim, size_t sharedMem, UPTKStream_t stream);
+    extern UPTKError_t __UPTKPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, UPTKStream_t *stream);
     extern __host__ UPTKError_t  UPTKStreamCreate(UPTKStream_t * pStream);
     extern __host__ UPTKError_t UPTKStreamCreateWithFlags(UPTKStream_t * pStream,unsigned int flags);
     extern __host__ UPTKError_t  UPTKStreamDestroy(UPTKStream_t stream);
@@ -3422,7 +3429,7 @@ typedef enum UPTKError_enum {
      * This error return is deprecated as of UPTK 3.2. It is no longer an
      * error to attempt to push the active context via ::cuCtxPushCurrent().
      */
-    UPTK_ERROR_CONTEXT_ALREADY_UPTKRRENT        = 202,
+    UPTK_ERROR_CONTEXT_ALREADY_CURRENT        = 202,
 
     /**
      * This indicates that a map or register operation has failed.
@@ -4419,7 +4426,7 @@ typedef enum UPTKfunction_attribute_enum {
     /**
      * The maximum number of threads per block, beyond which a launch of the
      * function would fail. This number depends on both the function and the
-     * device on which the function is UPTKrrently loaded.
+     * device on which the function is currently loaded.
      */
     UPTK_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 0,
 
@@ -4534,7 +4541,7 @@ typedef enum UPTKfunction_attribute_enum {
      * the program is run on a different hardware platform.
      *
      * UPTKDA API provides UPTKdaOcUPTKpancyMaxActiveClusters to assist with checking
-     * whether the desired size can be launched on the UPTKrrent device.
+     * whether the desired size can be launched on the current device.
      *
      * Portable Cluster Size
      *

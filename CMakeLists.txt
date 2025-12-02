@@ -28,7 +28,7 @@ endif()
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${ROCM_PATH}/include
-    ${CMAKE_UPTKRRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 

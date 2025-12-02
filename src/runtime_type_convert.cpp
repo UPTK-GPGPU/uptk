@@ -829,7 +829,7 @@ UPTKresult hipErrorToUPTKresult(hipError_t para) {
 //         case hipErrorCompatNotSupportedOnDevice:
 //             return UPTK_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE;
         case hipErrorContextAlreadyCurrent:
-            return UPTK_ERROR_CONTEXT_ALREADY_UPTKRRENT;
+            return UPTK_ERROR_CONTEXT_ALREADY_CURRENT;
         case hipErrorContextAlreadyInUse:
             return UPTK_ERROR_CONTEXT_ALREADY_IN_USE;
         case hipErrorContextIsDestroyed:

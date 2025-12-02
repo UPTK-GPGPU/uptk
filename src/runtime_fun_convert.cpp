@@ -18,17 +18,17 @@ __host__  UPTKError_t  UPTKFree(void * devPtr)
     return hipErrorToUPTKError(hip_res);
 }
 
-// UPTKError_t __UPTKPushCallConfiguration(dim3 gridDim, dim3 blockDim, size_t sharedMem , UPTKStream_t stream) {
-//     hipError_t res;
-//     res = __hipPushCallConfiguration(gridDim, blockDim, sharedMem, (hipStream_t)stream);
-//     return hipErrorToUPTKError(res);
-// }
+UPTKError_t __UPTKPushCallConfiguration(dim3 gridDim, dim3 blockDim, size_t sharedMem , UPTKStream_t stream) {
+    hipError_t res;
+    res = __hipPushCallConfiguration(gridDim, blockDim, sharedMem, (hipStream_t)stream);
+    return hipErrorToUPTKError(res);
+}
 
-// UPTKError_t __UPTKPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, UPTKStream_t *stream) {
-//     hipError_t res;
-//     res = __hipPopCallConfiguration(gridDim, blockDim, sharedMem, (hipStream_t *) stream);
-//     return hipErrorToUPTKError(res);
-// }
+UPTKError_t __UPTKPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, UPTKStream_t *stream) {
+    hipError_t res;
+    res = __hipPopCallConfiguration(gridDim, blockDim, sharedMem, (hipStream_t *) stream);
+    return hipErrorToUPTKError(res);
+}
 
 __host__ UPTKError_t  UPTKStreamCreate(UPTKStream_t * pStream)
 {
