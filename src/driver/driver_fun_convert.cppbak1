@@ -1,0 +1,959 @@
+#include "driver.hpp"
+#include <cuda_runtime_api.h>
+#include <cuda_runtime.h>
+#include <nvrtc.h>
+#include <cuda.h>
+#include <stdio.h>
+#include <algorithm>
+#include <string.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+//begin
+UPTKresult  UPTKMemGetInfo_v2D(size_t * free, size_t * total)
+{
+    CUresult cuda_res;
+    cuda_res = cuMemGetInfo_v2(free, total);
+    return CUresultToUPTKresult(cuda_res);
+}
+
+UPTKresult  UPTKMemHostAllocD(void **pp, size_t bytesize, unsigned int Flags)
+{
+    CUresult cuda_res;
+    cuda_res = cuMemHostAlloc(pp, bytesize, Flags);
+    return CUresultToUPTKresult(cuda_res);
+}
+
+UPTKresult  UPTKStreamSynchronizeD(UPTKStream_t * hStream)
+{
+    CUresult cuda_res;
+    cuda_res = cuStreamSynchronize((CUstream) hStream);
+    return CUresultToUPTKresult(cuda_res);
+}
+
+UPTKresult  UPTKMemcpyDtoHAsync_v2D(void * dstHost, UPTKdeviceptr srcDevice,size_t ByteCount,CUstream hStream)
+{
+    CUresult cuda_res;
+    cuda_res = cuMemcpyDtoHAsync_v2(dstHost, (CUdeviceptr)srcDevice, ByteCount, hStream);
+    return CUresultToUPTKresult(cuda_res);
+}
+
+UPTKresult  UPTKDeviceGetD(CUdevice * device,int ordinal)
+{
+    CUresult cuda_res;
+    cuda_res = cuDeviceGet(device, ordinal);
+    return CUresultToUPTKresult(cuda_res);
+}
+//end
+
+/*__host__ UPTKError_t UPTKMalloc(void ** devPtr, size_t size) {
+    CUresult cu_res = cuInit(0);  // Ensure driver is initialized
+    //if (cu_res != CUDA_SUCCESS) return CUresultToUPTKError(cu_res);
+    cu_res = cuMemAlloc((CUdeviceptr*)devPtr, size);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKFree(void * devPtr) {
+    CUresult cu_res = cuMemFree((CUdeviceptr)devPtr);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamCreate(UPTKStream_t * pStream) {
+    CUresult cu_res = cuStreamCreate((CUstream*)pStream, CU_STREAM_DEFAULT);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamCreateWithFlags(UPTKStream_t * pStream, unsigned int flags) {
+    CUresult cu_res = cuStreamCreate((CUstream*)pStream, flags);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamDestroy(UPTKStream_t stream) {
+    CUresult cu_res = cuStreamDestroy((CUstream)stream);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamSynchronize(UPTKStream_t stream) {
+    CUresult cu_res = cuStreamSynchronize((CUstream)stream);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamWaitEvent(UPTKStream_t stream, UPTKEvent_t event, unsigned int flags) {
+    CUresult cu_res = cuStreamWaitEvent((CUstream)stream, (CUevent)event, flags);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamBeginCapture(UPTKStream_t stream, enum UPTKStreamCaptureMode mode) {
+    if (mode < UPTKStreamCaptureModeGlobal || mode > UPTKStreamCaptureModeRelaxed) {
+        return UPTKErrorInvalidValue;
+    }
+    CUstreamCaptureMode cu_mode = (CUstreamCaptureMode)mode;  // Direct cast assuming compatibility
+    CUresult cu_res = cuStreamBeginCapture((CUstream)stream, cu_mode);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamEndCapture(UPTKStream_t stream, UPTKGraph_t * pGraph) {
+    CUresult cu_res = cuStreamEndCapture((CUstream)stream, (CUgraph*)pGraph);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKStreamIsCapturing(UPTKStream_t stream, enum UPTKStreamCaptureStatus * pCaptureStatus) {
+    if (nullptr == pCaptureStatus) return UPTKErrorInvalidValue;
+    CUstreamCaptureStatus cu_status;
+    CUresult cu_res = cuStreamIsCapturing((CUstream)stream, &cu_status);
+    *pCaptureStatus = (enum UPTKStreamCaptureStatus)cu_status;
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventCreate(UPTKEvent_t * event) {
+    CUresult cu_res = cuEventCreate((CUevent*)event, CU_EVENT_DEFAULT);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventCreateWithFlags(UPTKEvent_t * event, unsigned int flags) {
+    CUresult cu_res = cuEventCreate((CUevent*)event, flags);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventDestroy(UPTKEvent_t event) {
+    CUresult cu_res = cuEventDestroy((CUevent)event);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventSynchronize(UPTKEvent_t event) {
+    CUresult cu_res = cuEventSynchronize((CUevent)event);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventQuery(UPTKEvent_t event) {
+    CUresult cu_res = cuEventQuery((CUevent)event);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t UPTKEventRecord(UPTKEvent_t event, UPTKStream_t stream) {
+    CUresult cu_res = cuEventRecord((CUevent)event, (CUstream)stream);
+    return CUresultToUPTKresult(cu_res);
+}
+
+
+__host__ UPTKError_t UPTKIpcGetMemHandle(UPTKIpcMemHandle_t * handle, void * devPtr) {
+    CUresult cu_res = cuIpcGetMemHandle((CUipcMemHandle*)handle, (CUdeviceptr)devPtr);
+    return CUresultToUPTKresult(cu_res);
+}
+
+__host__ UPTKError_t  UPTKIpcOpenMemHandleD(CUdeviceptr * devPtr,UPTKIpcMemHandle_t handle,unsigned int flags)
+{
+    CUipcMemHandle_st CU_handle;
+    UPTKIpcMemHandleToCUipcMemHandle(&handle, &CU_handle);
+    if (UPTKIpcMemLazyEnablePeerAccess == flags)
+        flags = cudaIpcMemLazyEnablePeerAccess;
+    CUresult CU_res;
+    CU_res = cuIpcOpenMemHandle(devPtr, CU_handle, flags);
+    return CUresultToUPTKresult(CU_res);
+}*/
+
+/*__host__ UPTKError_t  UPTKIpcCloseMemHandle(void * devPtr)
+{
+    CUError_t CU_res;
+    CU_res = CUIpcCloseMemHandle(devPtr);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKChooseDevice(int * device,const struct UPTKDeviceProp * prop)
+{
+    if (nullptr == device || nullptr == prop)
+        return UPTKErrorInvalidValue;
+    CUDeviceProp CU_prop;
+    UPTKDevicePropToCUDeviceProp(prop, &CU_prop);
+    CUError_t CU_res;
+    CU_res = CUChooseDevice(device, &CU_prop);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKSetDevice(int device)
+{
+    CUError_t CU_res;
+    CU_res = CUSetDevice(device);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKGetDevice(int * device)
+{
+    CUError_t CU_res;
+    CU_res = CUGetDevice(device);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKDeviceSynchronize(void)
+{
+    CUError_t CU_res;
+    CU_res = CUDeviceSynchronize();
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKDeviceReset(void)
+{
+    CUError_t CU_res;
+    CU_res = CUDeviceReset();
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphCreate(UPTKGraph_t * pGraph,unsigned int flags)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphCreate((CUGraph_t *) pGraph, flags);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphClone(UPTKGraph_t * pGraphClone,UPTKGraph_t originalGraph)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphClone((CUGraph_t *) pGraphClone, (CUGraph_t) originalGraph);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphDestroy(UPTKGraph_t graph)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphDestroy((CUGraph_t) graph);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphAddDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphAddDependencies((CUGraph_t) graph, (const CUGraphNode_t *) from, (const CUGraphNode_t *) to, numDependencies);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphRemoveDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphRemoveDependencies((CUGraph_t) graph, (const CUGraphNode_t *) from, (const CUGraphNode_t *) to, numDependencies);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphInstantiate(UPTKGraphExec_t * pGraphExec,UPTKGraph_t graph,UPTKGraphNode_t * pErrorNode,char * pLogBuffer,size_t bufferSize)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphInstantiate((CUGraphExec_t *) pGraphExec, (CUGraph_t) graph, (CUGraphNode_t *) pErrorNode, pLogBuffer, bufferSize);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphLaunch(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphLaunch((CUGraphExec_t) graphExec, (CUStream_t) stream);
+    return CUErrorToUPTKError(CU_res);
+}
+__host__ UPTKError_t UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec,UPTKGraph_t hGraph,UPTKGraphNode_t *hErrorNode_out, enum UPTKGraphExecUpdateResult *updateResult_out)
+{
+    if (nullptr == updateResult_out) {
+        return UPTKErrorInvalidValue;
+    }
+    CUGraphExecUpdateResultInfo updateInfo = {};
+    CUError_t CU_res = CUGraphExecUpdate(
+        (CUGraphExec_t)hGraphExec,
+        (CUGraph_t)hGraph,
+        &updateInfo
+    );
+
+    if (hErrorNode_out) {
+        *hErrorNode_out = (UPTKGraphNode_t)updateInfo.errorNode;
+    }
+    *updateResult_out = CUGraphExecUpdateResultToUPTKGraphExecUpdateResult(
+        updateInfo.result
+    );
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, UPTKStream_t stream)
+{
+    CUError_t CU_res;
+    CU_res = CULaunchKernel(func, gridDim, blockDim, args, sharedMem, (CUStream_t)stream);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKFuncGetAttributes(struct UPTKFuncAttributes * attr,const void * func)
+{
+    if(nullptr == attr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+
+    memset(attr, 0, sizeof(UPTKFuncAttributes));
+
+    struct CUFuncAttributes CU_attr;
+    memset(&CU_attr, 0, sizeof(CUFuncAttributes));
+
+    CUError_t CU_res;
+    CU_res = CUFuncGetAttributes(&CU_attr, func);
+    if ( CU_res == CUSuccess )
+    {
+        CUFuncAttributesToUPTKFuncAttributes(&CU_attr, attr);
+    }
+    return CUErrorToUPTKError(CU_res);
+}
+
+UPTKresult  UPTKModuleLoad(UPTKmodule * module,const char * fname)
+{
+    CUresult CU_res;
+    CU_res = cuModuleLoad((CUmodule *)module, fname);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKModuleLoadData(UPTKmodule * module,const void * image)
+{
+    CUresult CU_res;
+    CU_res = cuModuleLoadData((CUmodule *)module, image);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKModuleUnload(UPTKmodule hmod)
+{
+    CUresult CU_res;
+    CU_res = cuModuleUnload((CUmodule) hmod);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKModuleGetFunction(UPTKfunction * hfunc,UPTKmodule hmod,const char * name)
+{
+    CUresult CU_res;
+    CU_res = cuModuleGetFunction((CUfunction *)hfunc, (CUmodule) hmod, name);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKModuleGetGlobal(UPTKdeviceptr * dptr, size_t * bytes,UPTKmodule hmod,const char * name)
+{
+    CUresult CU_res;
+    CU_res = cuModuleGetGlobal((CUdeviceptr *)dptr, bytes, (CUmodule) hmod, name);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKLinkCreate(unsigned int numOptions,UPTKjit_option * options,void ** optionValues,UPTKlinkState * stateOut)
+{
+    CUresult nvrtc_res;
+    CUjit_option* nvrtc_options = (CUjit_option*)malloc(sizeof(CUjit_option) * numOptions);
+    if (nullptr != options) {
+        if (nullptr == nvrtc_options) {
+          return UPTK_ERROR_OUT_OF_MEMORY;
+        }
+        for (int i = 0; i < numOptions; i++) {
+            nvrtc_options[i] = UPTKjit_optionTonvrtcJIT_option(options[i]);
+        }
+    }
+    nvrtc_res = cuLinkCreate(numOptions, nvrtc_options, optionValues, (CUlinkState* )stateOut);
+    free(nvrtc_options);
+    return CUResultToUPTKresult(nvrtc_res);
+}
+
+UPTKresult  UPTKLinkDestroy(UPTKlinkState state)
+{
+    CUresult nvrtc_res;
+    nvrtc_res = cuLinkDestroy((CUlinkState) state);
+    return CUResultToUPTKresult(nvrtc_res);
+}
+
+UPTKresult  UPTKLinkAddData(UPTKlinkState state,UPTKjitInputType type,void * data,size_t size,const char * name,unsigned int numOptions,UPTKjit_option * options,void ** optionValues)
+{
+    CUresult nvrtc_res;
+    CUjitInputType nvrtc_type = UPTKjitInputTypeTonvrtcJITInputType(type);
+    CUjit_option* nvrtc_options = (CUjit_option*)malloc(sizeof(CUjit_option) * numOptions);
+    if (nullptr != options) {
+        if (nullptr == nvrtc_options) {
+          return UPTK_ERROR_OUT_OF_MEMORY;
+        }
+        for (int i = 0; i < numOptions; i++) {
+            nvrtc_options[i] = UPTKjit_optionTonvrtcJIT_option(options[i]);
+        }
+    }
+    nvrtc_res = cuLinkAddData((CUlinkState) state, nvrtc_type, data, size, name, numOptions, nvrtc_options, optionValues);
+    free(nvrtc_options);
+    return CUResultToUPTKresult(nvrtc_res);
+}
+
+__host__  UPTKError_t  UPTKStreamCreateWithPriority(UPTKStream_t * pStream,unsigned int flags,int priority)
+{
+    CUError_t CU_res;
+    CU_res = CUStreamCreateWithPriority((CUStream_t *) pStream, flags, priority);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice, size_t count, UPTKStream_t stream)
+{
+    CUError_t CU_res;
+    CU_res = CUMemcpyPeerAsync(dst, dstDevice, src, srcDevice, count, (CUStream_t)stream);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKMemcpyPeer(void * dst,int dstDevice,const void * src,int srcDevice,size_t count)
+{
+    CUError_t CU_res;
+    CU_res = CUMemcpyPeer(dst, dstDevice, src, srcDevice, count);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKMemcpyAsync(void *dst, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    CUMemcpyKind CU_kind = UPTKMemcpyKindToCUMemcpyKind(kind);
+    CUError_t CU_res;
+    CU_res = CUMemcpyAsync(dst, src, count, CU_kind, (CUStream_t)stream);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKMallocManaged(void ** devPtr,size_t size,unsigned int flags)
+{
+    if(size == 0) {
+        if((devPtr == nullptr) ||((flags != UPTKMemAttachGlobal) && (flags != UPTKMemAttachHost)))
+        {
+            return UPTKErrorInvalidValue;
+        }else{
+            *devPtr = nullptr;
+            return UPTKSuccess;
+        }
+    }
+    CUError_t CU_res;
+    CU_res = CUMallocManaged(devPtr, size, flags);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKMallocAsync(void **devPtr, size_t size, UPTKStream_t hStream)
+{
+    CUError_t CU_res;
+    CU_res = CUMallocAsync(devPtr, size, (CUStream_t) hStream);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKLaunchCooperativeKernelMultiDevice(struct UPTKLaunchParams *launchParamsList, unsigned int numDevices, unsigned int flags)
+{
+    CUError_t CU_res;
+    CU_res = CULaunchCooperativeKernelMultiDevice((CULaunchParams *)launchParamsList, numDevices, flags);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphNodeGetType(UPTKGraphNode_t node,enum UPTKGraphNodeType * pType)
+{
+    if (nullptr == pType)
+        return UPTKErrorInvalidValue;
+    CUGraphNodeType CU_pType;
+    CUError_t CU_res;
+    CU_res = CUGraphNodeGetType((CUGraphNode_t) node, &CU_pType);
+    if (CUSuccess == CU_res)
+        *pType = CUGraphNodeTypeToUPTKGraphNodeType(CU_pType);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphGetNodes(UPTKGraph_t graph,UPTKGraphNode_t * nodes,size_t * numNodes)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphGetNodes((CUGraph_t) graph, (CUGraphNode_t *) nodes, numNodes);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphExecDestroy(UPTKGraphExec_t graphExec)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphExecDestroy((CUGraphExec_t) graphExec);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphDestroyNode(UPTKGraphNode_t node)
+{
+    CUError_t CU_res;
+    CU_res = CUGraphDestroyNode((CUGraphNode_t) node);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKGraphAddNode(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, size_t numDependencies, struct UPTKGraphNodeParams *nodeParams)
+{
+    if(nodeParams == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    CUError_t CU_res;
+    CUGraphNodeParams CU_nodeParams = {};
+    UPTKGraphNodeParamsToCUGraphNodeParams(nodeParams, &CU_nodeParams);
+    CU_res = CUGraphAddNode((CUGraphNode_t*) pGraphNode, (CUGraph_t) graph, (const CUGraphNode_t*) pDependencies, numDependencies, &CU_nodeParams);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKGetLastError(void)
+{
+    CUError_t CU_res;
+    CU_res = CUGetLastError();
+    return CUErrorToUPTKError(CU_res);
+}*/
+
+//__host__ const char * CUDARTAPI UPTKGetErrorString(UPTKError error)
+CUresult UPTKGetErrorStringd(UPTKError error)
+{
+    CUresult cu_err = UPTKErrorToCUresult(error);
+    const char* error_str = nullptr;  // 或 = NULL;
+    //CUresult cuda_res = cuGetErrorString(cu_err, &error_str);
+    return cuGetErrorString(cu_err, &error_str);;
+}
+
+/*__host__  const char *  UPTKGetErrorName(UPTKError_t error)
+{
+    switch (error) {
+        case UPTKErrorAlreadyAcquired:
+            return "UPTKErrorAlreadyAcquired";
+        case UPTKErrorAlreadyMapped:
+            return "UPTKErrorAlreadyMapped";
+        case UPTKErrorArrayIsMapped:
+            return "UPTKErrorArrayIsMapped";
+        case UPTKErrorAssert:
+            return "UPTKErrorAssert";
+        case UPTKErrorCapturedEvent:
+            return "UPTKErrorCapturedEvent";
+        case UPTKErrorContextIsDestroyed:
+            return "UPTKErrorContextIsDestroyed";
+        case UPTKErrorCooperativeLaunchTooLarge:
+            return "UPTKErrorCooperativeLaunchTooLarge";
+        case UPTKErrorUPTKrtUnloading:
+            return "UPTKErrorUPTKrtUnloading";
+        case UPTKErrorDeviceAlreadyInUse:
+            return "UPTKErrorDeviceAlreadyInUse";
+        case UPTKErrorDeviceUninitialized:
+            return "UPTKErrorDeviceUninitialized";
+        case UPTKErrorECCUncorrectable:
+            return "UPTKErrorECCUncorrectable";
+        case UPTKErrorFileNotFound:
+            return "UPTKErrorFileNotFound";
+        case UPTKErrorGraphExecUpdateFailure:
+            return "UPTKErrorGraphExecUpdateFailure";
+        case UPTKErrorHostMemoryAlreadyRegistered:
+            return "UPTKErrorHostMemoryAlreadyRegistered";
+        case UPTKErrorHostMemoryNotRegistered:
+            return "UPTKErrorHostMemoryNotRegistered";
+        case UPTKErrorIllegalAddress:
+            return "UPTKErrorIllegalAddress";
+        case UPTKErrorIllegalState:
+            return "UPTKErrorIllegalState";
+        case UPTKErrorInitializationError:
+            return "UPTKErrorInitializationError";
+        case UPTKErrorInsufficientDriver:
+            return "UPTKErrorInsufficientDriver";
+        case UPTKErrorInvalidConfiguration:
+            return "UPTKErrorInvalidConfiguration";
+        case UPTKErrorInvalidDevice:
+            return "UPTKErrorInvalidDevice";
+        case UPTKErrorInvalidDeviceFunction:
+            return "UPTKErrorInvalidDeviceFunction";
+        case UPTKErrorInvalidDevicePointer:
+            return "UPTKErrorInvalidDevicePointer";
+        case UPTKErrorInvalidGraphicsContext:
+            return "UPTKErrorInvalidGraphicsContext";
+        case UPTKErrorInvalidKernelImage:
+            return "UPTKErrorInvalidKernelImage";
+        case UPTKErrorInvalidMemcpyDirection:
+            return "UPTKErrorInvalidMemcpyDirection";
+        case UPTKErrorInvalidPitchValue:
+            return "UPTKErrorInvalidPitchValue";
+        case UPTKErrorInvalidPtx:
+            return "UPTKErrorInvalidPtx";
+        case UPTKErrorInvalidResourceHandle:
+            return "UPTKErrorInvalidResourceHandle";
+        case UPTKErrorInvalidSource:
+            return "UPTKErrorInvalidSource";
+        case UPTKErrorInvalidSymbol:
+            return "UPTKErrorInvalidSymbol";
+        case UPTKErrorInvalidValue:
+            return "UPTKErrorInvalidValue";
+        case UPTKErrorLaunchFailure:
+            return "UPTKErrorLaunchFailure";
+        case UPTKErrorLaunchOutOfResources:
+            return "UPTKErrorLaunchOutOfResources";
+        case UPTKErrorLaunchTimeout:
+            return "UPTKErrorLaunchTimeout";
+        case UPTKErrorMapBufferObjectFailed:
+            return "UPTKErrorMapBufferObjectFailed";
+        case UPTKErrorMemoryAllocation:
+            return "UPTKErrorMemoryAllocation";
+        case UPTKErrorMissingConfiguration:
+            return "UPTKErrorMissingConfiguration";
+        case UPTKErrorNoDevice:
+            return "UPTKErrorNoDevice";
+        case UPTKErrorNoKernelImageForDevice:
+            return "UPTKErrorNoKernelImageForDevice";
+        case UPTKErrorNotMapped:
+            return "UPTKErrorNotMapped";
+        case UPTKErrorNotMappedAsArray:
+            return "UPTKErrorNotMappedAsArray";
+        case UPTKErrorNotMappedAsPointer:
+            return "UPTKErrorNotMappedAsPointer";
+        case UPTKErrorNotReady:
+            return "UPTKErrorNotReady";
+        case UPTKErrorNotSupported:
+            return "UPTKErrorNotSupported";
+        case UPTKErrorOperatingSystem:
+            return "UPTKErrorOperatingSystem";
+        case UPTKErrorPeerAccessAlreadyEnabled:
+            return "UPTKErrorPeerAccessAlreadyEnabled";
+        case UPTKErrorPeerAccessNotEnabled:
+            return "UPTKErrorPeerAccessNotEnabled";
+        case UPTKErrorPeerAccessUnsupported:
+            return "UPTKErrorPeerAccessUnsupported";
+        case UPTKErrorPriorLaunchFailure:
+            return "UPTKErrorPriorLaunchFailure";
+        case UPTKErrorProfilerAlreadyStarted:
+            return "UPTKErrorProfilerAlreadyStarted";
+        case UPTKErrorProfilerAlreadyStopped:
+            return "UPTKErrorProfilerAlreadyStopped";
+        case UPTKErrorProfilerDisabled:
+            return "UPTKErrorProfilerDisabled";
+        case UPTKErrorProfilerNotInitialized:
+            return "UPTKErrorProfilerNotInitialized";
+        case UPTKErrorSetOnActiveProcess:
+            return "UPTKErrorSetOnActiveProcess";
+        case UPTKErrorSharedObjectInitFailed:
+            return "UPTKErrorSharedObjectInitFailed";
+        case UPTKErrorSharedObjectSymbolNotFound:
+            return "UPTKErrorSharedObjectSymbolNotFound";
+        case UPTKErrorStreamCaptureImplicit:
+            return "UPTKErrorStreamCaptureImplicit";
+        case UPTKErrorStreamCaptureInvalidated:
+            return "UPTKErrorStreamCaptureInvalidated";
+        case UPTKErrorStreamCaptureIsolation:
+            return "UPTKErrorStreamCaptureIsolation";
+        case UPTKErrorStreamCaptureMerge:
+            return "UPTKErrorStreamCaptureMerge";
+        case UPTKErrorStreamCaptureUnjoined:
+            return "UPTKErrorStreamCaptureUnjoined";
+        case UPTKErrorStreamCaptureUnmatched:
+            return "UPTKErrorStreamCaptureUnmatched";
+        case UPTKErrorStreamCaptureUnsupported:
+            return "UPTKErrorStreamCaptureUnsupported";
+        case UPTKErrorStreamCaptureWrongThread:
+            return "UPTKErrorStreamCaptureWrongThread";
+        case UPTKErrorSymbolNotFound:
+            return "UPTKErrorSymbolNotFound";
+        case UPTKErrorUnmapBufferObjectFailed:
+            return "UPTKErrorUnmapBufferObjectFailed";
+        case UPTKErrorUnsupportedLimit:
+            return "UPTKErrorUnsupportedLimit";
+        case UPTKSuccess:
+            return "UPTKSuccess";
+        default:
+            return "unrecognized error code";
+    };
+}
+
+__host__  UPTKError_t  UPTKGetDeviceCount(int * count)
+{
+    CUError_t CU_res;
+    CU_res = CUGetDeviceCount(count);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKFreeAsync(void *devPtr, UPTKStream_t hStream)
+{
+    if (devPtr == nullptr) {
+        return UPTKSuccess;
+    }
+    CUError_t CU_res;
+    CU_res = CUFreeAsync(devPtr, (CUStream_t) hStream);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKEventElapsedTime(float * ms,UPTKEvent_t start,UPTKEvent_t end)
+{
+    CUError_t CU_res;
+    CU_res = cuEventElapsedTime(ms, (CUevent_t) start, (CUevent_t) end);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKDeviceGetAttribute(int* value, enum UPTKDeviceAttr attr, int device) 
+{
+    if (value == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+    int device_count = 0;
+    CUError_t CU_res = CUGetDeviceCount(&device_count);
+    if (CU_res != CUSuccess) {
+        return CUErrorToUPTKError(CU_res);
+    }
+    if (device < 0 || device >= device_count) {
+        return UPTKErrorInvalidDevice;
+    }
+    CUDeviceProp prop = {0};
+    CU_res = CUGetDeviceProperties(&prop, device);
+    if (CU_res != CUSuccess) {
+        return CUErrorToUPTKError(CU_res);
+    }
+
+    UPTKError_t res = UPTKSuccess;
+    bool is_handled = true;
+
+    switch (attr) {
+    case UPTKDevAttrMaxSurface2DLayeredWidth:
+      *value = prop.maxSurface2DLayered[0];
+      break;
+    case UPTKDevAttrMaxSurface2DLayeredHeight:
+      *value = prop.maxSurface2DLayered[1];
+      break;
+    case UPTKDevAttrMaxSurface2DLayeredLayers:
+      *value = prop.maxSurface2DLayered[2];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearWidth:
+      *value = prop.maxTexture2DLinear[0];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearHeight:
+      *value = prop.maxTexture2DLinear[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearPitch:
+      *value = prop.maxTexture2DLinear[2];
+      break;
+    case UPTKDevAttrMaxSurface2DWidth:
+      *value = prop.maxSurface2D[0];
+      break;
+    case UPTKDevAttrMaxSurface2DHeight:
+      *value = prop.maxSurface2D[1];
+      break;
+    case UPTKDevAttrMaxSurface1DLayeredWidth:
+      *value = prop.maxSurface1DLayered[0];
+      break;
+    case UPTKDevAttrMaxSurface1DLayeredLayers:
+      *value = prop.maxSurface1DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture3DWidthAlt:
+      *value = prop.maxTexture3DAlt[0];
+      break;
+    case UPTKDevAttrMaxTexture3DHeightAlt:
+      *value = prop.maxTexture3DAlt[1];
+      break;
+    case UPTKDevAttrMaxTexture3DDepthAlt:
+      *value = prop.maxTexture3DAlt[2];
+      break;
+    case UPTKDevAttrTccDriver:
+      *value = 1;
+      fprintf(stdout, "[Warning] Enabling TCC has no impact on functionality.To ensure compatibility, TCC has enabled simulated return value 1.\n");
+      break;
+    case UPTKDevAttrMaxTexture1DLayeredWidth:
+      *value = prop.maxTexture1DLayered[0];
+      break;
+    case UPTKDevAttrMaxTexture1DLayeredLayers:
+      *value = prop.maxTexture1DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DMipmappedWidth:
+      *value = prop.maxTexture2DMipmap[0];
+      break;
+    case UPTKDevAttrMaxTexture2DMipmappedHeight:
+      *value = prop.maxTexture2DMipmap[1];
+      break;
+    case UPTKDevAttrMaxTextureCubemapLayeredWidth:
+      *value = prop.maxTextureCubemapLayered[0];
+      break;
+    case UPTKDevAttrMaxTextureCubemapLayeredLayers:
+      *value = prop.maxTextureCubemapLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DGatherWidth:
+      *value = prop.maxTexture2DGather[0];
+      break;
+    case UPTKDevAttrMaxTexture2DGatherHeight:
+      *value = prop.maxTexture2DGather[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredWidth:
+      *value = prop.maxTexture2DLayered[0];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredHeight:
+      *value = prop.maxTexture2DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredLayers:
+      *value = prop.maxTexture2DLayered[2];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapLayeredWidth:
+      *value = prop.maxSurfaceCubemapLayered[0];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapLayeredLayers:
+      *value = prop.maxSurfaceCubemapLayered[1];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapWidth:
+      *value = prop.maxSurfaceCubemap;
+      break;
+    case UPTKDevAttrSingleToDoublePrecisionPerfRatio:
+      *value = prop.singleToDoublePrecisionPerfRatio;
+      break;
+    case UPTKDevAttrMaxSurface3DWidth:
+      *value = prop.maxSurface3D[0];
+      break;
+    case UPTKDevAttrMaxSurface3DHeight:
+      *value = prop.maxSurface3D[1];
+      break;
+    case UPTKDevAttrMaxSurface3DDepth:
+      *value = prop.maxSurface3D[2];
+      break;
+    default: 
+    {
+        CUDeviceAttr CU_attr = UPTKDeviceAttrToCUdevice_attribute(attr);
+        CU_res = CUDeviceGetAttribute(value, CU_attr, device);
+        res = CUErrorToUPTKError(CU_res);
+        if (res == UPTKSuccess) {
+            if (CU_attr == CUDevAttrComputeCapabilityMajor) {
+                *value = SM_VERSION_MAJOR;
+            } else if (CU_attr == CUDevAttrComputeCapabilityMinor) {
+                *value = SM_VERSION_MINOR;
+            }
+        }
+        is_handled = false;
+        break;
+    }
+    }
+
+    if (is_handled && res == UPTKSuccess) {
+        res = UPTKSuccess;
+    }
+
+    return res;
+}
+
+__host__ UPTKError_t  UPTKDeviceEnablePeerAccess(int peerDevice,unsigned int flags)
+{
+    CUError_t CU_res;
+    CU_res = CUDeviceEnablePeerAccess(peerDevice, flags);
+    return CUErrorToUPTKError(CU_res);
+}
+
+UPTKresult  UPTKLinkComplete(UPTKlinkState state,void ** cubinOut,size_t * sizeOut)
+{
+    CUresult nvrtc_res;
+    nvrtc_res = cuLinkComplete((CUlinkState)state, cubinOut, sizeOut);
+    return CUResultToUPTKresult(nvrtc_res);
+}
+
+UPTKresult  UPTKInit(unsigned int Flags)
+{
+    CUresult CU_res;
+    CU_res = cuInit(Flags);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+__host__  UPTKError_t  UPTKFuncSetAttribute(const void * func,enum UPTKFuncAttribute attr,int value)
+{
+    CUFuncAttribute CU_attr = UPTKFuncAttributeToCUFuncAttribute(attr);
+    CUError_t CU_res;
+    CU_res = CUFuncSetAttribute(func, CU_attr, value);
+    return CUErrorToUPTKError(CU_res);
+}
+UPTKresult  UPTKDeviceGetName(char * name,int len,UPTKdevice dev)
+{
+    CUresult CU_res;
+    CU_res = cuDeviceGetName(name, len, (CUdevice) dev);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxSynchronize(void)
+{
+    CUresult CU_res;
+    CU_res = cuCtxSynchronize();
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxSetLimit(UPTKlimit limit,size_t value)
+{
+    CUlimit CU_limit = UPTKlimitToCUlimit(limit);
+    CUresult CU_res;
+    CU_res = cuCtxSetLimit(CU_limit, value);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxSetCurrent(UPTKcontext ctx)
+{
+    CUresult CU_res;
+    CU_res = cuCtxSetCurrent((CUcontext) ctx);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxGetLimit(size_t * pvalue,UPTKlimit limit)
+{
+    CUlimit CU_limit = UPTKlimitToCUlimit(limit);
+    CUresult CU_res;
+    CU_res = cuCtxGetLimit(pvalue, CU_limit);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxDestroy(UPTKcontext ctx)
+{
+    CUresult CU_res;
+    CU_res = cuCtxDestroy((CUcontext) ctx);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+UPTKresult  UPTKCtxCreate(UPTKcontext * pctx,unsigned int flags,UPTKdevice dev)
+{
+    CUresult CU_res;
+    CU_res = cuCtxCreate((CUcontext *)pctx, flags, (CUdevice) dev);
+    return CUErrorToUPTKresult(CU_res);
+}
+
+__host__ UPTKError_t UPTKMemset(void * devPtr,int value,size_t count)
+{
+    CUError_t CU_res;
+    CU_res = CUMemset(devPtr, value, count);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t UPTKMallocHost(void ** ptr,size_t size)
+{
+    CUError_t CU_res;
+    CU_res = CUMallocHost(ptr, size);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t UPTKFreeHost(void * ptr)
+{
+    CUError_t CU_res;
+    CU_res = CUFreeHost(ptr);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKOccupancyMaxPotentialBlockSize_internal(int* gridSize, int* blockSize, const void* f, size_t dynSharedMemPerBlk, int blockSizeLimit){
+
+    if ((gridSize == nullptr) || (blockSize == nullptr)) {
+        return UPTKErrorInvalidValue;
+    }
+    CUError_t CU_res;
+    CU_res = CUOccupancyMaxPotentialBlockSize(gridSize, blockSize, f, dynSharedMemPerBlk, blockSizeLimit);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    CUMemcpyKind CU_kind = UPTKMemcpyKindToCUMemcpyKind(kind);
+    CUError_t CU_res;
+    CU_res = CUMemcpyToSymbol(symbol, src, count, offset, CU_kind);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__ UPTKError_t  UPTKHostAlloc(void ** pHost,size_t size,unsigned int flags)
+{
+    CUError_t CU_res;
+    CU_res = CUMallocHost(pHost, size, flags);
+    return CUErrorToUPTKError(CU_res);
+}
+
+__host__  UPTKError_t  UPTKGetDeviceProperties_v2(struct UPTKDeviceProp * prop,int device)
+{
+    if(nullptr == prop)
+    {
+        return UPTKErrorInvalidValue;
+    }
+
+    memset(prop, 0, sizeof(UPTKDeviceProp));
+
+    CUDeviceProp CU_prop;
+    memset(&CU_prop, 0, sizeof(UPTKDeviceProp));
+
+    CUError_t CU_res;
+    CU_res = CUGetDeviceProperties_v2(&CU_prop, device);
+    if ( CU_res == CUSuccess )
+    {
+        CUDevicePropToUPTKDeviceProp(&CU_prop, prop);
+    }
+    return CUErrorToUPTKError(CU_res);
+}*/
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
