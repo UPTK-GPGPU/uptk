@@ -1,3 +1,8 @@
+#ifndef __UPTK_RUNTIME_API_H
+#define __UPTK_RUNTIME_API_H
+#include <stddef.h>
+#include "cuda_runtime.h"
+#include "cuda.h"
 #if defined(__cplusplus)
 extern "C"
 {
@@ -18,13 +23,6 @@ extern "C"
     /** \cond impl_private */
 #if !defined(__dv)
 
-#if defined(__NVCC__)
-#define UPTKStream_t cudaStream_t
-#endif 
-#if defined(__HIPCC__)
-#define UPTKStream_t hipStream_t
-#endif 
-
 #if defined(__cplusplus)
 
 #define __dv(v) \
@@ -39,7 +37,17 @@ extern "C"
 #endif /* !__dv */
 /** \endcond impl_private */
 
+#if defined(__CUDACC__)
+#define UPTKStream_t cudaStream_t
+#elif defined(__HIPCC__)
+#define UPTKStream_t hipStream_t
+#else
+// #define UPTKStream_t void* 
+#define UPTKStream_t cudaStream_t
+#endif
 
+
+#define UPTKGetDeviceProperties UPTKGetDeviceProperties_v2
 
     /**
      * UPTK memory copy types
@@ -3249,10 +3257,10 @@ struct  UPTKGraphNodeParams {
     extern __host__ UPTKError_t UPTKEventDestroy(UPTKEvent_t event);
     extern __host__ UPTKError_t UPTKEventSynchronize(UPTKEvent_t event);
     extern __host__ UPTKError_t UPTKEventQuery(UPTKEvent_t event);
-    extern __host__ UPTKError_t UPTKEventRecord(UPTKEvent_t event, UPTKStream_t stream);
+    extern __host__ UPTKError_t UPTKEventRecord(UPTKEvent_t event, UPTKStream_t stream __dv(0));
     // extern __host__ UPTKError_t  UPTKMemcpy(void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind);
     extern __host__ UPTKError_t UPTKIpcGetMemHandle(UPTKIpcMemHandle_t *handle, void *devPtr);
-    extern __host__ UPTKError_t UPTKIpcOpenMemHandle(void **devPtr, UPTKIpcMemHandle_t handle, unsigned int flags);
+    extern __host__ UPTKError_t UPTKIpcOpenMemHandleD(CUdeviceptr *devPtr, UPTKIpcMemHandle_t handle, unsigned int flags);
     extern __host__ UPTKError_t UPTKIpcCloseMemHandle(void *devPtr);
     extern __host__ UPTKError_t UPTKChooseDevice(int *device, const struct UPTKDeviceProp *prop);
     extern __host__ UPTKError_t UPTKSetDevice(int device);
@@ -3297,6 +3305,16 @@ struct  UPTKGraphNodeParams {
     extern __host__ UPTKError_t UPTKEventElapsedTime(float *ms, UPTKEvent_t start, UPTKEvent_t end);
     extern __host__ UPTKError_t UPTKDeviceGetAttribute(int *value, enum UPTKDeviceAttr attr, int device);
     extern __host__ UPTKError_t UPTKDeviceEnablePeerAccess(int peerDevice, unsigned int flags);
+
+// Based on the newly added application interface
+    extern __host__ UPTKError_t  UPTKMemset(void *devPtr, int value, size_t count);
+    extern __host__ UPTKError_t  UPTKMallocHost(void **ptr, size_t size);
+    extern __host__ UPTKError_t  UPTKFreeHost(void *ptr);
+    extern __host__ UPTKError_t  UPTKMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset __dv(0), enum UPTKMemcpyKind kind __dv(UPTKMemcpyHostToDevice));
+    extern __host__ UPTKError_t  UPTKOccupancyMaxPotentialBlockSize_internal(int* gridSize, int* blockSize, const void* f, size_t dynSharedMemPerBlk, int blockSizeLimit);
+    extern __host__ UPTKError_t  UPTKHostAlloc(void **pHost, size_t size, unsigned int flags);
+    extern __host__ UPTKError_t  UPTKGetDeviceProperties(struct UPTKDeviceProp *prop, int device);
+
 
 /**
  * UPTK device pointer
@@ -4005,7 +4023,7 @@ typedef enum UPTKarray_format_enum {
     UPTK_AD_FORMAT_MAX            = 0x7FFFFFFF
 } UPTKarray_format;
 
-typedef struct UPTKstream_st *UPTKstream;                        /**< UPTK stream */
+// typedef struct UPTKstream_st *UPTKstream;                        /**< UPTK stream */
 typedef struct UPTKarray_st *UPTKarray;                          /**< UPTK array */
 typedef struct UPTKmod_st *UPTKmodule;                           /**< UPTK module */
 typedef struct UPTKfunc_st *UPTKfunction;                        /**< UPTK function */
@@ -4426,7 +4444,7 @@ typedef enum UPTKfunction_attribute_enum {
     /**
      * The maximum number of threads per block, beyond which a launch of the
      * function would fail. This number depends on both the function and the
-     * device on which the function is currently loaded.
+     * device on which the function is UPTKrrently loaded.
      */
     UPTK_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 0,
 
@@ -4541,7 +4559,7 @@ typedef enum UPTKfunction_attribute_enum {
      * the program is run on a different hardware platform.
      *
      * UPTKDA API provides UPTKdaOcUPTKpancyMaxActiveClusters to assist with checking
-     * whether the desired size can be launched on the current device.
+     * whether the desired size can be launched on the UPTKrrent device.
      *
      * Portable Cluster Size
      *
@@ -4696,3 +4714,70 @@ static __inline__ __host__ struct UPTKExtent make_UPTKExtent(size_t w, size_t h,
 
   return e;
 }
+
+// Based on the newly added application interface
+template<class T>
+static __inline__ __host__  UPTKError_t UPTKOccupancyMaxPotentialBlockSize(
+    int    *minGridSize,
+    int    *blockSize,
+    T       func,
+    size_t  dynamicSMemSize = 0,
+    int     blockSizeLimit = 0)
+{
+  return UPTKOccupancyMaxPotentialBlockSize_internal(minGridSize, blockSize, reinterpret_cast<const void*>(func), dynamicSMemSize, blockSizeLimit);
+}
+
+
+template<class T>
+static __inline__ __host__ UPTKError_t UPTKMemcpyToSymbol(
+  const T                   &symbol,
+  const void                *src,
+        size_t               count,
+        size_t               offset = 0,
+        enum UPTKMemcpyKind  kind   = UPTKMemcpyHostToDevice
+)
+{
+  return ::UPTKMemcpyToSymbol((const void*)&symbol, src, count, offset, kind);
+}
+
+template<class T>
+static __inline__ __host__ UPTKError_t UPTKMallocHost(
+  T            **ptr,
+  size_t         size,
+  unsigned int   flags = 0
+)
+{
+  return UPTKMallocHost((void**)(void*)ptr, size, flags);
+}
+
+static __inline__ __host__ UPTKError_t UPTKMallocHost(
+  void         **ptr,
+  size_t         size,
+  unsigned int   flags
+)
+{
+  return ::UPTKHostAlloc(ptr, size, flags);
+}
+
+template<class T>
+static __inline__ __host__ UPTKError_t UPTKHostAlloc(
+  T            **ptr,
+  size_t         size,
+  unsigned int   flags
+)
+{
+  return ::UPTKHostAlloc((void**)(void*)ptr, size, flags);
+}
+
+template<class T>
+static __inline__ __host__ UPTKError_t UPTKFuncGetAttributes(
+  struct UPTKFuncAttributes *attr,
+  T                         *entry
+)
+{
+  return ::UPTKFuncGetAttributes(attr, (const void*)entry);
+}
+
+
+
+#endif

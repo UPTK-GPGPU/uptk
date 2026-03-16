@@ -10,4 +10,4 @@ add_executable(MyDemo
     MyDemo.cu
 )
 
-target_link_libraries(MyDemo cudart)
+target_link_libraries(MyDemo cudart UPTKdrt)

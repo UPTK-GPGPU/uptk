@@ -1,0 +1,26 @@
+libUPTKrt.so
+{
+global:
+UPDeviceGet;
+UPDeviceGetAttribute;
+UPDeviceGetCount;
+UPDeviceGetName;
+UPDevicePrimaryCtxRelease;
+UPDevicePrimaryCtxRetain;
+UPDeviceTotalMem_v2;
+UPDriverGetVersion;
+UPEventDestroy;
+UPLinkDestroy;
+UPMemcpyDtoHAsync_v2;
+UPMemcpyDtoH_v2;
+UPMemcpyHtoDAsync_v2;
+UPMemcpyHtoD_v2;
+UPMemsetD16Async;
+UPMemsetD32Async;
+UPMemsetD8Async;
+UPModuleLoadData;
+UPModuleLoadDataEx;
+UPStreamDestroy;
+local:
+        *;
+};
