@@ -21,6 +21,15 @@ extern "C" {
 #define ERROR_INVALID_ENUM() do{printf("Error invalid enum. Fun: %s, para: %d\n", __FUNCTION__, para); abort(); }while(0)
 #define ERROR_INVALID_OR_UNSUPPORTED_ENUM() do{printf("[ERROR] The enumeration passed in is invalid, or the functionality for the enumeration is currently not supported. Fun: %s, para: %d\n", __FUNCTION__, para); abort(); }while(0)
 
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_BOLD "\x1b[1m"
+#define ANSI_COLOR_HIGH_SATURATION "\x1b[91m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
+#define Debug() do { \
+    printf(ANSI_COLOR_BOLD ANSI_COLOR_HIGH_SATURATION ANSI_COLOR_MAGENTA "Warning: The %s is currently not supported.The %s is invalid.\n" ANSI_COLOR_RESET, __FUNCTION__, __FUNCTION__); \
+} while (0)
+
 const int SM_VERSION_MAJOR = 7;
 const int SM_VERSION_MINOR = 5;
 
