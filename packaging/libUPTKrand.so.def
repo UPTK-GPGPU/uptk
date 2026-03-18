@@ -1,0 +1,33 @@
+libUPTKrand.so.1
+{
+global:
+	UPTKrandCreateGenerator;
+	UPTKrandCreateGeneratorHost;
+	UPTKrandCreatePoissonDistribution;
+	UPTKrandDestroyDistribution;
+	UPTKrandDestroyGenerator;
+	UPTKrandGenerate;
+	UPTKrandGenerateLogNormal;
+	UPTKrandGenerateLogNormalDouble;
+	UPTKrandGenerateLongLong;
+	UPTKrandGenerateNormal;
+	UPTKrandGenerateNormalDouble;
+	UPTKrandGeneratePoisson;
+	UPTKrandGeneratePoissonMethod;
+	UPTKrandGenerateSeeds;
+	UPTKrandGenerateUniform;
+	UPTKrandGenerateUniformDouble;
+	UPTKrandGetDirectionVectors32;
+	UPTKrandGetDirectionVectors64;
+	UPTKrandGetProperty;
+	UPTKrandGetScrambleConstants32;
+	UPTKrandGetScrambleConstants64;
+	UPTKrandGetVersion;
+	UPTKrandSetGeneratorOffset;
+	UPTKrandSetGeneratorOrdering;
+	UPTKrandSetPseudoRandomGeneratorSeed;
+	UPTKrandSetQuasiRandomGeneratorDimensions;
+	UPTKrandSetStream;
+local:
+	*;
+};

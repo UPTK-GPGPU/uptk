@@ -1,0 +1,41 @@
+libUPTKfft.so.1
+{
+global:
+	UPTKfftCreate;
+	UPTKfftDestroy;
+	UPTKfftEstimate1d;
+	UPTKfftEstimate2d;
+	UPTKfftEstimate3d;
+	UPTKfftEstimateMany;
+	UPTKfftExecC2C;
+	UPTKfftExecC2R;
+	UPTKfftExecD2Z;
+	UPTKfftExecR2C;
+	UPTKfftExecZ2D;
+	UPTKfftExecZ2Z;
+	UPTKfftGetProperty;
+	UPTKfftGetSize;
+	UPTKfftGetSize1d;
+	UPTKfftGetSize2d;
+	UPTKfftGetSize3d;
+	UPTKfftGetSizeMany;
+	UPTKfftGetSizeMany64;
+	UPTKfftGetVersion;
+	UPTKfftMakePlan1d;
+	UPTKfftMakePlan2d;
+	UPTKfftMakePlan3d;
+	UPTKfftMakePlanMany;
+	UPTKfftMakePlanMany64;
+	UPTKfftPlan1d;
+	UPTKfftPlan2d;
+	UPTKfftPlan3d;
+	UPTKfftPlanMany;
+	UPTKfftSetAutoAllocation;
+	UPTKfftSetStream;
+	UPTKfftSetWorkArea;
+	UPTKfftGetPlanPropertyInt64;
+	UPTKfftResetPlanProperty;
+	UPTKfftSetPlanPropertyInt64;
+local:
+	*;
+};

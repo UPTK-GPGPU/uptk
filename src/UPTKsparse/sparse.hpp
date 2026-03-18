@@ -1,0 +1,85 @@
+#ifndef __SPARSE_HPP__
+#define __SPARSE_HPP__
+
+#include "../runtime/runtime.hpp"
+
+#include <UPTKsparse.h>
+#include <cusparse.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+/**
+ * UPTKsparse status convert function
+ */
+cusparseStatus_t UPTKsparseStatusTocusparseStatus(UPTKsparseStatus_t para);
+UPTKsparseStatus_t cusparseStatusToUPTKsparseStatus(cusparseStatus_t para);
+
+/**
+ * UPTKsparse data type convert function
+ */
+cusparseAction_t UPTKsparseActionTocusparseAction(UPTKsparseAction_t para);
+
+cusparseSpMMAlg_t UPTKsparseSpMMAlgTocusparseSpMMAlg(UPTKsparseSpMMAlg_t para);
+cusparseSpMVAlg_t UPTKsparseSpMVAlgTocusparseSpMVAlg(UPTKsparseSpMVAlg_t para);
+
+cusparseCsr2CscAlg_t UPTKsparseCsr2CscAlgTocusparseCsr2CscAlg(UPTKsparseCsr2CscAlg_t para);
+cusparseDiagType_t UPTKsparseDiagTypeTocusparseDiagType(UPTKsparseDiagType_t para);
+UPTKsparseDiagType_t cusparseDiagTypeToUPTKsparseDiagType(cusparseDiagType_t para);
+cusparseDirection_t UPTKsparseDirectionTocusparseDirection(UPTKsparseDirection_t para);
+
+cusparseFillMode_t UPTKsparseFillModeTocusparseFillMode(UPTKsparseFillMode_t para);
+UPTKsparseFillMode_t cusparseFillModeToUPTKsparseFillMode(cusparseFillMode_t para);
+
+cusparseFormat_t UPTKsparseFormatTocusparseFormat(UPTKsparseFormat_t para);
+UPTKsparseFormat_t cusparseFormatToUPTKsparseFormat(cusparseFormat_t para);
+
+cusparseIndexType_t UPTKsparseIndexTypeTocusparseIndexType(UPTKsparseIndexType_t para);
+UPTKsparseIndexType_t cusparseIndexTypeToUPTKsparseIndexType(cusparseIndexType_t para);
+
+cusparseIndexBase_t UPTKsparseIndexBaseTocusparseIndexBase(UPTKsparseIndexBase_t para);
+UPTKsparseIndexBase_t cusparseIndexBaseToUPTKsparseIndexBase(cusparseIndexBase_t para);
+
+cusparseMatrixType_t UPTKsparseMatrixTypeTocusparseMatrixType(UPTKsparseMatrixType_t para);
+UPTKsparseMatrixType_t cusparseMatrixTypeToUPTKsparseMatrixType(cusparseMatrixType_t para);
+
+cusparseOperation_t UPTKsparseOperationTocusparseOperation(UPTKsparseOperation_t para);
+
+cusparseOrder_t UPTKsparseOrderTocusparseOrder(UPTKsparseOrder_t para);
+UPTKsparseOrder_t cusparseOrderToUPTKsparseOrder(cusparseOrder_t para);
+
+cusparsePointerMode_t UPTKsparsePointerModeTocusparsePointerMode(UPTKsparsePointerMode_t para);
+UPTKsparsePointerMode_t cusparsePointerModeToUPTKsparsePointerMode(cusparsePointerMode_t para);
+
+cusparseSolvePolicy_t UPTKsparseSolvePolicyTocusparseSolvePolicy(UPTKsparseSolvePolicy_t para);
+
+cudaDataType_t UPTKDataTypeTocudaDataType(UPTKDataType_t para);
+UPTKDataType_t cudaDataTypeToUPTKDataType(cudaDataType_t para);
+
+cusparseSpMatAttribute_t UPTKsparseSpMatAttributeTocusparseSpMatAttribute(UPTKsparseSpMatAttribute_t para);
+UPTKsparseSpMatAttribute_t cusparseSpMatAttributeToUPTKsparseSpMatAttribute(cusparseSpMatAttribute_t para);
+
+cusparseSparseToDenseAlg_t UPTKsparseSparseToDenseAlgTocusparseSparseToDenseAlg(UPTKsparseSparseToDenseAlg_t para);
+cusparseDenseToSparseAlg_t UPTKsparseDenseToSparseAlgTocusparseDenseToSparseAlg(UPTKsparseDenseToSparseAlg_t para);
+
+cusparseSpSVAlg_t UPTKsparseSpSVAlgTocusparseSpSVAlg(UPTKsparseSpSVAlg_t para);
+cusparseSpSMAlg_t UPTKsparseSpSMAlgTocusparseSpSMAlg(UPTKsparseSpSMAlg_t para);
+
+cusparseSpGEMMAlg_t UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(UPTKsparseSpGEMMAlg_t para);
+cusparseSDDMMAlg_t UPTKsparseSDDMMAlgTocusparseSDDMMAlg(UPTKsparseSDDMMAlg_t para);
+
+cusparseSpSMUpdate_t UPTKsparseSpSMUpdateTocusparseSpSMUpdate(UPTKsparseSpSMUpdate_t para);
+UPTKsparseSpSMUpdate_t cusparseSpSMUpdateToUPTKsparseSpSMUpdate(cusparseSpSMUpdate_t para);
+ 
+cusparseSpSVUpdate_t UPTKsparseSpSVUpdateTocusparseSpSVUpdate(UPTKsparseSpSVUpdate_t para);
+UPTKsparseSpSVUpdate_t cusparseSpSVUpdateToUPTKsparseSpSVUpdate(cusparseSpSVUpdate_t para);
+
+cusparseSpMMOpAlg_t UPTKsparseSpMMOpAlgTocusparseSpMMOpAlg(UPTKsparseSpMMOpAlg_t para);
+
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
+
+#endif // __SPARSE_HPP__
