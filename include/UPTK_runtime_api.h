@@ -46,6 +46,7 @@ extern "C"
 #define UPTKStream_t cudaStream_t
 #endif
 
+#define UPTKART_VERSION  1000
 
 #define UPTKGetDeviceProperties UPTKGetDeviceProperties_v2
 
