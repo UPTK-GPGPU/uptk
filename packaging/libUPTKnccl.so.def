@@ -1,0 +1,26 @@
+libUPTKnccl.so.1
+{
+global:
+    UPTKncclGetVersion;
+    UPTKncclGetUniqueId;
+    UPTKncclCommInitRank;
+    UPTKncclCommInitAll;
+    UPTKncclCommDestroy;
+    UPTKncclCommAbort;
+    UPTKncclGetErrorString;
+    UPTKncclCommGetAsyncError;
+    UPTKncclCommCount;
+    UPTKncclCommCuDevice;
+    UPTKncclCommUserRank;
+    UPTKncclReduce;
+    UPTKncclBroadcast;
+    UPTKncclAllReduce;
+    UPTKncclReduceScatter;
+    UPTKncclAllGather;
+    UPTKncclSend;
+    UPTKncclRecv;
+    UPTKncclGroupStart;
+    UPTKncclGroupEnd;
+local:
+        *;
+};

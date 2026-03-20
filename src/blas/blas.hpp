@@ -15,7 +15,8 @@ extern "C" {
  */
 cublasStatus_t UPTKblasStatusTocublasStatus(UPTKblasStatus_t para);
 UPTKblasStatus_t cublasStatusToUPTKblasStatus(cublasStatus_t para);
-    cudaDataType UPTKDataTypeTocudaDataType(UPTKDataType para);
+
+cudaDataType UPTKDataTypeTocudaDataType(UPTKDataType para);
 
 /**
  * UPTKblas data type convert function
