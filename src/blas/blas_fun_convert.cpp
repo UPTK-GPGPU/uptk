@@ -2013,7 +2013,7 @@ UPTKBLASAPI UPTKblasStatus_t UPTKblasGetProperty(libraryPropertyType type, int *
 
 UPTKBLASAPI size_t UPTKblasGetCudartVersion(void)
 {
-    return UPTKART_VERSION;
+    return UPTKRT_VERSION;
 }
 
 UPTKBLASAPI UPTKblasStatus_t UPTKblasCgemm3m(UPTKblasHandle_t handle,

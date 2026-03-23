@@ -4,309 +4,630 @@
 extern "C" {
 #endif /* __cplusplus */
 
-__host__ UPTKError_t UPTKMalloc(void ** devPtr,size_t size)
+__host__ UPTKError UPTKLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, UPTKStream_t stream)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaMalloc(devPtr, size);
-    return cudaErrorToUPTKError(cuda_res);
+    cudaError_t res;
+    res = cudaLaunchKernel(func, gridDim, blockDim, args, sharedMem, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(res);
 }
 
-__host__  UPTKError_t  UPTKFree(void * devPtr)
+__host__ UPTKError UPTKLaunchKernel_ptsz(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, UPTKStream_t stream)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaFree(devPtr);
-    return cudaErrorToUPTKError(cuda_res);
+    cudaError_t res;
+    res = cudaLaunchKernel(func, gridDim, blockDim, args, sharedMem, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(res);
 }
 
-// UPTKError_t __UPTKPushCallConfiguration(dim3 gridDim, dim3 blockDim, size_t sharedMem , UPTKStream_t stream) {
-//     cudaError_t res;
-//     res = __cudaPushCallConfiguration(gridDim, blockDim, sharedMem, (cudaStream_t)stream);
-//     return cudaErrorToUPTKError(res);
+// CUresult UPTKAPI cuTexObjectGetTextureDesc(UPTK_TEXTURE_DESC * pTexDesc,CUtexObject texObject)
+// {
+//     //TODO: 1 No known from UPTK UPTK_TEXTURE_DESC pTexDesc to cuda cudaTextureDesc pTexDesc
+//     cudaError_t cuda_res;
+//     cuda_res = cudaGetTextureObjectTextureDesc(pTexDesc, (cudaTextureObject_t) texObject);
+//     return cudaErrorToCUresult(cuda_res);
 // }
 
-// UPTKError_t __UPTKPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, UPTKStream_t *stream) {
-//     cudaError_t res;
-//     res = __cudaPopCallConfiguration(gridDim, blockDim, sharedMem, (cudaStream_t *) stream);
-//     return cudaErrorToUPTKError(res);
-// }
-
-__host__ UPTKError_t  UPTKStreamCreate(UPTKStream_t * pStream)
+__host__ UPTKError UPTKArrayGetInfo(struct UPTKChannelFormatDesc * desc,struct UPTKExtent * extent,unsigned int * flags,UPTKArray_t array)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamCreate((cudaStream_t *) pStream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKStreamCreateWithFlags(UPTKStream_t * pStream,unsigned int flags)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamCreateWithFlags((cudaStream_t *) pStream, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKStreamDestroy(UPTKStream_t stream)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamDestroy((cudaStream_t) stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKStreamSynchronize(UPTKStream_t stream)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamSynchronize((cudaStream_t) stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKStreamWaitEvent(UPTKStream_t stream,UPTKEvent_t event,unsigned int flags)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamWaitEvent((cudaStream_t) stream, (cudaEvent_t) event, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKStreamBeginCapture(UPTKStream_t stream,enum UPTKStreamCaptureMode mode)
-{
-    if (mode < UPTKStreamCaptureModeGlobal || mode > UPTKStreamCaptureModeRelaxed)
-    {
-        return UPTKErrorInvalidValue;
+    if (array == nullptr) {
+        return UPTKErrorInvalidResourceHandle;
     }
-    cudaStreamCaptureMode cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(mode);
+    if ((desc == nullptr) || (extent == nullptr) || (flags == nullptr)) {
+        return UPTKSuccess;
+    }
     cudaError_t cuda_res;
-    cuda_res = cudaStreamBeginCapture((cudaStream_t) stream, cuda_mode);
+    cuda_res = cudaArrayGetInfo((cudaChannelFormatDesc *)desc, (cudaExtent *)extent, flags, (cudaArray_t)array);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKStreamEndCapture(UPTKStream_t stream,UPTKGraph_t * pGraph)
+// UNSUPPORTED
+__host__ unsigned long long UPTKCGGetIntrinsicHandle(enum UPTKCGScope scope)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamEndCapture((cudaStream_t) stream, (cudaGraph_t *) pGraph);
-    return cudaErrorToUPTKError(cuda_res);
+    Debug();
+    return UPTKErrorNotSupported;
 }
 
-__host__ UPTKError_t  UPTKStreamIsCapturing(UPTKStream_t stream,enum UPTKStreamCaptureStatus * pCaptureStatus)
+// UNSUPPORTED
+__host__ UPTKError UPTKCGGetRank(unsigned int * threadRank,unsigned int * gridRank,unsigned long long handle)
 {
-    if (nullptr == pCaptureStatus)
-        return UPTKErrorInvalidValue;
-    cudaStreamCaptureStatus cuda_pCaptureStatus;
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamIsCapturing((cudaStream_t) stream, &cuda_pCaptureStatus);
-    *pCaptureStatus = cudaStreamCaptureStatusToUPTKStreamCaptureStatus(cuda_pCaptureStatus);
-    return cudaErrorToUPTKError(cuda_res);
+    Debug();
+    return UPTKErrorNotSupported;
 }
 
-__host__ UPTKError_t  UPTKEventCreate(UPTKEvent_t * event)
+// UNSUPPORTED
+__host__ UPTKError UPTKCGGetSize(unsigned int * numThreads,unsigned int * numGrids,unsigned long long handle)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaEventCreate((cudaEvent_t *)event);
-    return cudaErrorToUPTKError(cuda_res);
+    Debug();
+    return UPTKErrorNotSupported;
 }
 
-__host__  UPTKError_t  UPTKEventCreateWithFlags(UPTKEvent_t * event,unsigned int flags)
+// UNSUPPORTED
+__host__ UPTKError UPTKCGSynchronize(unsigned long long handle,unsigned int flags)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaEventCreateWithFlags((cudaEvent_t *)event, flags);
-    return cudaErrorToUPTKError(cuda_res);
+    Debug();
+    return UPTKErrorNotSupported;
 }
 
-__host__  UPTKError_t  UPTKEventDestroy(UPTKEvent_t event)
+// UNSUPPORTED
+__host__ UPTKError UPTKCGSynchronizeGrid(unsigned long long handle,unsigned int flags)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaEventDestroy((cudaEvent_t) event);
-    return cudaErrorToUPTKError(cuda_res);
+    Debug();
+    return UPTKErrorNotSupported;
 }
 
-__host__ UPTKError_t  UPTKEventSynchronize(UPTKEvent_t event)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaEventSynchronize((cudaEvent_t) event);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKEventQuery(UPTKEvent_t event)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaEventQuery((cudaEvent_t) event);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKEventRecord(UPTKEvent_t event,UPTKStream_t stream)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaEventRecord((cudaEvent_t) event, (cudaStream_t) stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKMemcpy(void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
-{
-    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
-    cudaError_t cuda_res;
-    cuda_res = cudaMemcpy(dst, src, count, cuda_kind);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKIpcGetMemHandle(UPTKIpcMemHandle_t * handle,void * devPtr)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaIpcGetMemHandle((cudaIpcMemHandle_t *) handle, devPtr);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKIpcOpenMemHandle(void ** devPtr,UPTKIpcMemHandle_t handle,unsigned int flags)
-{
-    cudaIpcMemHandle_t cuda_handle;
-    UPTKIpcMemHandleTocudaIpcMemHandle(&handle, &cuda_handle);
-    if (UPTKIpcMemLazyEnablePeerAccess == flags)
-        flags = cudaIpcMemLazyEnablePeerAccess;
-    cudaError_t cuda_res;
-    cuda_res = cudaIpcOpenMemHandle(devPtr, cuda_handle, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKIpcCloseMemHandle(void * devPtr)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaIpcCloseMemHandle(devPtr);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKChooseDevice(int * device,const struct UPTKDeviceProp * prop)
+__host__ UPTKError UPTKChooseDevice(int * device,const struct UPTKDeviceProp * prop)
 {
     if (nullptr == device || nullptr == prop)
         return UPTKErrorInvalidValue;
-    cudaDeviceProp cuda_prop;
-    UPTKDevicePropTocudaDeviceProp(prop, &cuda_prop);
     cudaError_t cuda_res;
-    cuda_res = cudaChooseDevice(device, &cuda_prop);
+    cuda_res = cudaChooseDevice(device, (cudaDeviceProp *)prop);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKSetDevice(int device)
+__host__ struct UPTKChannelFormatDesc UPTKCreateChannelDesc(int x,int y,int z,int w,enum UPTKChannelFormatKind f)
+{
+    enum cudaChannelFormatKind cuda_f = UPTKChannelFormatKindTocudaChannelFormatKind(f);
+    struct cudaChannelFormatDesc cuda_res;
+    memset(&cuda_res, 0, sizeof(cudaChannelFormatDesc));
+    cuda_res = cudaCreateChannelDesc(x, y, z, w, cuda_f);
+
+    struct UPTKChannelFormatDesc res;
+    memset(&res, 0, sizeof(UPTKChannelFormatDesc));
+    cudaChannelFormatDescToUPTKChannelFormatDesc(&cuda_res, &res);
+    return res;
+}
+
+__host__ UPTKError UPTKCreateSurfaceObject(UPTKSurfaceObject_t * pSurfObject,const struct UPTKResourceDesc * pResDesc)
+{
+    cudaResourceDesc cuda_pResDesc;
+    UPTKResourceDescTocudaResourceDesc(pResDesc, &cuda_pResDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaCreateSurfaceObject((cudaSurfaceObject_t *)pSurfObject, &cuda_pResDesc);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKCreateTextureObject(UPTKTextureObject_t * pTexObject,const struct UPTKResourceDesc * pResDesc,const struct UPTKTextureDesc * pTexDesc,const struct UPTKResourceViewDesc * pResViewDesc)
+{
+    // Validate input params
+    if (pTexObject == nullptr || pResDesc == nullptr || pTexDesc == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+    cudaResourceDesc cuda_pResDesc;
+    UPTKResourceDescTocudaResourceDesc(pResDesc, &cuda_pResDesc);
+    cudaTextureDesc cuda_pTexDesc;
+    UPTKTextureDescTocudaTextureDesc(pTexDesc, &cuda_pTexDesc);
+    cudaError_t cuda_res;
+    if (pResViewDesc) {
+        struct cudaResourceViewDesc cuda_pResViewDesc;
+        UPTKResourceViewDescTocudaResourceViewDesc(pResViewDesc, &cuda_pResViewDesc);
+        cuda_res = cudaCreateTextureObject((cudaTextureObject_t *)pTexObject, &cuda_pResDesc, &cuda_pTexDesc, &cuda_pResViewDesc);
+    }
+    else {
+        cuda_res = cudaCreateTextureObject((cudaTextureObject_t *)pTexObject, &cuda_pResDesc, &cuda_pTexDesc, nullptr);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDestroyExternalMemory(UPTKExternalMemory_t extMem)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaSetDevice(device);
+    cuda_res = cudaDestroyExternalMemory((cudaExternalMemory_t) extMem);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-
-__host__  UPTKError_t  UPTKGetDevice(int * device)
+__host__ UPTKError UPTKDestroyExternalSemaphore(UPTKExternalSemaphore_t extSem)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGetDevice(device);
+    cuda_res = cudaDestroyExternalSemaphore((cudaExternalSemaphore_t) extSem);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__  UPTKError_t  UPTKDeviceSynchronize(void)
+__host__ UPTKError UPTKDestroySurfaceObject(UPTKSurfaceObject_t surfObject)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaDeviceSynchronize();
+    cuda_res = cudaDestroySurfaceObject((cudaSurfaceObject_t) surfObject);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKDeviceReset(void)
+__host__ UPTKError UPTKDestroyTextureObject(UPTKTextureObject_t texObject)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDestroyTextureObject((cudaTextureObject_t) texObject);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceCanAccessPeer(int * canAccessPeer,int device,int peerDevice)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceCanAccessPeer(canAccessPeer, device, peerDevice);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceDisablePeerAccess(int peerDevice)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceDisablePeerAccess(peerDevice);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceEnablePeerAccess(int peerDevice,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceEnablePeerAccess(peerDevice, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetAttribute(int* value, enum UPTKDeviceAttr attr, int device) 
+{
+    if (value == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+    int device_count = 0;
+    cudaError_t cuda_res = cudaGetDeviceCount(&device_count);
+    if (cuda_res != cudaSuccess) {
+        return cudaErrorToUPTKError(cuda_res);
+    }
+    if (device < 0 || device >= device_count) {
+        return UPTKErrorInvalidDevice;
+    }
+    cudaDeviceProp prop = {0};
+    cuda_res = cudaGetDeviceProperties_v2(&prop, device);
+    if (cuda_res != cudaSuccess) {
+        return cudaErrorToUPTKError(cuda_res);
+    }
+
+    UPTKError res = UPTKSuccess;
+    bool is_handled = true;
+
+    switch (attr) {
+    case UPTKDevAttrMaxSurface2DLayeredWidth:
+      *value = prop.maxSurface2DLayered[0];
+      break;
+    case UPTKDevAttrMaxSurface2DLayeredHeight:
+      *value = prop.maxSurface2DLayered[1];
+      break;
+    case UPTKDevAttrMaxSurface2DLayeredLayers:
+      *value = prop.maxSurface2DLayered[2];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearWidth:
+      *value = prop.maxTexture2DLinear[0];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearHeight:
+      *value = prop.maxTexture2DLinear[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLinearPitch:
+      *value = prop.maxTexture2DLinear[2];
+      break;
+    case UPTKDevAttrMaxSurface2DWidth:
+      *value = prop.maxSurface2D[0];
+      break;
+    case UPTKDevAttrMaxSurface2DHeight:
+      *value = prop.maxSurface2D[1];
+      break;
+    case UPTKDevAttrMaxSurface1DLayeredWidth:
+      *value = prop.maxSurface1DLayered[0];
+      break;
+    case UPTKDevAttrMaxSurface1DLayeredLayers:
+      *value = prop.maxSurface1DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture3DWidthAlt:
+      *value = prop.maxTexture3DAlt[0];
+      break;
+    case UPTKDevAttrMaxTexture3DHeightAlt:
+      *value = prop.maxTexture3DAlt[1];
+      break;
+    case UPTKDevAttrMaxTexture3DDepthAlt:
+      *value = prop.maxTexture3DAlt[2];
+      break;
+    case UPTKDevAttrTccDriver:
+      *value = 1;
+      fprintf(stdout, "[Warning] Enabling TCC has no impact on functionality.To ensure compatibility, TCC has enabled simulated return value 1.\n");
+      break;
+    case UPTKDevAttrMaxTexture1DLayeredWidth:
+      *value = prop.maxTexture1DLayered[0];
+      break;
+    case UPTKDevAttrMaxTexture1DLayeredLayers:
+      *value = prop.maxTexture1DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DMipmappedWidth:
+      *value = prop.maxTexture2DMipmap[0];
+      break;
+    case UPTKDevAttrMaxTexture2DMipmappedHeight:
+      *value = prop.maxTexture2DMipmap[1];
+      break;
+    case UPTKDevAttrMaxTextureCubemapLayeredWidth:
+      *value = prop.maxTextureCubemapLayered[0];
+      break;
+    case UPTKDevAttrMaxTextureCubemapLayeredLayers:
+      *value = prop.maxTextureCubemapLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DGatherWidth:
+      *value = prop.maxTexture2DGather[0];
+      break;
+    case UPTKDevAttrMaxTexture2DGatherHeight:
+      *value = prop.maxTexture2DGather[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredWidth:
+      *value = prop.maxTexture2DLayered[0];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredHeight:
+      *value = prop.maxTexture2DLayered[1];
+      break;
+    case UPTKDevAttrMaxTexture2DLayeredLayers:
+      *value = prop.maxTexture2DLayered[2];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapLayeredWidth:
+      *value = prop.maxSurfaceCubemapLayered[0];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapLayeredLayers:
+      *value = prop.maxSurfaceCubemapLayered[1];
+      break;
+    case UPTKDevAttrMaxSurfaceCubemapWidth:
+      *value = prop.maxSurfaceCubemap;
+      break;
+    case UPTKDevAttrSingleToDoublePrecisionPerfRatio:
+      *value = prop.singleToDoublePrecisionPerfRatio;
+      break;
+    case UPTKDevAttrMaxSurface3DWidth:
+      *value = prop.maxSurface3D[0];
+      break;
+    case UPTKDevAttrMaxSurface3DHeight:
+      *value = prop.maxSurface3D[1];
+      break;
+    case UPTKDevAttrMaxSurface3DDepth:
+      *value = prop.maxSurface3D[2];
+      break;
+    // The following three require specific evaluation assignments, temporary comments, and subsequent evaluation assignments.
+    // case UPTKDevAttrCanFlushRemoteWrites: 
+    //   *value = 0;
+    //   break;
+    // case UPTKDevAttrReserved92:
+    //   *value = 0;
+    //   break;
+    // case UPTKDevAttrReserved93:
+    //   *value = 0;
+    //   break;
+    default: 
+    {
+        cudaDeviceAttr cuda_attr = UPTKDeviceAttrTocudaDeviceAttr(attr);
+        cuda_res = cudaDeviceGetAttribute(value, cuda_attr, device);
+        res = cudaErrorToUPTKError(cuda_res);
+        // Do not change for the time being, the subsequent overall modification to the front of the overall implementation.
+        if (res == UPTKSuccess) {
+            if (cuda_attr == cudaDevAttrComputeCapabilityMajor) {
+                *value = SM_VERSION_MAJOR;
+            } else if (cuda_attr == cudaDevAttrComputeCapabilityMinor) {
+                *value = SM_VERSION_MINOR;
+            }
+        }
+        is_handled = false;
+        break;
+    }
+    }
+
+    if (is_handled && res == UPTKSuccess) {
+        res = UPTKSuccess;
+    }
+
+    return res;
+}
+
+__host__ UPTKError UPTKDeviceGetByPCIBusId(int * device,const char * pciBusId)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetByPCIBusId(device, pciBusId);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetCacheConfig(enum UPTKFuncCache * pCacheConfig)
+{
+    if(nullptr == pCacheConfig)
+    {
+        return UPTKErrorInvalidValue;
+    }
+
+    memset(pCacheConfig, 0, sizeof(UPTKFuncCache));
+
+    cudaFuncCache cuda_cacheConfig;
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetCacheConfig(&cuda_cacheConfig);
+    if ( cuda_res == cudaSuccess )
+    {
+        *pCacheConfig = cudaFuncCacheToUPTKFuncCache(cuda_cacheConfig);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetLimit(size_t * pValue,enum UPTKLimit limit)
+{
+    enum cudaLimit cuda_limit = UPTKLimitTocudaLimit(limit);
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetLimit(pValue, cuda_limit);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKDeviceGetNvSciSyncAttributes(void * nvSciSyncAttrList,int device,int flags)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// runtime not implement this api
+__host__ UPTKError UPTKDeviceGetP2PAttribute(int * value,enum UPTKDeviceP2PAttr attr,int srcDevice,int dstDevice)
+{
+    cudaDeviceP2PAttr cuda_attr = UPTKDeviceP2PAttrTocudaDeviceP2PAttr(attr);
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetP2PAttribute(value, cuda_attr, srcDevice, dstDevice);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetPCIBusId(char * pciBusId,int len,int device)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetPCIBusId(pciBusId, len, device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetSharedMemConfig(enum UPTKSharedMemConfig * pConfig)
+{
+    if(nullptr == pConfig)
+    {
+        return UPTKErrorInvalidValue;
+    }
+
+    memset(pConfig, 0, sizeof(UPTKSharedMemConfig));
+
+    cudaSharedMemConfig cuda_pConfig;
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetSharedMemConfig(&cuda_pConfig);
+    if ( cuda_res == cudaSuccess )
+    {
+        *pConfig = cudaSharedMemConfigToUPTKSharedMemConfig(cuda_pConfig);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetStreamPriorityRange(int * leastPriority,int * greatestPriority)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetStreamPriorityRange(leastPriority, greatestPriority);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceReset(void)
 {
     cudaError_t cuda_res;
     cuda_res = cudaDeviceReset();
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphCreate(UPTKGraph_t * pGraph,unsigned int flags)
+__host__ UPTKError UPTKDeviceSetCacheConfig(enum UPTKFuncCache cacheConfig)
 {
+    cudaFuncCache cuda_cacheConfig = UPTKFuncCacheTocudaFuncCache(cacheConfig);
     cudaError_t cuda_res;
-    cuda_res = cudaGraphCreate((cudaGraph_t *) pGraph, flags);
+    cuda_res = cudaDeviceSetCacheConfig(cuda_cacheConfig);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphClone(UPTKGraph_t * pGraphClone,UPTKGraph_t originalGraph)
+__host__ UPTKError UPTKDeviceSetLimit(enum UPTKLimit limit,size_t value)
 {
+    enum cudaLimit cuda_limit = UPTKLimitTocudaLimit(limit);
     cudaError_t cuda_res;
-    cuda_res = cudaGraphClone((cudaGraph_t *) pGraphClone, (cudaGraph_t) originalGraph);
+    cuda_res = cudaDeviceSetLimit(cuda_limit, value);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphDestroy(UPTKGraph_t graph)
+__host__ UPTKError UPTKDeviceSetSharedMemConfig(enum UPTKSharedMemConfig config)
 {
+    cudaSharedMemConfig cuda_config = UPTKSharedMemConfigTocudaSharedMemConfig(config);
     cudaError_t cuda_res;
-    cuda_res = cudaGraphDestroy((cudaGraph_t) graph);
+    cuda_res = cudaDeviceSetSharedMemConfig(cuda_config);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphAddDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+__host__ UPTKError UPTKDeviceSynchronize(void)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGraphAddDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    cuda_res = cudaDeviceSynchronize();
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphRemoveDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+__host__ UPTKError UPTKDriverGetVersion(int * driverVersion)
+{
+    *driverVersion = CUDA_VERSION;
+    return UPTKSuccess;
+}
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamConsumerAcquireFrame(UPTKEglStreamConnection * conn,UPTKGraphicsResource_t * pUPTKResource,UPTKStream_t * pStream,unsigned int timeout)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamConsumerConnect(UPTKEglStreamConnection * conn,EGLStreamKHR eglStream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamConsumerConnectWithFlags(UPTKEglStreamConnection * conn,EGLStreamKHR eglStream,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamConsumerDisconnect(UPTKEglStreamConnection * conn)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamConsumerReleaseFrame(UPTKEglStreamConnection * conn,UPTKGraphicsResource_t pUPTKResource,UPTKStream_t * pStream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamProducerConnect(UPTKEglStreamConnection * conn,EGLStreamKHR eglStream,EGLint width,EGLint height)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamProducerDisconnect(UPTKEglStreamConnection * conn)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamProducerPresentFrame(UPTKEglStreamConnection * conn,UPTKEglFrame eglframe,UPTKStream_t * pStream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEGLStreamProducerReturnFrame(UPTKEglStreamConnection * conn,UPTKEglFrame * eglframe,UPTKStream_t * pStream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+__host__ UPTKError UPTKEventCreate(UPTKEvent_t * event)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGraphRemoveDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    cuda_res = cudaEventCreate((cudaEvent_t *)event);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphInstantiate(UPTKGraphExec_t * pGraphExec,UPTKGraph_t graph,UPTKGraphNode_t * pErrorNode,char * pLogBuffer,size_t bufferSize)
+// // UNSUPPORTED
+// __host__ UPTKError UPTKEventCreateFromEGLSync(UPTKEvent_t * phEvent,EGLSyncKHR eglSync,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+__host__ UPTKError UPTKEventCreateWithFlags(UPTKEvent_t * event,unsigned int flags)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGraphInstantiate((cudaGraphExec_t *) pGraphExec, (cudaGraph_t) graph, (cudaGraphNode_t *) pErrorNode, pLogBuffer, bufferSize);
+    cuda_res = cudaEventCreateWithFlags((cudaEvent_t *)event, flags);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKGraphLaunch(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+__host__ UPTKError UPTKEventDestroy(UPTKEvent_t event)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGraphLaunch((cudaGraphExec_t) graphExec, (cudaStream_t) stream);
+    cuda_res = cudaEventDestroy((cudaEvent_t) event);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-/*之前的版本进行修改
-__host__ UPTKError_t  UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec,UPTKGraph_t hGraph,UPTKGraphNode_t * hErrorNode_out,enum UPTKGraphExecUpdateResult * updateResult_out)
+__host__ UPTKError UPTKEventElapsedTime(float * ms,UPTKEvent_t start,UPTKEvent_t end)
 {
-    if (nullptr == updateResult_out)
-        return UPTKErrorInvalidValue;
-    cudaGraphExecUpdateResult cuda_updateResult_out;
     cudaError_t cuda_res;
-    cuda_res = cudaGraphExecUpdate((cudaGraphExec_t) hGraphExec, (cudaGraph_t) hGraph, (cudaGraphNode_t *) hErrorNode_out, &cuda_updateResult_out);
-    // The return value cudaErrorGraphExecUpdateFailure is also a valuable output.
-    if (cudaSuccess == cuda_res || cudaErrorGraphExecUpdateFailure == cuda_res)
-        *updateResult_out = cudaGraphExecUpdateResultToUPTKGraphExecUpdateResult(cuda_updateResult_out);
+    cuda_res = cudaEventElapsedTime(ms, (cudaEvent_t) start, (cudaEvent_t) end);
     return cudaErrorToUPTKError(cuda_res);
 }
-*/
-//改正的新版本
-/*__host__ UPTKError_t UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec,UPTKGraph_t hGraph,UPTKGraphNode_t *hErrorNode_out, enum UPTKGraphExecUpdateResult *updateResult_out)
+
+__host__ UPTKError UPTKEventQuery(UPTKEvent_t event)
 {
-    if (nullptr == updateResult_out) {
+    cudaError_t cuda_res;
+    cuda_res = cudaEventQuery((cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKEventRecord(UPTKEvent_t event,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaEventRecord((cudaEvent_t) event, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKEventSynchronize(UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaEventSynchronize((cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKExternalMemoryGetMappedBuffer(void ** devPtr,UPTKExternalMemory_t extMem,const struct UPTKExternalMemoryBufferDesc * bufferDesc)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaExternalMemoryGetMappedBuffer(devPtr, (cudaExternalMemory_t) extMem, (cudaExternalMemoryBufferDesc *)bufferDesc);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKExternalMemoryGetMappedMipmappedArray(UPTKMipmappedArray_t * mipmap,UPTKExternalMemory_t extMem,const struct UPTKExternalMemoryMipmappedArrayDesc * mipmapDesc)
+{
+    if(mipmapDesc == nullptr)
+    {
         return UPTKErrorInvalidValue;
     }
-    // 1. 使用 CUDA 12.0+ 新结构体
-    //cudaGraphExecUpdateResultInfo updateInfo = {}; // 初始化为零
-    mcGraphExecUpdateResultInfo updateInfo = {}; // 初始化为零
-    // 2. 调用新版函数（仅3个参数！）
-    mcError_t cuda_res = mcGraphExecUpdate(
-        (cudaGraphExec_t)hGraphExec,
-        (cudaGraph_t)hGraph,
-        &updateInfo  // ← 唯一输出参数
-    );
-    // 3. 提取结果到旧版字段（保持 API 兼容）
-    if (hErrorNode_out) {
-        *hErrorNode_out = (UPTKGraphNode_t)updateInfo.errorNode; // 节点指针
-    }
-    *updateResult_out = cudaGraphExecUpdateResultToUPTKGraphExecUpdateResult(
-        updateInfo.result  // ← 结构体中的 result 字段
-    );
-    // 4. 返回错误码（注意：cudaErrorGraphExecUpdateFailure 可能被移除）
-    return cudaErrorToUPTKError(cuda_res);
-}*/
+    cudaError_t cuda_res;
+    cudaExternalMemoryMipmappedArrayDesc cuda_mipmapDesc;
+    UPTKExternalMemoryMipmappedArrayDescTocudaExternalMemoryMipmappedArrayDesc(mipmapDesc, &cuda_mipmapDesc);
+    cuda_res = cudaExternalMemoryGetMappedMipmappedArray((cudaMipmappedArray_t *) mipmap, (cudaExternalMemory_t) extMem, &cuda_mipmapDesc);
+    return cudaErrorToUPTKError(cuda_res); 
+}
 
-__host__ UPTKError_t  UPTKLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, UPTKStream_t stream)
+__host__ UPTKError UPTKFree(void * devPtr)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaLaunchKernel(func, gridDim, blockDim, args, sharedMem, (cudaStream_t)stream);
+    cuda_res = cudaFree(devPtr);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__  UPTKError_t  UPTKFuncGetAttributes(struct UPTKFuncAttributes * attr,const void * func)
+__host__ UPTKError UPTKFreeArray(UPTKArray_t array)
+{
+    if (nullptr == array) 
+        return UPTKSuccess;
+    cudaError_t cuda_res;
+    cuda_res = cudaFreeArray((cudaArray *) array);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFreeHost(void * ptr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaFreeHost(ptr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFreeMipmappedArray(UPTKMipmappedArray_t mipmappedArray)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaFreeMipmappedArray((cudaMipmappedArray_t) mipmappedArray);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFuncGetAttributes(struct UPTKFuncAttributes * attr,const void * func)
 {
     if(nullptr == attr)
     {
@@ -327,213 +648,136 @@ __host__  UPTKError_t  UPTKFuncGetAttributes(struct UPTKFuncAttributes * attr,co
     return cudaErrorToUPTKError(cuda_res);
 }
 
-// __host__ UPTKError_t UPTKStreamGetDevice(UPTKStream_t stream, UPTKdevice * device)
+__host__ UPTKError UPTKFuncSetAttribute(const void * func,enum UPTKFuncAttribute attr,int value)
+{
+    cudaFuncAttribute cuda_attr = UPTKFuncAttributeTocudaFuncAttribute(attr);
+    cudaError_t cuda_res;
+    cuda_res = cudaFuncSetAttribute(func, cuda_attr, value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFuncSetCacheConfig(const void * func,enum UPTKFuncCache cacheConfig)
+{
+    cudaFuncCache cuda_config = UPTKFuncCacheTocudaFuncCache(cacheConfig);
+    cudaError_t cuda_res;
+    cuda_res = cudaFuncSetCacheConfig(func, cuda_config);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFuncSetSharedMemConfig(const void * func,enum UPTKSharedMemConfig config)
+{
+    cudaSharedMemConfig cuda_config = UPTKSharedMemConfigTocudaSharedMemConfig(config);
+    cudaError_t cuda_res;
+    cuda_res = cudaFuncSetSharedMemConfig(func, cuda_config);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+#if UPTK_ENABLE_GL==0
+__host__ UPTKError UPTKGLGetDevices(unsigned int * pUPTKDeviceCount,int * pUPTKDevices,unsigned int UPTKDeviceCount,enum UPTKGLDeviceList deviceList)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+#else
+__host__ UPTKError UPTKGLGetDevices(unsigned int * pUPTKDeviceCount,int * pUPTKDevices,unsigned int UPTKDeviceCount,enum UPTKGLDeviceList deviceList)
+{
+    cudaError_t cuda_res;
+    cudaGLDeviceList cuda_deviceList;
+    cuda_deviceList = UPTKGLDeviceListTocudaGLDeviceList(deviceList);
+    cuda_res = cudaGLGetDevices(pUPTKDeviceCount, pUPTKDevices, UPTKDeviceCount, cuda_deviceList);
+    return cudaErrorToUPTKError(cuda_res);
+}
+#endif
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLMapBufferObject(void ** devPtr,GLuint bufObj)
 // {
-//     cudaError_t cuda_res;
-//     cuda_res = cudaStreamGetDevice((cudaStream_t) stream, (int*) device);
-//     return cudaErrorToUPTKError(cuda_res);
+//     Debug();
+//     return UPTKErrorNotSupported;
 // }
-//二次改动
-UPTKresult  UPTKModuleLoad(UPTKmodule * module,const char * fname)
-{
-    CUresult cuda_res;
-    cuda_res = cuModuleLoad((CUmodule *)module, fname);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-//二次改动
-UPTKresult  UPTKModuleLoadData(UPTKmodule * module,const void * image)
-{
-    CUresult cuda_res;
-    cuda_res = cuModuleLoadData((CUmodule *)module, image);
-    return cudaErrorToUPTKresult(cuda_res);
-}
 
-UPTKresult  UPTKModuleUnload(UPTKmodule hmod)
-{
-    CUresult cuda_res;
-    cuda_res = cuModuleUnload((CUmodule) hmod);
-    return cudaErrorToUPTKresult(cuda_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLMapBufferObjectAsync(void ** devPtr,GLuint bufObj,UPTKStream_t stream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-UPTKresult  UPTKModuleGetFunction(UPTKfunction * hfunc,UPTKmodule hmod,const char * name)
-{
-    CUresult cuda_res;
-    cuda_res = cuModuleGetFunction((CUfunction *)hfunc, (CUmodule) hmod, name);
-    return cudaErrorToUPTKresult(cuda_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLRegisterBufferObject(GLuint bufObj)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-UPTKresult  UPTKModuleGetGlobal(UPTKdeviceptr * dptr, size_t * bytes,UPTKmodule hmod,const char * name)
-{
-    CUresult cuda_res;
-    cuda_res = cuModuleGetGlobal((CUdeviceptr *)dptr, bytes, (CUmodule) hmod, name);
-    return cudaErrorToUPTKresult(cuda_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLSetBufferObjectMapFlags(GLuint bufObj,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-//改动较多
-UPTKresult  UPTKLinkCreate(unsigned int numOptions,UPTKjit_option * options,void ** optionValues,UPTKlinkState * stateOut)
-{
-    CUresult nvrtc_res;
-    CUjit_option* nvrtc_options = (CUjit_option*)malloc(sizeof(CUjit_option) * numOptions);
-    if (nullptr != options) {
-        if (nullptr == nvrtc_options) {
-          return UPTK_ERROR_OUT_OF_MEMORY;
-        }
-        for (int i = 0; i < numOptions; i++) {
-            nvrtc_options[i] = UPTKjit_optionTonvrtcJIT_option(options[i]);
-        }
-    }
-    nvrtc_res = cuLinkCreate(numOptions, nvrtc_options, optionValues, (CUlinkState* )stateOut);
-    free(nvrtc_options);
-    return cudaResultToUPTKresult(nvrtc_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLSetGLDevice(int device)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-//改动了
-UPTKresult  UPTKLinkDestroy(UPTKlinkState state)
-{
-    CUresult nvrtc_res;
-    nvrtc_res = cuLinkDestroy((CUlinkState) state);
-    return cudaResultToUPTKresult(nvrtc_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLUnmapBufferObject(GLuint bufObj)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-//nvrtcJITInputType多处有问题
-UPTKresult  UPTKLinkAddData(UPTKlinkState state,UPTKjitInputType type,void * data,size_t size,const char * name,unsigned int numOptions,UPTKjit_option * options,void ** optionValues)
-{
-    CUresult nvrtc_res;
-    CUjitInputType nvrtc_type = UPTKjitInputTypeTonvrtcJITInputType(type);
-    CUjit_option* nvrtc_options = (CUjit_option*)malloc(sizeof(CUjit_option) * numOptions);
-    if (nullptr != options) {
-        if (nullptr == nvrtc_options) {
-          return UPTK_ERROR_OUT_OF_MEMORY;
-        }
-        for (int i = 0; i < numOptions; i++) {
-            nvrtc_options[i] = UPTKjit_optionTonvrtcJIT_option(options[i]);
-        }
-    }
-    nvrtc_res = cuLinkAddData((CUlinkState) state, nvrtc_type, data, size, name, numOptions, nvrtc_options, optionValues);
-    free(nvrtc_options);
-    return cudaResultToUPTKresult(nvrtc_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLUnmapBufferObjectAsync(GLuint bufObj,UPTKStream_t stream)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-__host__  UPTKError_t  UPTKStreamCreateWithPriority(UPTKStream_t * pStream,unsigned int flags,int priority)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaStreamCreateWithPriority((cudaStream_t *) pStream, flags, priority);
-    return cudaErrorToUPTKError(cuda_res);
-}
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGLUnregisterBufferObject(GLuint bufObj)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
 
-__host__ UPTKError_t  UPTKMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice, size_t count, UPTKStream_t stream)
+__host__ UPTKError UPTKGetChannelDesc(struct UPTKChannelFormatDesc * desc,UPTKArray_const_t array)
 {
-    cudaError_t cuda_res;
-    cuda_res = cudaMemcpyPeerAsync(dst, dstDevice, src, srcDevice, count, (cudaStream_t)stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKMemcpyPeer(void * dst,int dstDevice,const void * src,int srcDevice,size_t count)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaMemcpyPeer(dst, dstDevice, src, srcDevice, count);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKMemcpyAsync(void *dst, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
-{
-    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
-    cudaError_t cuda_res;
-    cuda_res = cudaMemcpyAsync(dst, src, count, cuda_kind, (cudaStream_t)stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKMallocManaged(void ** devPtr,size_t size,unsigned int flags)
-{
-    if(size == 0) {
-        if((devPtr == nullptr) ||((flags != UPTKMemAttachGlobal) && (flags != UPTKMemAttachHost)))
-        {
-            return UPTKErrorInvalidValue;
-        }else{
-            *devPtr = nullptr;
-            return UPTKSuccess;
-        }
-    }
-    cudaError_t cuda_res;
-    cuda_res = cudaMallocManaged(devPtr, size, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKMallocAsync(void **devPtr, size_t size, UPTKStream_t hStream)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaMallocAsync(devPtr, size, (cudaStream_t) hStream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKLaunchCooperativeKernelMultiDevice(struct UPTKLaunchParams *launchParamsList, unsigned int numDevices, unsigned int flags)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaLaunchCooperativeKernelMultiDevice((cudaLaunchParams *)launchParamsList, numDevices, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKGraphNodeGetType(UPTKGraphNode_t node,enum UPTKGraphNodeType * pType)
-{
-    if (nullptr == pType)
-        return UPTKErrorInvalidValue;
-    cudaGraphNodeType cuda_pType;
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphNodeGetType((cudaGraphNode_t) node, &cuda_pType);
-    if (cudaSuccess == cuda_res)
-        *pType = cudaGraphNodeTypeToUPTKGraphNodeType(cuda_pType);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKGraphGetNodes(UPTKGraph_t graph,UPTKGraphNode_t * nodes,size_t * numNodes)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphGetNodes((cudaGraph_t) graph, (cudaGraphNode_t *) nodes, numNodes);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKGraphExecDestroy(UPTKGraphExec_t graphExec)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphExecDestroy((cudaGraphExec_t) graphExec);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKGraphDestroyNode(UPTKGraphNode_t node)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphDestroyNode((cudaGraphNode_t) node);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-/*__host__ UPTKError_t  UPTKGraphAddNode(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, size_t numDependencies, struct UPTKGraphNodeParams *nodeParams)
-{
-    if(nodeParams == nullptr){
+    if(nullptr == desc)
+    {
         return UPTKErrorInvalidValue;
     }
     cudaError_t cuda_res;
-    cudaGraphNodeParams cuda_nodeParams = {};
-    UPTKGraphNodeParamsTomcGraphNodeParams(nodeParams, &cuda_nodeParams);
-    cuda_res = cudaGraphAddNode((cudaGraphNode_t*) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t*) pDependencies, numDependencies, &cuda_nodeParams);
+    cuda_res = cudaGetChannelDesc((cudaChannelFormatDesc *)desc, (cudaArray_t) array);
     return cudaErrorToUPTKError(cuda_res);
-}*/
+}
 
-__host__  UPTKError_t  UPTKGetLastError(void)
+__host__ UPTKError UPTKGetDevice(int * device)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGetLastError();
+    cuda_res = cudaGetDevice(device);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__  const char *  UPTKGetErrorString(UPTKError_t error)
+__host__ UPTKError UPTKGetDeviceCount(int * count)
 {
-    cudaError_t cuda_error = UPTKErrorTocudaError(error);
-    const char * cuda_res;
-    cuda_res = cudaGetErrorString(cuda_error);
-    return cuda_res;
+    cudaError_t cuda_res;
+    cuda_res = cudaGetDeviceCount(count);
+    return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__  const char *  UPTKGetErrorName(UPTKError_t error)
+__host__ UPTKError UPTKGetDeviceFlags(unsigned int * flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGetDeviceFlags(flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ const char * UPTKGetErrorName(UPTKError error)
 {
     switch (error) {
         case UPTKErrorAlreadyAcquired:
@@ -550,8 +794,8 @@ __host__  const char *  UPTKGetErrorName(UPTKError_t error)
             return "UPTKErrorContextIsDestroyed";
         case UPTKErrorCooperativeLaunchTooLarge:
             return "UPTKErrorCooperativeLaunchTooLarge";
-        case UPTKErrorUPTKrtUnloading:
-            return "UPTKErrorUPTKrtUnloading";
+        case UPTKErrorCudartUnloading:
+            return "UPTKErrorCudartUnloading";
         case UPTKErrorDeviceAlreadyInUse:
             return "UPTKErrorDeviceAlreadyInUse";
         case UPTKErrorDeviceUninitialized:
@@ -679,14 +923,2667 @@ __host__  const char *  UPTKGetErrorName(UPTKError_t error)
     };
 }
 
-__host__  UPTKError_t  UPTKGetDeviceCount(int * count)
+
+
+__host__ const char * UPTKGetErrorString(UPTKError error)
+{
+    cudaError_t cuda_cudaError = UPTKErrorTocudaError(error);
+    const char * cuda_res;
+    cuda_res = cudaGetErrorString(cuda_cudaError);
+    return cuda_res;
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKGetExportTable(const void ** ppExportTable,const UPTKUUID_t * pExportTableId)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGetLastError(void)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaGetDeviceCount(count);
+    cuda_res = cudaGetLastError();
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKFreeAsync(void *devPtr, UPTKStream_t hStream)
+__host__ UPTKError UPTKGetMipmappedArrayLevel(UPTKArray_t * levelArray,UPTKMipmappedArray_const_t mipmappedArray,unsigned int level)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGetMipmappedArrayLevel((cudaArray_t *)levelArray, (cudaMipmappedArray_const_t) mipmappedArray, level);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// UNSUPPORTED
+__host__ void * UPTKGetParameterBuffer(size_t alignment,size_t size)
+{
+    Debug();
+    return nullptr;
+}
+
+// UNSUPPORTED
+__host__ void * UPTKGetParameterBufferV2(void * func,dim3 gridDimension,dim3 blockDimension,unsigned int sharedMemSize)
+{
+    Debug();
+    return nullptr;
+}
+
+
+__host__ UPTKError UPTKGetSurfaceObjectResourceDesc(struct UPTKResourceDesc * pResDesc,UPTKSurfaceObject_t surfObject)
+{
+    if (!pResDesc)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaResourceDesc cuda_pResDesc;
+    cuda_res = cudaGetSurfaceObjectResourceDesc(&cuda_pResDesc, (cudaSurfaceObject_t) surfObject);
+    if ( cuda_res == cudaSuccess )
+    {
+        cudaResourceDescToUPTKResourceDesc(&cuda_pResDesc, pResDesc);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetSymbolAddress(void ** devPtr,const void * symbol)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGetSymbolAddress(devPtr, symbol);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetSymbolSize(size_t * size,const void * symbol)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGetSymbolSize(size, symbol);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetTextureObjectResourceDesc(struct UPTKResourceDesc * pResDesc,UPTKTextureObject_t texObject)
+{
+    cudaResourceDesc cuda_pResDesc;
+    UPTKResourceDescTocudaResourceDesc(pResDesc, &cuda_pResDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaGetTextureObjectResourceDesc(&cuda_pResDesc, (cudaTextureObject_t) texObject);
+    if ( cuda_res == cudaSuccess )
+    {
+        cudaResourceDescToUPTKResourceDesc(&cuda_pResDesc, pResDesc);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetTextureObjectResourceViewDesc(struct UPTKResourceViewDesc * pResViewDesc,UPTKTextureObject_t texObject)
+{
+    struct cudaResourceViewDesc cuda_pResViewDesc;
+    UPTKResourceViewDescTocudaResourceViewDesc(pResViewDesc, &cuda_pResViewDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaGetTextureObjectResourceViewDesc(&cuda_pResViewDesc, (cudaTextureObject_t) texObject);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetTextureObjectTextureDesc(struct UPTKTextureDesc * pTexDesc,UPTKTextureObject_t texObject)
+{
+    cudaTextureDesc cuda_pTexDesc;
+    UPTKTextureDescTocudaTextureDesc(pTexDesc, &cuda_pTexDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaGetTextureObjectTextureDesc(&cuda_pTexDesc, (cudaTextureObject_t) texObject);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddChildGraphNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,UPTKGraph_t childGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddChildGraphNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, (cudaGraph_t) childGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddEmptyNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddEmptyNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddEventRecordNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddEventRecordNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddEventWaitNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddEventWaitNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddExternalSemaphoresSignalNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKExternalSemaphoreSignalNodeParams * nodeParams)
+{
+    if (nodeParams == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreSignalNodeParams cuda_nodeParams = UPTKExternalSemaphoreSignalNodeParamsTocudaExternalSemaphoreSignalNodeParams(*nodeParams);
+    cuda_res = cudaGraphAddExternalSemaphoresSignalNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddExternalSemaphoresWaitNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKExternalSemaphoreWaitNodeParams * nodeParams)
+{
+    if (nodeParams == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreWaitNodeParams cuda_nodeParams = UPTKExternalSemaphoreWaitNodeParamsTocudaExternalSemaphoreWaitNodeParams(*nodeParams);
+    cuda_res = cudaGraphAddExternalSemaphoresWaitNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddHostNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKHostNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaHostNodeParams cuda_pNodeParams;
+    UPTKHostNodeParamsTocudaHostNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddHostNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddKernelNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKKernelNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaKernelNodeParams cuda_pNodeParams;
+    UPTKKernelNodeParamsTocudaKernelNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddKernelNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemcpyNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKMemcpy3DParms * pCopyParams)
+{
+    if (nullptr == pCopyParams)
+        return UPTKErrorInvalidValue;
+    cudaMemcpy3DParms cuda_pCopyParams;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(pCopyParams, &cuda_pCopyParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemcpyNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_pCopyParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemcpyNode1D(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemcpyNode1D((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, dst, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemcpyNodeFromSymbol(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,void * dst,const void * symbol,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemcpyNodeFromSymbol((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemcpyNodeToSymbol(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const void * symbol,const void * src,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemcpyNodeToSymbol((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemsetNode(UPTKGraphNode_t * pGraphNode,UPTKGraph_t graph,const UPTKGraphNode_t * pDependencies,size_t numDependencies,const struct UPTKMemsetParams * pMemsetParams)
+{
+    if (nullptr == pMemsetParams)
+        return UPTKErrorInvalidValue;
+    cudaMemsetParams cuda_pMemsetParams;
+    UPTKMemsetParamsTocudaMemsetParams(pMemsetParams, &cuda_pMemsetParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemsetNode((cudaGraphNode_t *) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t *) pDependencies, numDependencies, &cuda_pMemsetParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphChildGraphNodeGetGraph(UPTKGraphNode_t node,UPTKGraph_t * pGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphChildGraphNodeGetGraph((cudaGraphNode_t) node, (cudaGraph_t *) pGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphClone(UPTKGraph_t * pGraphClone,UPTKGraph_t originalGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphClone((cudaGraph_t *) pGraphClone, (cudaGraph_t) originalGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphCreate(UPTKGraph_t * pGraph,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphCreate((cudaGraph_t *) pGraph, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphDestroy(UPTKGraph_t graph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphDestroy((cudaGraph_t) graph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphDestroyNode(UPTKGraphNode_t node)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphDestroyNode((cudaGraphNode_t) node);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphEventRecordNodeGetEvent(UPTKGraphNode_t node,UPTKEvent_t * event_out)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphEventRecordNodeGetEvent((cudaGraphNode_t) node, (cudaEvent_t *) event_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphEventRecordNodeSetEvent(UPTKGraphNode_t node,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphEventRecordNodeSetEvent((cudaGraphNode_t) node, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphEventWaitNodeGetEvent(UPTKGraphNode_t node,UPTKEvent_t * event_out)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphEventWaitNodeGetEvent((cudaGraphNode_t) node, (cudaEvent_t *) event_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphEventWaitNodeSetEvent(UPTKGraphNode_t node,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphEventWaitNodeSetEvent((cudaGraphNode_t) node, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecChildGraphNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,UPTKGraph_t childGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecChildGraphNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, (cudaGraph_t) childGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecDestroy(UPTKGraphExec_t graphExec)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecDestroy((cudaGraphExec_t) graphExec);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecEventRecordNodeSetEvent(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t hNode,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecEventRecordNodeSetEvent((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecEventWaitNodeSetEvent(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t hNode,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecEventWaitNodeSetEvent((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecExternalSemaphoresSignalNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t hNode,const struct UPTKExternalSemaphoreSignalNodeParams * nodeParams)
+{
+    if(nodeParams == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreSignalNodeParams cuda_nodeParams = UPTKExternalSemaphoreSignalNodeParamsTocudaExternalSemaphoreSignalNodeParams(*nodeParams);
+    cuda_res = cudaGraphExecExternalSemaphoresSignalNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecExternalSemaphoresWaitNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t hNode,const struct UPTKExternalSemaphoreWaitNodeParams * nodeParams)
+{
+    if(nodeParams == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreWaitNodeParams cuda_nodeParams = UPTKExternalSemaphoreWaitNodeParamsTocudaExternalSemaphoreWaitNodeParams(*nodeParams);
+    cuda_res = cudaGraphExecExternalSemaphoresWaitNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecHostNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,const struct UPTKHostNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaHostNodeParams cuda_pNodeParams;
+    UPTKHostNodeParamsTocudaHostNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecHostNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecKernelNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,const struct UPTKKernelNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaKernelNodeParams cuda_pNodeParams;
+    UPTKKernelNodeParamsTocudaKernelNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecKernelNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecMemcpyNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,const struct UPTKMemcpy3DParms * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemcpy3DParms cuda_pNodeParams;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecMemcpyNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecMemcpyNodeSetParams1D(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecMemcpyNodeSetParams1D((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, dst, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecMemcpyNodeSetParamsFromSymbol(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,void * dst,const void * symbol,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecMemcpyNodeSetParamsFromSymbol((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecMemcpyNodeSetParamsToSymbol(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,const void * symbol,const void * src,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecMemcpyNodeSetParamsToSymbol((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecMemsetNodeSetParams(UPTKGraphExec_t hGraphExec,UPTKGraphNode_t node,const struct UPTKMemsetParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemsetParams cuda_pNodeParams;
+    UPTKMemsetParamsTocudaMemsetParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecMemsetNodeSetParams((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec, UPTKGraph_t hGraph, UPTKGraphExecUpdateResultInfo *resultInfo)
+{   
+    if (nullptr == resultInfo){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaGraphExecUpdateResultInfo cuda_resultInfo;
+    cuda_res = cudaGraphExecUpdate((cudaGraphExec_t) hGraphExec, (cudaGraph_t) hGraph, &cuda_resultInfo);
+    // The return value cudaErrorGraphExecUpdateFailure is also a valuable output.
+    if(cudaSuccess == cuda_res || cudaErrorGraphExecUpdateFailure == cuda_res){
+        cudaGraphExecUpdateResultInfoToUPTKGraphExecUpdateResultInfo(&cuda_resultInfo, resultInfo);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExternalSemaphoresSignalNodeGetParams(UPTKGraphNode_t hNode,struct UPTKExternalSemaphoreSignalNodeParams * params_out)
+{
+    if (nullptr == params_out)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreSignalNodeParams cuda_params_out;
+    cuda_res = cudaGraphExternalSemaphoresSignalNodeGetParams((cudaGraphNode_t) hNode, &cuda_params_out);
+    if(cuda_res == cudaSuccess)
+    {
+        *params_out = cudaExternalSemaphoreSignalNodeParamsToUPTKExternalSemaphoreSignalNodeParams(cuda_params_out);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExternalSemaphoresSignalNodeSetParams(UPTKGraphNode_t hNode,const struct UPTKExternalSemaphoreSignalNodeParams * nodeParams)
+{
+    if (nullptr == nodeParams)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreSignalNodeParams cuda_nodeParams = UPTKExternalSemaphoreSignalNodeParamsTocudaExternalSemaphoreSignalNodeParams(*nodeParams);
+    cuda_res = cudaGraphExternalSemaphoresSignalNodeSetParams((cudaGraphNode_t) hNode, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExternalSemaphoresWaitNodeGetParams(UPTKGraphNode_t hNode,struct UPTKExternalSemaphoreWaitNodeParams * params_out)
+{
+    if (nullptr == params_out)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreWaitNodeParams cuda_params_out;
+    cuda_res = cudaGraphExternalSemaphoresWaitNodeGetParams((cudaGraphNode_t) hNode, &cuda_params_out);
+    if(cuda_res == cudaSuccess)
+    {
+        *params_out = cudaExternalSemaphoreWaitNodeParamsToUPTKExternalSemaphoreWaitNodeParams(cuda_params_out);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExternalSemaphoresWaitNodeSetParams(UPTKGraphNode_t hNode,const struct UPTKExternalSemaphoreWaitNodeParams * nodeParams)
+{
+    if (nullptr == nodeParams)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaExternalSemaphoreWaitNodeParams cuda_nodeParams = UPTKExternalSemaphoreWaitNodeParamsTocudaExternalSemaphoreWaitNodeParams(*nodeParams);
+    cuda_res = cudaGraphExternalSemaphoresWaitNodeSetParams((cudaGraphNode_t) hNode, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphGetEdges(UPTKGraph_t graph,UPTKGraphNode_t * from,UPTKGraphNode_t * to,size_t * numEdges)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphGetEdges((cudaGraph_t) graph, (cudaGraphNode_t *) from, (cudaGraphNode_t *) to, numEdges);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphGetNodes(UPTKGraph_t graph,UPTKGraphNode_t * nodes,size_t * numNodes)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphGetNodes((cudaGraph_t) graph, (cudaGraphNode_t *) nodes, numNodes);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphGetRootNodes(UPTKGraph_t graph,UPTKGraphNode_t * pRootNodes,size_t * pNumRootNodes)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphGetRootNodes((cudaGraph_t) graph, (cudaGraphNode_t *) pRootNodes, pNumRootNodes);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphHostNodeGetParams(UPTKGraphNode_t node,struct UPTKHostNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaHostNodeParams cuda_pNodeParams;
+    UPTKHostNodeParamsTocudaHostNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphHostNodeGetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    if ( cuda_res == cudaSuccess )
+    {
+        cudaHostNodeParamsToUPTKHostNodeParams(&cuda_pNodeParams, pNodeParams);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphHostNodeSetParams(UPTKGraphNode_t node,const struct UPTKHostNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaHostNodeParams cuda_pNodeParams;
+    UPTKHostNodeParamsTocudaHostNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphHostNodeSetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+// UPTK 12.6.2: In the driver module,cuGraphInstantiate is equal to cuGraphInstantiateWithFlags interface.
+// UPTKGraphInstantiate statement after the change, the number and type and parameters of the corresponding cudaGraphInstantiateWithFlags interface.
+__host__ UPTKError UPTKGraphInstantiate(UPTKGraphExec_t *pGraphExec, UPTKGraph_t graph, unsigned long long flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphInstantiateWithFlags((cudaGraphExec_t *) pGraphExec, (cudaGraph_t) graph, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphKernelNodeGetParams(UPTKGraphNode_t node,struct UPTKKernelNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;    
+    cudaKernelNodeParams cuda_pNodeParams;
+    UPTKKernelNodeParamsTocudaKernelNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphKernelNodeGetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    if (cudaSuccess == cuda_res)
+        cudaKernelNodeParamsToUPTKKernelNodeParams(&cuda_pNodeParams, pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphKernelNodeSetParams(UPTKGraphNode_t node,const struct UPTKKernelNodeParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaKernelNodeParams cuda_pNodeParams;
+    UPTKKernelNodeParamsTocudaKernelNodeParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphKernelNodeSetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphLaunch(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphLaunch((cudaGraphExec_t) graphExec, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemcpyNodeGetParams(UPTKGraphNode_t node,struct UPTKMemcpy3DParms * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemcpy3DParms cuda_pNodeParams;
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemcpyNodeGetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    if ( cuda_res == cudaSuccess )
+    {
+        cudaMemcpy3DParmsToUPTKMemcpy3DParms(&cuda_pNodeParams, pNodeParams);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemcpyNodeSetParams(UPTKGraphNode_t node,const struct UPTKMemcpy3DParms * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemcpy3DParms cuda_pNodeParams;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemcpyNodeSetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemcpyNodeSetParams1D(UPTKGraphNode_t node,void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemcpyNodeSetParams1D((cudaGraphNode_t) node, dst, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemcpyNodeSetParamsFromSymbol(UPTKGraphNode_t node,void * dst,const void * symbol,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemcpyNodeSetParamsFromSymbol((cudaGraphNode_t) node, dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemcpyNodeSetParamsToSymbol(UPTKGraphNode_t node,const void * symbol,const void * src,size_t count,size_t offset,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemcpyNodeSetParamsToSymbol((cudaGraphNode_t) node, symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemsetNodeGetParams(UPTKGraphNode_t node,struct UPTKMemsetParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemsetParams cuda_pNodeParams;
+    UPTKMemsetParamsTocudaMemsetParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemsetNodeGetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    if (cudaSuccess == cuda_res)
+        cudaMemsetParamsToUPTKMemsetParams(&cuda_pNodeParams, pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemsetNodeSetParams(UPTKGraphNode_t node,const struct UPTKMemsetParams * pNodeParams)
+{
+    if (nullptr == pNodeParams)
+        return UPTKErrorInvalidValue;
+    cudaMemsetParams cuda_pNodeParams;
+    UPTKMemsetParamsTocudaMemsetParams(pNodeParams, &cuda_pNodeParams);
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemsetNodeSetParams((cudaGraphNode_t) node, &cuda_pNodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeFindInClone(UPTKGraphNode_t * pNode,UPTKGraphNode_t originalNode,UPTKGraph_t clonedGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeFindInClone((cudaGraphNode_t *) pNode, (cudaGraphNode_t) originalNode, (cudaGraph_t) clonedGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetDependencies(UPTKGraphNode_t node,UPTKGraphNode_t * pDependencies,size_t * pNumDependencies)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetDependencies((cudaGraphNode_t) node, (cudaGraphNode_t *) pDependencies, pNumDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetDependentNodes(UPTKGraphNode_t node,UPTKGraphNode_t * pDependentNodes,size_t * pNumDependentNodes)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetDependentNodes((cudaGraphNode_t) node, (cudaGraphNode_t *) pDependentNodes, pNumDependentNodes);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetType(UPTKGraphNode_t node,enum UPTKGraphNodeType * pType)
+{
+    if (nullptr == pType)
+        return UPTKErrorInvalidValue;
+    cudaGraphNodeType cuda_pType;
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetType((cudaGraphNode_t) node, &cuda_pType);
+    if (cudaSuccess == cuda_res)
+        *pType = cudaGraphNodeTypeToUPTKGraphNodeType(cuda_pType);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphRemoveDependencies(UPTKGraph_t graph,const UPTKGraphNode_t * from,const UPTKGraphNode_t * to,size_t numDependencies)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphRemoveDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphUpload(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphUpload((cudaGraphExec_t) graphExec, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGraphicsEGLRegisterImage(struct UPTKGraphicsResource ** pUPTKResource,EGLImageKHR image,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+#if UPTK_ENABLE_GL==0
+__host__ UPTKError UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource ** resource,GLuint buffer,unsigned int flags)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource ** resource,GLuint image,GLenum target,unsigned int flags)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGraphicsMapResources(int count, UPTKGraphicsResource_t *resources, UPTKStream_t stream)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGraphicsResourceGetMappedPointer(void ** devPtr,size_t * size,UPTKGraphicsResource_t resource)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGraphicsSubResourceGetMappedArray(UPTKArray_t * array,UPTKGraphicsResource_t resource,unsigned int arrayIndex,unsigned int mipLevel)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKGraphicsUnregisterResource(UPTKGraphicsResource_t resource)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+#else
+__host__ UPTKError UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource ** resource,GLuint buffer,unsigned int flags)
+{
+    cudaGraphicsResource *cuda_resource;
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsGLRegisterBuffer(&cuda_resource, buffer, flags);
+    if (cuda_res == cudaSuccess){
+        *resource = (struct UPTKGraphicsResource *) cuda_resource;
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource ** resource,GLuint image,GLenum target,unsigned int flags)
+{
+    cudaGraphicsResource *cuda_resource;
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsGLRegisterImage(&cuda_resource, image, target, flags);
+    if (cuda_res == cudaSuccess){
+        *resource = (struct UPTKGraphicsResource *) cuda_resource;
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphicsMapResources(int count, UPTKGraphicsResource_t *resources, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsMapResources(count, (cudaGraphicsResource_t *) resources, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphicsResourceGetMappedPointer(void ** devPtr,size_t * size,UPTKGraphicsResource_t resource)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsResourceGetMappedPointer(devPtr, size, (cudaGraphicsResource_t) resource);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphicsSubResourceGetMappedArray(UPTKArray_t * array,UPTKGraphicsResource_t resource,unsigned int arrayIndex,unsigned int mipLevel)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsSubResourceGetMappedArray((cudaArray_t *) array, (cudaGraphicsResource_t) resource, arrayIndex, mipLevel);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphicsUnregisterResource(UPTKGraphicsResource_t resource)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphicsUnregisterResource((cudaGraphicsResource_t) resource);
+    return cudaErrorToUPTKError(cuda_res);
+}
+#endif
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGraphicsResourceGetMappedEglFrame(UPTKEglFrame * eglFrame,UPTKGraphicsResource_t resource,unsigned int index,unsigned int mipLevel)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// UNSUPPORTED
+__host__ UPTKError UPTKGraphicsResourceGetMappedMipmappedArray(UPTKMipmappedArray_t * mipmappedArray,UPTKGraphicsResource_t resource)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKGraphicsResourceSetMapFlags(UPTKGraphicsResource_t resource,unsigned int flags)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKGraphicsUnmapResources(int count, UPTKGraphicsResource_t *resources, UPTKStream_t stream)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGraphicsVDPAURegisterOutputSurface(struct UPTKGraphicsResource ** resource,VdpOutputSurface vdpSurface,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKGraphicsVDPAURegisterVideoSurface(struct UPTKGraphicsResource ** resource,VdpVideoSurface vdpSurface,unsigned int flags)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+__host__ UPTKError UPTKHostAlloc(void ** pHost,size_t size,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaHostAlloc(pHost, size, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKHostGetDevicePointer(void ** pDevice,void * pHost,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaHostGetDevicePointer(pDevice, pHost, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKHostGetFlags(unsigned int * pFlags,void * pHost)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaHostGetFlags(pFlags, pHost);
+    // UPTK default to add flag UPTKHostAllocMapped
+    if (cudaSuccess == cuda_res)
+        *pFlags = *pFlags | UPTKHostAllocMapped;
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKHostRegister(void * ptr,size_t size,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaHostRegister(ptr, size, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKHostUnregister(void * ptr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaHostUnregister(ptr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKImportExternalMemory(UPTKExternalMemory_t * extMem_out,const struct UPTKExternalMemoryHandleDesc * memHandleDesc)
+{
+    cudaExternalMemoryHandleDesc cuda_memHandleDesc;
+    UPTKExternalMemoryHandleDescTocudaExternalMemoryHandleDesc(memHandleDesc, &cuda_memHandleDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaImportExternalMemory((cudaExternalMemory_t *) extMem_out, &cuda_memHandleDesc);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKImportExternalSemaphore(UPTKExternalSemaphore_t * extSem_out,const struct UPTKExternalSemaphoreHandleDesc * semHandleDesc)
+{
+    cudaExternalSemaphoreHandleDesc cuda_semHandleDesc;
+    UPTKExternalSemaphoreHandleDescTocudaExternalSemaphoreHandleDesc(semHandleDesc, &cuda_semHandleDesc);
+    cudaError_t cuda_res;
+    cuda_res = cudaImportExternalSemaphore((cudaExternalSemaphore_t *) extSem_out, &cuda_semHandleDesc);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKIpcCloseMemHandle(void * devPtr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaIpcCloseMemHandle(devPtr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKIpcGetEventHandle(UPTKIpcEventHandle_t * handle,UPTKEvent_t event)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaIpcGetEventHandle((cudaIpcEventHandle_t *) handle, (cudaEvent_t) event);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKIpcGetMemHandle(UPTKIpcMemHandle_t * handle,void * devPtr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaIpcGetMemHandle((cudaIpcMemHandle_t *) handle, devPtr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKIpcOpenEventHandle(UPTKEvent_t * event,UPTKIpcEventHandle_t handle)
+{    
+    cudaIpcEventHandle_t cuda_handle;
+    UPTKIpcEventHandleTocudaIpcEventHandle(&handle, &cuda_handle);
+    cudaError_t cuda_res;
+    cuda_res = cudaIpcOpenEventHandle((cudaEvent_t *)event, cuda_handle);
+    cudaIpcEventHandleToUPTKIpcEventHandle(&cuda_handle, &handle);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKIpcOpenMemHandle(void ** devPtr,UPTKIpcMemHandle_t handle,unsigned int flags)
+{
+    cudaIpcMemHandle_t cuda_handle;
+    UPTKIpcMemHandleTocudaIpcMemHandle(&handle, &cuda_handle);
+    if (UPTKIpcMemLazyEnablePeerAccess == flags)
+        flags = cudaIpcMemLazyEnablePeerAccess;
+    cudaError_t cuda_res;
+    cuda_res = cudaIpcOpenMemHandle(devPtr, cuda_handle, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKLaunchCooperativeKernel(const void * func,dim3 gridDim,dim3 blockDim,void ** args,size_t sharedMem,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaLaunchCooperativeKernel(func, gridDim, blockDim, args, sharedMem, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// UNSUPPORTED
+ __host__ UPTKError UPTKLaunchCooperativeKernelMultiDevice(struct UPTKLaunchParams *launchParamsList, unsigned int numDevices, unsigned int flags)
+ {
+    //Debug();
+    cudaError_t cuda_res;
+    cuda_res = cudaLaunchCooperativeKernelMultiDevice((cudaLaunchParams *)launchParamsList, numDevices, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKLaunchHostFunc(UPTKStream_t stream,UPTKHostFn_t fn,void * userData)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaLaunchHostFunc((cudaStream_t) stream, (cudaHostFn_t) fn, userData);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMalloc(void ** devPtr,size_t size)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMalloc(devPtr, size);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMalloc3D(struct UPTKPitchedPtr * pitchedDevPtr,struct UPTKExtent extent)
+{
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaError_t cuda_res;
+    cuda_res = cudaMalloc3D((cudaPitchedPtr*) pitchedDevPtr, cuda_extent);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMalloc3DArray(UPTKArray_t *array, const struct UPTKChannelFormatDesc* desc, struct UPTKExtent extent, unsigned int flags)
+{
+    if (nullptr == desc)
+        return UPTKErrorInvalidValue;
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaChannelFormatDesc cuda_desc;
+    UPTKChannelFormatDescTocudaChannelFormatDesc(desc, &cuda_desc);
+    cudaError_t cuda_res;
+    cuda_res = cudaMalloc3DArray((cudaArray_t*) array, &cuda_desc, cuda_extent, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocArray(UPTKArray_t *array, const struct UPTKChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocArray((cudaArray_t*) array, (cudaChannelFormatDesc *)desc, width, height, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocHost(void ** ptr,size_t size)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocHost(ptr, size);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocManaged(void ** devPtr,size_t size,unsigned int flags)
+{
+    // If the size of the NV environment is 0, the UPTKErrorInvalidValue should be returned theoretically according to the UPTK official documentation.
+    // However, in the actual NV environment verification, UPTKSuccess is returned when size is 0, and the returned device pointer is nullptr, if the actual operation of this memory, it will crash.
+    if(size == 0) {
+        if((devPtr == nullptr) ||((flags != UPTKMemAttachGlobal) && (flags != UPTKMemAttachHost)))
+        {
+            return UPTKErrorInvalidValue;
+        }else{
+            *devPtr = nullptr;
+            return UPTKSuccess;
+        }
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocManaged(devPtr, size, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocMipmappedArray(UPTKMipmappedArray_t *mipmappedArray, const struct UPTKChannelFormatDesc* desc, struct UPTKExtent extent, unsigned int numLevels, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cudaChannelFormatDesc cuda_desc;
+    cudaExtent cuda_extent;
+    if (desc == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    UPTKChannelFormatDescTocudaChannelFormatDesc(desc, &cuda_desc);
+    cuda_res = cudaMallocMipmappedArray((cudaMipmappedArray_t *)mipmappedArray, &cuda_desc, cuda_extent, numLevels, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocPitch(void ** devPtr,size_t * pitch,size_t width,size_t height)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocPitch(devPtr, pitch, width, height);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemAdvise(const void * devPtr,size_t count,enum UPTKMemoryAdvise advice,int device)
+{
+    cudaMemoryAdvise cuda_advice = UPTKMemoryAdviseTocudaMemoryAdvise(advice);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemAdvise(devPtr, count, cuda_advice, device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemGetInfo(size_t * free,size_t * total)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemGetInfo(free, total);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPrefetchAsync(const void *devPtr, size_t count, int dstDevice, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPrefetchAsync(devPtr, count, dstDevice, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemRangeGetAttribute(void * data,size_t dataSize,enum UPTKMemRangeAttribute attribute,const void * devPtr,size_t count)
+{
+    cudaMemRangeAttribute cuda_attribute = UPTKMemRangeAttributeTocudaMemRangeAttribute(attribute);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemRangeGetAttribute(data, dataSize, cuda_attribute, devPtr, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemRangeGetAttributes(void ** data,size_t * dataSizes,enum UPTKMemRangeAttribute * attributes,size_t numAttributes,const void * devPtr,size_t count)
+{
+    cudaMemRangeAttribute cuda_attributes;
+    cudaError_t cuda_res;
+    cuda_res = cudaMemRangeGetAttributes(data, dataSizes, &cuda_attributes, numAttributes, devPtr, count);
+    if ( cuda_res == cudaSuccess )
+    {
+        //TODO
+        *attributes = cudaMemRangeAttributeToUPTKMemRangeAttribute(cuda_attributes);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy(void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy(dst, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2D(void * dst,size_t dpitch,const void * src,size_t spitch,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2D(dst, dpitch, src, spitch, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DArrayToArray(UPTKArray_t dst,size_t wOffsetDst,size_t hOffsetDst,UPTKArray_const_t src,size_t wOffsetSrc,size_t hOffsetSrc,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DArrayToArray((cudaArray_t) dst, wOffsetDst, hOffsetDst, (cudaArray_t) src, wOffsetSrc, hOffsetSrc, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DAsync(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DAsync(dst, dpitch, src, spitch, width, height, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DAsync_ptsz(void * dst,size_t dpitch,const void * src,size_t spitch,size_t width,size_t height,enum UPTKMemcpyKind kind,UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DAsync(dst, dpitch, src, spitch, width, height, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DFromArray(void * dst,size_t dpitch,UPTKArray_const_t src,size_t wOffset,size_t hOffset,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DFromArray(dst, dpitch, (cudaArray_t) src, wOffset, hOffset, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DFromArrayAsync(void *dst, size_t dpitch, UPTKArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DFromArrayAsync(dst, dpitch, (cudaArray_t) src, wOffset, hOffset, width, height, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DToArray(UPTKArray_t dst,size_t wOffset,size_t hOffset,const void * src,size_t spitch,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DToArray((cudaArray_t) dst, wOffset, hOffset, src, spitch, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DToArrayAsync(UPTKArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DToArrayAsync((cudaArray_t) dst, wOffset, hOffset, src, spitch, width, height, cuda_kind,(cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3D(const struct UPTKMemcpy3DParms * p)
+{
+    if (nullptr == p)
+        return UPTKErrorInvalidValue;
+    struct cudaMemcpy3DParms cuda_p;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(p, &cuda_p);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy3D(&cuda_p);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DAsync(const struct UPTKMemcpy3DParms *p, UPTKStream_t stream)
+{
+    if (nullptr == p)
+        return UPTKErrorInvalidValue;
+    struct cudaMemcpy3DParms cuda_p;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(p, &cuda_p);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy3DAsync(&cuda_p, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DPeerAsync(const struct UPTKMemcpy3DPeerParms *p, UPTKStream_t stream)
+{
+    if (p == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemcpy3DPeerParms h_p;
+    UPTKMemcpy3DPeerParmsTocudaMemcpy3DPeerParms(p, &h_p);
+    cuda_res = cudaMemcpy3DPeerAsync(&h_p, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromSymbol(dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToSymbol(symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToSymbolAsync(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToSymbolAsync(symbol, src, count, offset, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DPeer(const struct UPTKMemcpy3DPeerParms * p)
+{
+    if (p == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemcpy3DPeerParms h_p;
+    UPTKMemcpy3DPeerParmsTocudaMemcpy3DPeerParms(p, &h_p);
+    cuda_res = cudaMemcpy3DPeer(&h_p);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+
+__host__ UPTKError UPTKMemcpyArrayToArray(UPTKArray_t dst,size_t wOffsetDst,size_t hOffsetDst,UPTKArray_const_t src,size_t wOffsetSrc,size_t hOffsetSrc,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyArrayToArray((cudaArray_t) dst, wOffsetDst, hOffsetDst, (cudaArray_t) src, wOffsetSrc, hOffsetSrc, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyAsync(void *dst, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyAsync(dst, src, count, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromArray(void * dst,UPTKArray_const_t src,size_t wOffset,size_t hOffset,size_t count,enum UPTKMemcpyKind kind)
+{
+    if (src == nullptr)
+    {
+        return UPTKErrorInvalidResourceHandle;
+    }
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromArray(dst, (cudaArray_t) src, wOffset, hOffset, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromArrayAsync(void *dst, UPTKArray_const_t src, size_t wOffset, size_t hOffset, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromArrayAsync(dst, (cudaArray_t) src, wOffset, hOffset, count, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromSymbolAsync(void *dst, const void *symbol, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromSymbolAsync(dst, symbol, count, offset, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyPeer(void * dst,int dstDevice,const void * src,int srcDevice,size_t count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyPeer(dst, dstDevice, src, srcDevice, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyPeerAsync(void *dst, int dstDevice, const void *src, int srcDevice, size_t count, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyPeerAsync(dst, dstDevice, src, srcDevice, count, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToArray(UPTKArray_t dst,size_t wOffset,size_t hOffset,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToArray((cudaArray *) dst, wOffset, hOffset, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToArrayAsync(UPTKArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToArrayAsync((cudaArray_t) dst, wOffset, hOffset, src, count, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset(void * devPtr,int value,size_t count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset(devPtr, value, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset2D(void * devPtr,size_t pitch,int value,size_t width,size_t height)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset2D(devPtr, pitch, value, width, height);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset2DAsync(void * devPtr,size_t pitch,int value,size_t width,size_t height,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset2DAsync(devPtr, pitch, value, width, height, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset2DAsync_ptsz(void * devPtr,size_t pitch,int value,size_t width,size_t height,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset2DAsync(devPtr, pitch, value, width, height, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset3D(struct UPTKPitchedPtr pitchedDevPtr,int value,struct UPTKExtent extent)
+{
+    cudaPitchedPtr cuda_pitchedDevPtr;
+    UPTKPitchedPtrTocudaPitchedPtr(&pitchedDevPtr, &cuda_pitchedDevPtr);
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset3D(cuda_pitchedDevPtr, value, cuda_extent);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset3DAsync(struct UPTKPitchedPtr pitchedDevPtr, int value, struct UPTKExtent extent, UPTKStream_t stream)
+{
+    cudaPitchedPtr cuda_pitchedDevPtr;
+    UPTKPitchedPtrTocudaPitchedPtr(&pitchedDevPtr, &cuda_pitchedDevPtr);
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset3DAsync(cuda_pitchedDevPtr, value, cuda_extent , (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemsetAsync(void *devPtr, int value, size_t count, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemsetAsync(devPtr, value, count, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// // UNSUPPORTED
+// UPTKOccError UPTKOccMaxActiveBlocksPerMultiprocessor(UPTKOccResult * result,const UPTKOccDeviceProp * properties,const UPTKOccFuncAttributes * attributes,const UPTKOccDeviceState * state,int blockSize,size_t dynamicSmemSize)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// UPTKOccError UPTKOccMaxPotentialOccupancyBlockSize(int * minGridSize,int * blockSize,const UPTKOccDeviceProp * properties,const UPTKOccFuncAttributes * attributes,const UPTKOccDeviceState * state,size_t dynamicSMemSize=0)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// UPTKOccError UPTKOccMaxPotentialOccupancyBlockSizeVariableSMem(int * minGridSize,int * blockSize,const UPTKOccDeviceProp * properties,const UPTKOccFuncAttributes * attributes,const UPTKOccDeviceState * state,UnaryFunction blockSizeToDynamicSMemSize)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+__host__ UPTKError UPTKOccupancyMaxActiveBlocksPerMultiprocessor(int * numBlocks,const void * func,int blockSize,size_t dynamicSMemSize)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaOccupancyMaxActiveBlocksPerMultiprocessor(numBlocks, func, blockSize, dynamicSMemSize);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int * numBlocks,const void * func,int blockSize,size_t dynamicSMemSize,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(numBlocks, func, blockSize, dynamicSMemSize, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKPeekAtLastError(void)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaPeekAtLastError();
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKPointerGetAttributes(struct UPTKPointerAttributes * attributes,const void * ptr)
+{
+    if(nullptr == attributes)
+    {
+        return UPTKErrorInvalidValue;
+    }
+
+    memset(attributes, 0, sizeof(UPTKPointerAttributes));
+    
+    cudaPointerAttributes cuda_attributes;
+    memset(&cuda_attributes, 0, sizeof(cudaPointerAttributes));
+
+    cudaError_t cuda_res;
+    cuda_res = cudaPointerGetAttributes(&cuda_attributes, ptr);
+    if ( cuda_res == cudaSuccess )
+    {
+        cudaPointerAttributesToUPTKPointerAttributes(&cuda_attributes, attributes);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKProfilerStart(void)
+{
+    // return cudaErrorToUPTKError(cudaProfilerStart());
+    return UPTKSuccess;
+}
+
+__host__ UPTKError UPTKProfilerStop(void)
+{
+    // return cudaErrorToUPTKError(cudaProfilerStop());
+    return UPTKSuccess;
+}
+
+__host__ UPTKError UPTKRuntimeGetVersion(int * runtimeVersion)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaRuntimeGetVersion(runtimeVersion);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKSetDevice(int device)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaSetDevice(device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKSetDeviceFlags(unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaSetDeviceFlags(flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKSetDoubleForDevice(double * d)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// UNSUPPORTED
+__host__ UPTKError UPTKSetDoubleForHost(double * d)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKSetValidDevices(int * device_arr,int len)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaSetValidDevices (device_arr, len);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKSignalExternalSemaphoresAsync(const UPTKExternalSemaphore_t *extSemArray, const struct UPTKExternalSemaphoreSignalParams *paramsArray, unsigned int numExtSems, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    if (paramsArray == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaExternalSemaphoreSignalParams *cuda_paramsArray = (cudaExternalSemaphoreSignalParams *)malloc(sizeof(cudaExternalSemaphoreSignalParams) * numExtSems);
+    for (int i = 0; i < numExtSems; i++){
+        cuda_paramsArray[i] = UPTKExternalSemaphoreSignalParamsTocudaExternalSemaphoreSignalParams(paramsArray[i]);
+    }
+    cuda_res = cudaSignalExternalSemaphoresAsync((cudaExternalSemaphore_t *)extSemArray, cuda_paramsArray, numExtSems, (cudaStream_t) stream);
+    free(cuda_paramsArray);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamAddCallback(UPTKStream_t stream,UPTKStreamCallback_t callback,void * userData,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamAddCallback((cudaStream_t) stream, (cudaStreamCallback_t) callback, userData, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamAttachMemAsync(UPTKStream_t stream, void *devPtr, size_t length, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamAttachMemAsync((cudaStream_t) stream, devPtr, length, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamBeginCapture(UPTKStream_t stream,enum UPTKStreamCaptureMode mode)
+{
+    if (mode < UPTKStreamCaptureModeGlobal || mode > UPTKStreamCaptureModeRelaxed)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaStreamCaptureMode cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(mode);
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamBeginCapture((cudaStream_t) stream, cuda_mode);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamCreate(UPTKStream_t * pStream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamCreate((cudaStream_t *) pStream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamCreateWithFlags(UPTKStream_t * pStream,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamCreateWithFlags((cudaStream_t *) pStream, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamCreateWithPriority(UPTKStream_t * pStream,unsigned int flags,int priority)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamCreateWithPriority((cudaStream_t *) pStream, flags, priority);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamDestroy(UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamDestroy((cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamEndCapture(UPTKStream_t stream,UPTKGraph_t * pGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamEndCapture((cudaStream_t) stream, (cudaGraph_t *) pGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetFlags(UPTKStream_t hStream,unsigned int * flags)
+{
+    // UPTK is ok for null stream
+    if (nullptr == hStream) {
+        *flags = 0;
+        return UPTKSuccess;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetFlags((cudaStream_t) hStream, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetPriority(UPTKStream_t hStream,int * priority)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetPriority((cudaStream_t) hStream, priority);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamIsCapturing(UPTKStream_t stream,enum UPTKStreamCaptureStatus * pCaptureStatus)
+{
+    if (nullptr == pCaptureStatus)
+        return UPTKErrorInvalidValue;
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamIsCapturing((cudaStream_t) stream, (cudaStreamCaptureStatus *)pCaptureStatus);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamQuery(UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamQuery((cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamSynchronize(UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamSynchronize((cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamWaitEvent(UPTKStream_t stream,UPTKEvent_t event,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamWaitEvent((cudaStream_t) stream, (cudaEvent_t) event, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadExchangeStreamCaptureMode(enum UPTKStreamCaptureMode * mode)
+{
+    cudaStreamCaptureMode cuda_mode;
+    if (mode != nullptr) {
+        cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(*mode);
+    }else{
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaThreadExchangeStreamCaptureMode(&cuda_mode);
+    if ( cuda_res == cudaSuccess )
+    {
+        *mode = cudaStreamCaptureModeToUPTKStreamCaptureMode(cuda_mode);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadExit(void)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceReset();
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadGetCacheConfig(enum UPTKFuncCache * pCacheConfig)
+{
+    if (nullptr == pCacheConfig)
+        return UPTKErrorInvalidValue;
+    cudaFuncCache cuda_cacheConfig;
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetCacheConfig(&cuda_cacheConfig);
+    if ( cuda_res == cudaSuccess )
+    {
+        *pCacheConfig = cudaFuncCacheToUPTKFuncCache(cuda_cacheConfig);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadGetLimit(size_t * pValue,enum UPTKLimit limit)
+{
+    enum cudaLimit cuda_limit = UPTKLimitTocudaLimit(limit);
+    cudaError_t cuda_res;
+    cuda_res = cudaThreadGetLimit(pValue, cuda_limit);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadSetCacheConfig(enum UPTKFuncCache cacheConfig)
+{
+    cudaFuncCache cuda_cacheConfig = UPTKFuncCacheTocudaFuncCache(cacheConfig);
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceSetCacheConfig(cuda_cacheConfig);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadSetLimit(enum UPTKLimit limit,size_t value)
+{
+    enum cudaLimit cuda_limit = UPTKLimitTocudaLimit(limit);
+    cudaError_t cuda_res;
+    cuda_res = cudaThreadSetLimit(cuda_limit, value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKThreadSynchronize(void)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceSynchronize();
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKVDPAUGetDevice(int * device,VdpDevice vdpDevice,VdpGetProcAddress * vdpGetProcAddress)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKVDPAUSetVDPAUDevice(int device,VdpDevice vdpDevice,VdpGetProcAddress * vdpGetProcAddress)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+__host__ UPTKError UPTKWaitExternalSemaphoresAsync(const UPTKExternalSemaphore_t *extSemArray, const struct UPTKExternalSemaphoreWaitParams *paramsArray, unsigned int numExtSems, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    if (paramsArray == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaExternalSemaphoreWaitParams *cuda_paramsArray = (cudaExternalSemaphoreWaitParams *)malloc(sizeof(cudaExternalSemaphoreWaitParams) * numExtSems);
+    for (int i = 0; i < numExtSems; i++){
+        cuda_paramsArray[i] = UPTKExternalSemaphoreWaitParamsTocudaExternalSemaphoreWaitParams(paramsArray[i]);
+    }
+    cuda_res = cudaWaitExternalSemaphoresAsync((cudaExternalSemaphore_t *) extSemArray, cuda_paramsArray, numExtSems, (cudaStream_t) stream);
+    free(cuda_paramsArray);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+
+// // UNSUPPORTED
+// __host__ UPTKError UPTKWGLGetDevice(int * device,HGPUNV hGpu)
+// {
+//     Debug();
+//     return UPTKErrorNotSupported;
+// }
+
+
+/*
+ * Update UPTK 11.8
+ */
+__host__ UPTKError UPTKDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, const struct UPTKChannelFormatDesc *fmtDesc, int device)
+{
+    if(fmtDesc == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaChannelFormatDesc cuda_fmtDesc;
+    UPTKChannelFormatDescTocudaChannelFormatDesc(fmtDesc, &cuda_fmtDesc);
+    cuda_res = cudaDeviceGetTexture1DLinearMaxWidth(maxWidthInElements, &cuda_fmtDesc, device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceFlushGPUDirectRDMAWrites(enum UPTKFlushGPUDirectRDMAWritesTarget target, enum UPTKFlushGPUDirectRDMAWritesScope scope)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKDeviceGetDefaultMemPool(UPTKMemPool_t *memPool, int device)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetDefaultMemPool((cudaMemPool_t *) memPool, device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceSetMemPool(int device, UPTKMemPool_t memPool)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceSetMemPool(device, (cudaMemPool_t) memPool);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetMemPool(UPTKMemPool_t *memPool, int device)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGetMemPool((cudaMemPool_t *) memPool, device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKCtxResetPersistingL2Cache(void)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKStreamCopyAttributes(UPTKStream_t dst, UPTKStream_t src)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamCopyAttributes((cudaStream_t) dst, (cudaStream_t) src);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+/*__host__ UPTKError UPTKStreamGetAttribute(UPTKStream_t hStream, UPTKStreamAttrID attr, UPTKStreamAttrValue *value_out)
+{
+    if (!value_out)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaStreamAttrValue cuda_value_out;
+    cudaStreamAttrID cuda_attr = UPTKLaunchAttributeIDTocudaLaunchAttributeID(attr);
+    cuda_res = cudaStreamGetAttribute((cudaStream_t) hStream, cuda_attr, &cuda_value_out);
+    if (cuda_res == cudaSuccess){
+        cudaStreamAttrValueToUPTKStreamAttrValue(&cuda_value_out, value_out, cuda_attr);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}*/
+
+/*__host__ UPTKError UPTKStreamSetAttribute(UPTKStream_t hStream, UPTKStreamAttrID attr, const UPTKStreamAttrValue *value)
+{
+    if (!value)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaStreamAttrValue cuda_value;
+    cudaStreamAttrID cuda_attr = UPTKStreamAttrIDTocudaStreamAttrID(attr);
+    UPTKStreamAttrValueTocudaStreamAttrValue(value, &cuda_value, attr);
+    cuda_res = cudaStreamSetAttribute((cudaStream_t) hStream, cuda_attr, &cuda_value);
+    return cudaErrorToUPTKError(cuda_res);
+}*/
+
+__host__ UPTKError UPTKStreamGetCaptureInfo_v2(UPTKStream_t stream, enum UPTKStreamCaptureStatus *captureStatus_out, unsigned long long *id_out, UPTKGraph_t *graph_out, const UPTKGraphNode_t **dependencies_out, size_t *numDependencies_out)
+{
+    if (captureStatus_out == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetCaptureInfo_v2((cudaStream_t) stream, (cudaStreamCaptureStatus *)captureStatus_out, id_out, (cudaGraph_t *) graph_out, (const cudaGraphNode_t **) dependencies_out, numDependencies_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKEventRecordWithFlags(UPTKEvent_t event, UPTKStream_t stream, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaEventRecordWithFlags((cudaEvent_t) event, (cudaStream_t) stream, flags);
+    return cudaErrorToUPTKError(cuda_res);   
+}
+
+__host__ UPTKError UPTKLaunchKernelExC(const UPTKLaunchConfig_t *config, const void *func, void **args)
+{
+    if(!config)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaLaunchConfig_t cuda_config;
+    UPTKLaunchConfig_tTocudaLaunchConfig_t(config, &cuda_config);
+    cuda_res = cudaLaunchKernelExC(&cuda_config, func, args);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKOccupancyAvailableDynamicSMemPerBlock(size_t *dynamicSmemSize, const void *func, int numBlocks, int blockSize)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKOccupancyMaxPotentialClusterSize(int *clusterSize, const void *func, const UPTKLaunchConfig_t *launchConfig)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKOccupancyMaxActiveClusters(int *numClusters, const void *func, const UPTKLaunchConfig_t *launchConfig)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKArrayGetPlane(UPTKArray_t *pPlaneArray, UPTKArray_t hArray, unsigned int planeIdx)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKArrayGetMemoryRequirements(struct UPTKArrayMemoryRequirements  *memoryRequirements, UPTKArray_t array, int device)
+{
+    if (!memoryRequirements)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaArrayMemoryRequirements cuda_memoryRequirements;
+    cuda_res = cudaArrayGetMemoryRequirements(&cuda_memoryRequirements, (cudaArray_t) array, device);
+    if (cuda_res == cudaSuccess){
+        cudaArrayMemoryRequirementsToUPTKArrayMemoryRequirements(&cuda_memoryRequirements, memoryRequirements);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMipmappedArrayGetMemoryRequirements(struct UPTKArrayMemoryRequirements *memoryRequirements, UPTKMipmappedArray_t mipmap, int device)
+{
+    if (!memoryRequirements)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaArrayMemoryRequirements cuda_memoryRequirements;
+    cuda_res = cudaMipmappedArrayGetMemoryRequirements(&cuda_memoryRequirements, (cudaMipmappedArray_t) mipmap, device);
+    if (cuda_res == cudaSuccess){
+        cudaArrayMemoryRequirementsToUPTKArrayMemoryRequirements(&cuda_memoryRequirements, memoryRequirements);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKArrayGetSparseProperties(struct UPTKArraySparseProperties *sparseProperties, UPTKArray_t array)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKMipmappedArrayGetSparseProperties(struct UPTKArraySparseProperties *sparseProperties, UPTKMipmappedArray_t mipmap)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+__host__ UPTKError UPTKMallocAsync(void **devPtr, size_t size, UPTKStream_t hStream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocAsync(devPtr, size, (cudaStream_t) hStream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFreeAsync(void *devPtr, UPTKStream_t hStream)
+{
+    //cuda is different from the official UPTK internal implementation and is aligned with the official UPTK
+    if (devPtr == nullptr) {
+        return UPTKSuccess;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaFreeAsync(devPtr, (cudaStream_t) hStream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolTrimTo(UPTKMemPool_t memPool, size_t minBytesToKeep)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPoolTrimTo((cudaMemPool_t) memPool, minBytesToKeep);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolSetAttribute(UPTKMemPool_t memPool, enum UPTKMemPoolAttr attr, void *value)
+{
+    cudaError_t cuda_res;
+    cudaMemPoolAttr cuda_attr = UPTKMemPoolAttrTocudaMemPoolAttr(attr);
+    cuda_res = cudaMemPoolSetAttribute((cudaMemPool_t) memPool, cuda_attr, value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolGetAttribute(UPTKMemPool_t memPool, enum UPTKMemPoolAttr attr, void *value)
+{
+    cudaError_t cuda_res;
+    cudaMemPoolAttr cuda_attr = UPTKMemPoolAttrTocudaMemPoolAttr(attr);
+    cuda_res = cudaMemPoolGetAttribute((cudaMemPool_t) memPool, cuda_attr, value);
+    return cudaErrorToUPTKError(cuda_res); 
+}
+
+//TODO: need to verfiy const and pointer
+__host__ UPTKError UPTKMemPoolSetAccess(UPTKMemPool_t memPool, const struct UPTKMemAccessDesc *descList, size_t count)
+{
+    cudaError_t cuda_res;
+    cudaMemAccessDesc* cuda_descList = (cudaMemAccessDesc*)malloc(sizeof(cudaMemAccessDesc) * count);
+    for (int i = 0; i < count; i++)
+    {
+        cuda_descList[i] = UPTKMemAccessDescTocudaMemAccessDesc(descList[i]);
+    }
+    cuda_res = cudaMemPoolSetAccess((cudaMemPool_t) memPool, cuda_descList, count);
+    free(cuda_descList);
+    return cudaErrorToUPTKError(cuda_res); 
+}
+
+__host__ UPTKError UPTKMemPoolGetAccess(enum UPTKMemAccessFlags *flags, UPTKMemPool_t memPool, struct UPTKMemLocation *location)
+{
+    cudaError_t cuda_res;
+    cudaMemLocation cuda_location;
+    cudaMemAccessFlags cuda_flags;
+    UPTKMemLocationTocudaMemLocation(location, &cuda_location);
+    cuda_res = cudaMemPoolGetAccess(&cuda_flags, (cudaMemPool_t) memPool, &cuda_location);
+    if (cuda_res == cudaSuccess) {
+        *flags = cudaMemAccessFlagsToUPTKMemAccessFlags(cuda_flags);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolCreate(UPTKMemPool_t *memPool, const struct UPTKMemPoolProps *poolProps)
+{
+    cudaError_t cuda_res;
+    cudaMemPoolProps cuda_poolProps;
+    UPTKMemPoolPropsTocudaMemPoolProps(poolProps, &cuda_poolProps);
+    cuda_res = cudaMemPoolCreate((cudaMemPool_t *) memPool, &cuda_poolProps);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolDestroy(UPTKMemPool_t memPool)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPoolDestroy((cudaMemPool_t) memPool);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocFromPoolAsync(void **ptr, size_t size, UPTKMemPool_t memPool, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocFromPoolAsync((void**) ptr, size, (cudaMemPool_t) memPool, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolExportToShareableHandle(void *shareableHandle, UPTKMemPool_t memPool, enum UPTKMemAllocationHandleType handleType, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cudaMemAllocationHandleType cuda_handleType;
+    unsigned int cuda_flags = (unsigned int)flags;
+    cuda_handleType = UPTKMemAllocationHandleTypeTocudaMemAllocationHandleType(handleType);
+    cuda_res = cudaMemPoolExportToShareableHandle(shareableHandle, (cudaMemPool_t) memPool, cuda_handleType, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolImportFromShareableHandle(UPTKMemPool_t *memPool, void *shareableHandle, enum UPTKMemAllocationHandleType handleType, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cudaMemAllocationHandleType cuda_handleType;
+    unsigned int cuda_flags = (unsigned int)flags;
+    cuda_handleType = UPTKMemAllocationHandleTypeTocudaMemAllocationHandleType(handleType);
+    cuda_res = cudaMemPoolImportFromShareableHandle((cudaMemPool_t *) memPool, shareableHandle, cuda_handleType, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolExportPointer(struct UPTKMemPoolPtrExportData *exportData, void *ptr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPoolExportPointer((cudaMemPoolPtrExportData *) exportData, ptr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPoolImportPointer(void **ptr, UPTKMemPool_t memPool, struct UPTKMemPoolPtrExportData *exportData)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPoolImportPointer(ptr, (cudaMemPool_t) memPool, (cudaMemPoolPtrExportData *) exportData);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphKernelNodeCopyAttributes(UPTKGraphNode_t hSrc, UPTKGraphNode_t hDst)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphKernelNodeCopyAttributes((cudaGraphNode_t) hSrc, (cudaGraphNode_t) hDst);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphKernelNodeGetAttribute(UPTKGraphNode_t hNode, UPTKKernelNodeAttrID attr, UPTKKernelNodeAttrValue *value_out)
+{
+    cudaError_t cuda_res;
+    cudaKernelNodeAttrID cuda_attr;
+    cudaKernelNodeAttrValue cuda_value_out;
+    if (value_out == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cuda_res = cudaGraphKernelNodeGetAttribute((cudaGraphNode_t) hNode, cuda_attr, &cuda_value_out);
+    if (cuda_res == cudaSuccess) {
+        cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(&cuda_value_out, value_out, attr);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphKernelNodeSetAttribute(UPTKGraphNode_t hNode, UPTKKernelNodeAttrID attr, const UPTKKernelNodeAttrValue *value)
+{
+    if (value == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaKernelNodeAttrID cuda_attr;
+    cudaKernelNodeAttrValue cuda_value;
+    cuda_attr = UPTKKernelNodeAttrIDTocudaKernelNodeAttrID(attr);
+    UPTKKernelNodeAttrValueTocudaKernelNodeAttrValue(value, &cuda_value, attr);
+    cuda_res = cudaGraphKernelNodeSetAttribute((cudaGraphNode_t) hNode, cuda_attr, &cuda_value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemAllocNode(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, size_t numDependencies, struct UPTKMemAllocNodeParams *nodeParams)
+{
+    if (nodeParams == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemAllocNodeParams cuda_nodeParams;
+    UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(nodeParams, &cuda_nodeParams);
+    cuda_res = cudaGraphAddMemAllocNode((cudaGraphNode_t *) pGraphNode,  (cudaGraph_t) graph, (cudaGraphNode_t *) pDependencies, numDependencies, &cuda_nodeParams);
+    if(cudaSuccess == cuda_res){
+        nodeParams->dptr = cuda_nodeParams.dptr;
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemAllocNodeGetParams(UPTKGraphNode_t node, struct UPTKMemAllocNodeParams *params_out)
+{
+    if (params_out == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemAllocNodeParams cuda_params_out;
+    cuda_res = cudaGraphMemAllocNodeGetParams((cudaGraphNode_t) node, &cuda_params_out);
+    if(cuda_res == cudaSuccess){
+        cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(&cuda_params_out, params_out);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddMemFreeNode(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, size_t numDependencies, void *dptr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddMemFreeNode((cudaGraphNode_t *)pGraphNode, (cudaGraph_t) graph, (cudaGraphNode_t *) pDependencies, numDependencies, dptr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphMemFreeNodeGetParams(UPTKGraphNode_t node, void *dptr_out)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphMemFreeNodeGetParams((cudaGraphNode_t) node, dptr_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGraphMemTrim(int device)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceGraphMemTrim(device);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceGetGraphMemAttribute(int device, enum UPTKGraphMemAttributeType attr, void* value)
+{
+    cudaError_t cuda_res;
+    cudaGraphMemAttributeType cuda_attr;
+    cuda_attr = UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(attr);
+    cuda_res = cudaDeviceGetGraphMemAttribute(device, cuda_attr, value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKDeviceSetGraphMemAttribute(int device, enum UPTKGraphMemAttributeType attr, void* value)
+{
+    cudaError_t cuda_res;
+    cudaGraphMemAttributeType cuda_attr;
+    cuda_attr = UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(attr);
+    cuda_res = cudaDeviceSetGraphMemAttribute(device, cuda_attr, value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphInstantiateWithFlags(UPTKGraphExec_t *pGraphExec, UPTKGraph_t graph, unsigned long long flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphInstantiateWithFlags((cudaGraphExec_t *) pGraphExec, (cudaGraph_t) graph, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeSetEnabled(UPTKGraphExec_t hGraphExec, UPTKGraphNode_t hNode, unsigned int isEnabled)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeSetEnabled((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, isEnabled);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetEnabled(UPTKGraphExec_t hGraphExec, UPTKGraphNode_t hNode, unsigned int *isEnabled)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetEnabled((cudaGraphExec_t) hGraphExec, (cudaGraphNode_t) hNode, isEnabled);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphDebugDotPrint(UPTKGraph_t graph, const char *path, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphDebugDotPrint((cudaGraph_t) graph, path, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKUserObjectCreate(UPTKUserObject_t *object_out, void *ptr, UPTKHostFn_t destroy, unsigned int initialRefcount, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaUserObjectCreate((cudaUserObject_t *) object_out, ptr, (cudaHostFn_t) destroy, initialRefcount, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKUserObjectRetain(UPTKUserObject_t object, unsigned int count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaUserObjectRetain((cudaUserObject_t) object, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKUserObjectRelease(UPTKUserObject_t object, unsigned int count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaUserObjectRelease((cudaUserObject_t) object, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphRetainUserObject(UPTKGraph_t graph, UPTKUserObject_t object, unsigned int count, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphRetainUserObject((cudaGraph_t) graph, (cudaUserObject_t) object, count, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphReleaseUserObject(UPTKGraph_t graph, UPTKUserObject_t object, unsigned int count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphReleaseUserObject((cudaGraph_t) graph, (cudaUserObject_t) object, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetDriverEntryPoint(const char *symbol, void **funcPtr, unsigned long long flags)
+{
+    cudaError_t cuda_res;
+    if (symbol == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cuda_res = cudaGetDriverEntryPoint(symbol, funcPtr, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetFuncBySymbol(UPTKFunction_t* functionPtr, const void* symbolPtr)
+{
+    Debug();
+    return UPTKErrorNotSupported;
+}
+
+// The mapping can be found in cudaFY of ROCM 6.1.0, but not in galaxy code of 24.04 and ROCM 5.7
+__host__ UPTKError UPTKStreamUpdateCaptureDependencies(UPTKStream_t stream, UPTKGraphNode_t *dependencies, size_t numDependencies, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamUpdateCaptureDependencies((cudaStream_t) stream, (cudaGraphNode_t *) dependencies, numDependencies, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKSignalExternalSemaphoresAsync_v2_ptsz(const UPTKExternalSemaphore_t *extSemArray, const struct UPTKExternalSemaphoreSignalParams *paramsArray, unsigned int numExtSems, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    if (paramsArray == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaExternalSemaphoreSignalParams *cuda_paramsArray = (cudaExternalSemaphoreSignalParams *)malloc(sizeof(cudaExternalSemaphoreSignalParams) * numExtSems);
+    for (int i = 0; i < numExtSems; i++){
+        cuda_paramsArray[i] = UPTKExternalSemaphoreSignalParamsTocudaExternalSemaphoreSignalParams(paramsArray[i]);
+    }
+    cuda_res = cudaSignalExternalSemaphoresAsync((const cudaExternalSemaphore_t *)extSemArray, cuda_paramsArray, numExtSems, (cudaStream_t) stream);
+    free(cuda_paramsArray);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKWaitExternalSemaphoresAsync_v2_ptsz(const UPTKExternalSemaphore_t *extSemArray, const struct UPTKExternalSemaphoreWaitParams *paramsArray, unsigned int numExtSems, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    if (paramsArray == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaExternalSemaphoreWaitParams *cuda_paramsArray = (cudaExternalSemaphoreWaitParams *)malloc(sizeof(cudaExternalSemaphoreWaitParams) * numExtSems);
+    for (int i = 0; i < numExtSems; i++){
+        cuda_paramsArray[i] = UPTKExternalSemaphoreWaitParamsTocudaExternalSemaphoreWaitParams(paramsArray[i]);
+    }
+    cuda_res = cudaWaitExternalSemaphoresAsync((cudaExternalSemaphore_t *) extSemArray, cuda_paramsArray, numExtSems, (cudaStream_t) stream);
+    free(cuda_paramsArray);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy_ptds(void * dst,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy(dst, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToSymbol_ptds(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToSymbol(symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromSymbol_ptds(void *dst, const void *symbol, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromSymbol(dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2D_ptds(void * dst,size_t dpitch,const void * src,size_t spitch,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2D(dst, dpitch, src, spitch, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToArray_ptds(UPTKArray_t dst,size_t wOffset,size_t hOffset,const void * src,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToArray((cudaArray *) dst, wOffset, hOffset, src, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DToArray_ptds(UPTKArray_t dst,size_t wOffset,size_t hOffset,const void * src,size_t spitch,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DToArray((cudaArray_t) dst, wOffset, hOffset, src, spitch, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromArray_ptds(void * dst,UPTKArray_const_t src,size_t wOffset,size_t hOffset,size_t count,enum UPTKMemcpyKind kind)
+{
+    if (src == nullptr)
+    {
+        return UPTKErrorInvalidResourceHandle;
+    }
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromArray(dst, (cudaArray_t) src, wOffset, hOffset, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DFromArray_ptds(void * dst,size_t dpitch,UPTKArray_const_t src,size_t wOffset,size_t hOffset,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DFromArray(dst, dpitch, (cudaArray_t) src, wOffset, hOffset, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyArrayToArray_ptds(UPTKArray_t dst,size_t wOffsetDst,size_t hOffsetDst,UPTKArray_const_t src,size_t wOffsetSrc,size_t hOffsetSrc,size_t count,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DArrayToArray((cudaArray_t) dst, wOffsetDst, hOffsetDst, (cudaArray_t) src, wOffsetSrc, hOffsetSrc, count, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DArrayToArray_ptds(UPTKArray_t dst,size_t wOffsetDst,size_t hOffsetDst,UPTKArray_const_t src,size_t wOffsetSrc,size_t hOffsetSrc,size_t width,size_t height,enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DArrayToArray((cudaArray_t) dst, wOffsetDst, hOffsetDst, (cudaArray_t) src, wOffsetSrc, hOffsetSrc, width, height, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3D_ptds(const struct UPTKMemcpy3DParms * p)
+{
+    if (nullptr == p)
+        return UPTKErrorInvalidValue;
+    struct cudaMemcpy3DParms cuda_p;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(p, &cuda_p);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy3D(&cuda_p);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DPeer_ptds(const struct UPTKMemcpy3DPeerParms * p)
+{
+    if (p == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemcpy3DPeerParms h_p;
+    UPTKMemcpy3DPeerParmsTocudaMemcpy3DPeerParms(p, &h_p);
+    cuda_res = cudaMemcpy3DPeer(&h_p);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset_ptds(void * devPtr,int value,size_t count)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset(devPtr, value, count);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset2D_ptds(void * devPtr,size_t pitch,int value,size_t width,size_t height)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset2D(devPtr, pitch, value, width, height);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset3D_ptds(struct UPTKPitchedPtr pitchedDevPtr,int value,struct UPTKExtent extent)
+{
+    cudaPitchedPtr cuda_pitchedDevPtr;
+    UPTKPitchedPtrTocudaPitchedPtr(&pitchedDevPtr, &cuda_pitchedDevPtr);
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset3D(cuda_pitchedDevPtr, value, cuda_extent);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphUpload_ptsz(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphUpload((cudaGraphExec_t) graphExec, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphLaunch_ptsz(UPTKGraphExec_t graphExec,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphLaunch((cudaGraphExec_t) graphExec, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamBeginCapture_ptsz(UPTKStream_t stream,enum UPTKStreamCaptureMode mode)
+{
+    if (mode < UPTKStreamCaptureModeGlobal || mode > UPTKStreamCaptureModeRelaxed)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaStreamCaptureMode cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(mode);
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamBeginCapture((cudaStream_t) stream, cuda_mode);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamEndCapture_ptsz(UPTKStream_t stream,UPTKGraph_t * pGraph)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamEndCapture((cudaStream_t) stream, (cudaGraph_t *) pGraph);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetCaptureInfo_v2_ptsz(UPTKStream_t stream, enum UPTKStreamCaptureStatus *captureStatus_out, unsigned long long *id_out, UPTKGraph_t *graph_out, const UPTKGraphNode_t **dependencies_out, size_t *numDependencies_out)
+{
+    if (captureStatus_out == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetCaptureInfo_v2((cudaStream_t) stream, (cudaStreamCaptureStatus *)captureStatus_out, id_out, (cudaGraph_t *) graph_out, (const cudaGraphNode_t **) dependencies_out, numDependencies_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamIsCapturing_ptsz(UPTKStream_t stream,enum UPTKStreamCaptureStatus * pCaptureStatus)
+{
+    if (nullptr == pCaptureStatus)
+        return UPTKErrorInvalidValue;
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamIsCapturing((cudaStream_t) stream, (cudaStreamCaptureStatus *)pCaptureStatus);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyAsync_ptsz(void *dst, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyAsync(dst, src, count, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToSymbolAsync_ptsz(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToSymbolAsync(symbol, src, count, offset, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromSymbolAsync_ptsz(void *dst, const void *symbol, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromSymbolAsync(dst, symbol, count, offset, cuda_kind, (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToArrayAsync_ptsz(UPTKArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToArrayAsync((cudaArray_t) dst, wOffset, hOffset, src, count, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DToArrayAsync_ptsz(UPTKArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DToArrayAsync((cudaArray_t) dst, wOffset, hOffset, src, spitch, width, height, cuda_kind,(cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyFromArrayAsync_ptsz(void *dst, UPTKArray_const_t src, size_t wOffset, size_t hOffset, size_t count, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromArrayAsync(dst, (cudaArray_t) src, wOffset, hOffset, count, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy2DFromArrayAsync_ptsz(void *dst, size_t dpitch, UPTKArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum UPTKMemcpyKind kind, UPTKStream_t stream)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy2DFromArrayAsync(dst, dpitch, (cudaArray_t) src, wOffset, hOffset, width, height, cuda_kind, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DAsync_ptsz(const struct UPTKMemcpy3DParms *p, UPTKStream_t stream)
+{
+    if (nullptr == p)
+        return UPTKErrorInvalidValue;
+    struct cudaMemcpy3DParms cuda_p;
+    UPTKMemcpy3DParmsTocudaMemcpy3DParms(p, &cuda_p);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpy3DAsync(&cuda_p, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpy3DPeerAsync_ptsz(const struct UPTKMemcpy3DPeerParms *p, UPTKStream_t stream)
+{
+    if (p == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaMemcpy3DPeerParms h_p;
+    UPTKMemcpy3DPeerParmsTocudaMemcpy3DPeerParms(p, &h_p);
+    cuda_res = cudaMemcpy3DPeerAsync(&h_p, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemsetAsync_ptsz(void *devPtr, int value, size_t count, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemsetAsync(devPtr, value, count, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemset3DAsync_ptsz(struct UPTKPitchedPtr pitchedDevPtr, int value, struct UPTKExtent extent, UPTKStream_t stream)
+{
+    cudaPitchedPtr cuda_pitchedDevPtr;
+    UPTKPitchedPtrTocudaPitchedPtr(&pitchedDevPtr, &cuda_pitchedDevPtr);
+    cudaExtent cuda_extent;
+    UPTKExtentTocudaExtent(&extent, &cuda_extent);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemset3DAsync(cuda_pitchedDevPtr, value, cuda_extent , (cudaStream_t)stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamQuery_ptsz(UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamQuery((cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetFlags_ptsz(UPTKStream_t hStream,unsigned int * flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetFlags((cudaStream_t) hStream, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetPriority_ptsz(UPTKStream_t hStream,int * priority)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetPriority((cudaStream_t) hStream, priority);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKEventRecord_ptsz(UPTKEvent_t event,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaEventRecord((cudaEvent_t) event, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKEventRecordWithFlags_ptsz(UPTKEvent_t event, UPTKStream_t stream, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaEventRecordWithFlags((cudaEvent_t) event, (cudaStream_t) stream, flags);
+    return cudaErrorToUPTKError(cuda_res);   
+}
+
+__host__ UPTKError UPTKStreamWaitEvent_ptsz(UPTKStream_t stream,UPTKEvent_t event,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamWaitEvent((cudaStream_t) stream, (cudaEvent_t) event, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamAddCallback_ptsz(UPTKStream_t stream,UPTKStreamCallback_t callback,void * userData,unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamAddCallback((cudaStream_t) stream, (cudaStreamCallback_t) callback, userData, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamAttachMemAsync_ptsz(UPTKStream_t stream, void *devPtr, size_t length, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamAttachMemAsync((cudaStream_t) stream, devPtr, length, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamSynchronize_ptsz(UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamSynchronize((cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKLaunchKernelExC_ptsz(const UPTKLaunchConfig_t *config, const void *func, void **args)
+{
+    if(!config)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaLaunchConfig_t cuda_config;
+    UPTKLaunchConfig_tTocudaLaunchConfig_t(config, &cuda_config);
+    cuda_res = cudaLaunchKernelExC(&cuda_config, func, args);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKLaunchHostFunc_ptsz(UPTKStream_t stream,UPTKHostFn_t fn,void * userData)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaLaunchHostFunc((cudaStream_t) stream, (cudaHostFn_t) fn, userData);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPrefetchAsync_ptsz(const void *devPtr, size_t count, int dstDevice, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMemPrefetchAsync(devPtr, count, dstDevice, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKLaunchCooperativeKernel_ptsz(const void * func,dim3 gridDim,dim3 blockDim,void ** args,size_t sharedMem,UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaLaunchCooperativeKernel(func, gridDim, blockDim, args, sharedMem, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamCopyAttributes_ptsz(UPTKStream_t dst, UPTKStream_t src)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamCopyAttributes((cudaStream_t) dst, (cudaStream_t) src);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetAttribute_ptsz(UPTKStream_t hStream, UPTKStreamAttrID attr, UPTKStreamAttrValue *value_out)
+{
+    if (!value_out)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaStreamAttrValue cuda_value_out;
+    cudaStreamAttrID cuda_attr = UPTKStreamAttrIDTocudaStreamAttrID(attr);
+    cuda_res = cudaStreamGetAttribute((cudaStream_t) hStream, cuda_attr, &cuda_value_out);
+    if (cuda_res == cudaSuccess){
+        cudaStreamAttrValueToUPTKStreamAttrValue(&cuda_value_out, value_out, cuda_attr);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamSetAttribute_ptsz(UPTKStream_t hStream, UPTKStreamAttrID attr, const UPTKStreamAttrValue *value)
+{
+    if (!value)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaStreamAttrValue cuda_value;
+    cudaStreamAttrID cuda_attr = UPTKStreamAttrIDTocudaStreamAttrID(attr);
+    UPTKStreamAttrValueTocudaStreamAttrValue(value, &cuda_value, attr);
+    cuda_res = cudaStreamSetAttribute((cudaStream_t) hStream, cuda_attr, &cuda_value);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMallocAsync_ptsz(void **devPtr, size_t size, UPTKStream_t hStream)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaMallocAsync(devPtr, size, (cudaStream_t) hStream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFreeAsync_ptsz(void *devPtr, UPTKStream_t hStream)
 {
     if (devPtr == nullptr) {
         return UPTKSuccess;
@@ -696,321 +3593,62 @@ __host__ UPTKError_t  UPTKFreeAsync(void *devPtr, UPTKStream_t hStream)
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError_t  UPTKEventElapsedTime(float * ms,UPTKEvent_t start,UPTKEvent_t end)
+__host__ UPTKError UPTKMallocFromPoolAsync_ptsz(void **ptr, size_t size, UPTKMemPool_t memPool, UPTKStream_t stream)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaEventElapsedTime(ms, (cudaEvent_t) start, (cudaEvent_t) end);
+    cuda_res = cudaMallocFromPoolAsync((void**) ptr, size, (cudaMemPool_t) memPool, (cudaStream_t) stream);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__  UPTKError_t  UPTKDeviceGetAttribute(int* value, enum UPTKDeviceAttr attr, int device) 
+__host__ UPTKError UPTKGetDriverEntryPoint_ptsz(const char *symbol, void **funcPtr, unsigned long long flags)
 {
-    if (value == nullptr) {
-        return UPTKErrorInvalidValue;
-    }
-    int device_count = 0;
-    cudaError_t cuda_res = cudaGetDeviceCount(&device_count);
-    if (cuda_res != cudaSuccess) {
-        return cudaErrorToUPTKError(cuda_res);
-    }
-    if (device < 0 || device >= device_count) {
-        return UPTKErrorInvalidDevice;
-    }
-    cudaDeviceProp prop = {0};
-    cuda_res = cudaGetDeviceProperties(&prop, device);
-    if (cuda_res != cudaSuccess) {
-        return cudaErrorToUPTKError(cuda_res);
-    }
-
-    UPTKError_t res = UPTKSuccess;
-    bool is_handled = true;
-
-    switch (attr) {
-    case UPTKDevAttrMaxSurface2DLayeredWidth:
-      *value = prop.maxSurface2DLayered[0];
-      break;
-    case UPTKDevAttrMaxSurface2DLayeredHeight:
-      *value = prop.maxSurface2DLayered[1];
-      break;
-    case UPTKDevAttrMaxSurface2DLayeredLayers:
-      *value = prop.maxSurface2DLayered[2];
-      break;
-    case UPTKDevAttrMaxTexture2DLinearWidth:
-      *value = prop.maxTexture2DLinear[0];
-      break;
-    case UPTKDevAttrMaxTexture2DLinearHeight:
-      *value = prop.maxTexture2DLinear[1];
-      break;
-    case UPTKDevAttrMaxTexture2DLinearPitch:
-      *value = prop.maxTexture2DLinear[2];
-      break;
-    case UPTKDevAttrMaxSurface2DWidth:
-      *value = prop.maxSurface2D[0];
-      break;
-    case UPTKDevAttrMaxSurface2DHeight:
-      *value = prop.maxSurface2D[1];
-      break;
-    case UPTKDevAttrMaxSurface1DLayeredWidth:
-      *value = prop.maxSurface1DLayered[0];
-      break;
-    case UPTKDevAttrMaxSurface1DLayeredLayers:
-      *value = prop.maxSurface1DLayered[1];
-      break;
-    case UPTKDevAttrMaxTexture3DWidthAlt:
-      *value = prop.maxTexture3DAlt[0];
-      break;
-    case UPTKDevAttrMaxTexture3DHeightAlt:
-      *value = prop.maxTexture3DAlt[1];
-      break;
-    case UPTKDevAttrMaxTexture3DDepthAlt:
-      *value = prop.maxTexture3DAlt[2];
-      break;
-    case UPTKDevAttrTccDriver:
-      *value = 1;
-      fprintf(stdout, "[Warning] Enabling TCC has no impact on functionality.To ensure compatibility, TCC has enabled simulated return value 1.\n");
-      break;
-    case UPTKDevAttrMaxTexture1DLayeredWidth:
-      *value = prop.maxTexture1DLayered[0];
-      break;
-    case UPTKDevAttrMaxTexture1DLayeredLayers:
-      *value = prop.maxTexture1DLayered[1];
-      break;
-    case UPTKDevAttrMaxTexture2DMipmappedWidth:
-      *value = prop.maxTexture2DMipmap[0];
-      break;
-    case UPTKDevAttrMaxTexture2DMipmappedHeight:
-      *value = prop.maxTexture2DMipmap[1];
-      break;
-    case UPTKDevAttrMaxTextureCubemapLayeredWidth:
-      *value = prop.maxTextureCubemapLayered[0];
-      break;
-    case UPTKDevAttrMaxTextureCubemapLayeredLayers:
-      *value = prop.maxTextureCubemapLayered[1];
-      break;
-    case UPTKDevAttrMaxTexture2DGatherWidth:
-      *value = prop.maxTexture2DGather[0];
-      break;
-    case UPTKDevAttrMaxTexture2DGatherHeight:
-      *value = prop.maxTexture2DGather[1];
-      break;
-    case UPTKDevAttrMaxTexture2DLayeredWidth:
-      *value = prop.maxTexture2DLayered[0];
-      break;
-    case UPTKDevAttrMaxTexture2DLayeredHeight:
-      *value = prop.maxTexture2DLayered[1];
-      break;
-    case UPTKDevAttrMaxTexture2DLayeredLayers:
-      *value = prop.maxTexture2DLayered[2];
-      break;
-    case UPTKDevAttrMaxSurfaceCubemapLayeredWidth:
-      *value = prop.maxSurfaceCubemapLayered[0];
-      break;
-    case UPTKDevAttrMaxSurfaceCubemapLayeredLayers:
-      *value = prop.maxSurfaceCubemapLayered[1];
-      break;
-    case UPTKDevAttrMaxSurfaceCubemapWidth:
-      *value = prop.maxSurfaceCubemap;
-      break;
-    case UPTKDevAttrSingleToDoublePrecisionPerfRatio:
-      *value = prop.singleToDoublePrecisionPerfRatio;
-      break;
-    case UPTKDevAttrMaxSurface3DWidth:
-      *value = prop.maxSurface3D[0];
-      break;
-    case UPTKDevAttrMaxSurface3DHeight:
-      *value = prop.maxSurface3D[1];
-      break;
-    case UPTKDevAttrMaxSurface3DDepth:
-      *value = prop.maxSurface3D[2];
-      break;
-    // The following three require specific evaluation assignments, temporary comments, and subsequent evaluation assignments.
-    // case UPTKDevAttrCanFlushRemoteWrites: 
-    //   *value = 0;
-    //   break;
-    // case UPTKDevAttrReserved92:
-    //   *value = 0;
-    //   break;
-    // case UPTKDevAttrReserved93:
-    //   *value = 0;
-    //   break;
-    default: 
+    cudaError_t cuda_res;
+    if (symbol == nullptr)
     {
-        cudaDeviceAttr cuda_attr = UPTKDeviceAttrTocudaDeviceAttribute(attr);
-        cuda_res = cudaDeviceGetAttribute(value, cuda_attr, device);
-        res = cudaErrorToUPTKError(cuda_res);
-        // Do not change for the time being, the subsequent overall modification to the front of the overall implementation.
-        if (res == UPTKSuccess) {
-            if (cuda_attr == cudaDevAttrComputeCapabilityMajor) {
-                *value = SM_VERSION_MAJOR;
-            } else if (cuda_attr == cudaDevAttrComputeCapabilityMinor) {
-                *value = SM_VERSION_MINOR;
-            }
-        }
-        is_handled = false;
-        break;
-    }
-    }
-
-    if (is_handled && res == UPTKSuccess) {
-        res = UPTKSuccess;
-    }
-
-    return res;
-}
-
-__host__ UPTKError_t  UPTKDeviceEnablePeerAccess(int peerDevice,unsigned int flags)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaDeviceEnablePeerAccess(peerDevice, flags);
-    return cudaErrorToUPTKError(cuda_res);
-}
-//改动了
-UPTKresult  UPTKLinkComplete(UPTKlinkState state,void ** cubinOut,size_t * sizeOut)
-{
-    CUresult nvrtc_res;
-    nvrtc_res = cuLinkComplete((CUlinkState)state, cubinOut, sizeOut);
-    return cudaResultToUPTKresult(nvrtc_res);
-}
-
-UPTKresult  UPTKInit(unsigned int Flags)
-{
-    CUresult cuda_res;
-    cuda_res = cuInit(Flags);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-__host__  UPTKError_t  UPTKFuncSetAttribute(const void * func,enum UPTKFuncAttribute attr,int value)
-{
-    cudaFuncAttribute cuda_attr = UPTKFuncAttributeTocudaFuncAttribute(attr);
-    cudaError_t cuda_res;
-    cuda_res = cudaFuncSetAttribute(func, cuda_attr, value);
-    return cudaErrorToUPTKError(cuda_res);
-}
-//改动多
-UPTKresult  UPTKDeviceGetName(char * name,int len,UPTKdevice dev)
-{
-    CUresult cuda_res;
-    cuda_res = cuDeviceGetName(name, len, (CUdevice) dev);
-    /*
-    // To enable users to obtain architecture information through the interface, add the architecture information to the device name
-    if(cuda_res == cudaSuccess){
-        cudaDeviceProp cuda_prop;
-        memset(&cuda_prop, 0, sizeof(cudaDeviceProp));
-        cudaError_t cuda_res2 = cudaGetDeviceProperties(&cuda_prop, dev);
-        if (cuda_res2 == cudaSuccess)
-        {
-            // Add the gcnArchName of hip to the device name
-            strncpy(name, cuda_prop.name, len - 1);
-            name[len - 1] = '\0';
-            
-            if (strlen(name) + strlen(cuda_prop.gcnArchName)  < len - 1)
-            {
-                strncat(name, " ", len - strlen(name) - 1);
-                strncat(name, cuda_prop.gcnArchName, len - strlen(name) - 1);
-            }
-            else
-            {
-                return cudaErrorToUPTKresult(cuda_res2);
-            }
-  
-        }
-    }
-    */
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxSynchronize(void)
-{
-    CUresult cuda_res;
-    cuda_res = cuCtxSynchronize();
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxSetLimit(UPTKlimit limit,size_t value)
-{
-    CUlimit cuda_limit = UPTKlimitToCUlimit(limit);
-    CUresult cuda_res;
-    cuda_res = cuCtxSetLimit(cuda_limit, value);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxSetCurrent(UPTKcontext ctx)
-{
-    CUresult cuda_res;
-    cuda_res = cuCtxSetCurrent((CUcontext) ctx);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxGetLimit(size_t * pvalue,UPTKlimit limit)
-{
-    CUlimit cuda_limit = UPTKlimitToCUlimit(limit);
-    CUresult cuda_res;
-    cuda_res = cuCtxGetLimit(pvalue, cuda_limit);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxDestroy(UPTKcontext ctx)
-{
-    CUresult cuda_res;
-    cuda_res = cuCtxDestroy((CUcontext) ctx);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-UPTKresult  UPTKCtxCreate(UPTKcontext * pctx,unsigned int flags,UPTKdevice dev)
-{
-    CUresult cuda_res;
-    cuda_res = cuCtxCreate((CUcontext *)pctx, flags, (CUdevice) dev);
-    return cudaErrorToUPTKresult(cuda_res);
-}
-
-// Based on the newly added application interface
-__host__ UPTKError_t UPTKMemset(void * devPtr,int value,size_t count)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaMemset(devPtr, value, count);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t UPTKMallocHost(void ** ptr,size_t size)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaMallocHost(ptr, size);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t UPTKFreeHost(void * ptr)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaFreeHost(ptr);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError_t  UPTKOccupancyMaxPotentialBlockSize_internal(int* gridSize, int* blockSize, const void* f, size_t dynSharedMemPerBlk, int blockSizeLimit){
-
-    if ((gridSize == nullptr) || (blockSize == nullptr)) {
         return UPTKErrorInvalidValue;
     }
-    cudaError_t cuda_res;
-    cuda_res = cudaOccupancyMaxPotentialBlockSize(gridSize, blockSize, f, dynSharedMemPerBlk, blockSizeLimit);
+    cuda_res = cudaGetDriverEntryPoint(symbol, funcPtr, flags);
     return cudaErrorToUPTKError(cuda_res);
 }
-
-__host__ UPTKError_t  UPTKMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
-{
-    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
-    cudaError_t cuda_res;
-    cuda_res = cudaMemcpyToSymbol(symbol, src, count, offset, cuda_kind);
-    return cudaErrorToUPTKError(cuda_res);
+void cudaToUPTKCallback(cudaAsyncNotificationInfo_t* cudaInfo, void* wrappedUserData, cudaAsyncCallbackHandle_t cudaHandle) {
+    CallbackWrapperData* wrapper = static_cast<CallbackWrapperData*>(wrappedUserData);
+    UPTKAsyncNotificationInfo_t UPTKInfo;
+    UPTKInfo.type = cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaInfo->type);
+    UPTKInfo.info.overBudget.bytesOverBudget = cudaInfo->info.overBudget.bytesOverBudget;
+    UPTKAsyncCallbackHandle_t UPTKHandle = reinterpret_cast<UPTKAsyncCallbackHandle_t>(cudaHandle);
+    wrapper->userCallback(&UPTKInfo, wrapper->userData, UPTKHandle);
 }
-
-__host__ UPTKError_t  UPTKHostAlloc(void ** pHost,size_t size,unsigned int flags)
+__host__ UPTKError UPTKDeviceRegisterAsyncNotification(int device, UPTKAsyncCallback callbackFunc, void* userData, UPTKAsyncCallbackHandle_t* callback)
 {
     cudaError_t cuda_res;
-    cuda_res = cudaMallocHost(pHost, size, flags);
+    if (callbackFunc == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    CallbackWrapperData *wrapperData = static_cast<CallbackWrapperData *>(malloc(sizeof(CallbackWrapperData)));
+    wrapperData->userCallback = callbackFunc;
+    wrapperData->userData = userData;
+
+    cuda_res = cudaDeviceRegisterAsyncNotification(device, cudaToUPTKCallback, wrapperData, (cudaAsyncCallbackHandle_t *) callback);
+
+    if (cuda_res != cudaSuccess)
+    {
+        // This is done only when cuda registration fails, while the data is retained for subsequent callbacks when it succeeds.
+        free(wrapperData);
+        return cudaErrorToUPTKError(cuda_res);
+    }
+    return UPTKSuccess;
+}
+
+__host__ UPTKError UPTKDeviceUnregisterAsyncNotification(int device, UPTKAsyncCallbackHandle_t callback)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaDeviceUnregisterAsyncNotification(device, (cudaAsyncCallbackHandle_t) callback);
     return cudaErrorToUPTKError(cuda_res);
 }
 
-/*__host__  UPTKError_t  UPTKGetDeviceProperties_v2(struct UPTKDeviceProp * prop,int device)
+// UPTK 12.6.2:added some members to the UPTKDeviceProp structure.Declaration of no change.
+__host__ UPTKError UPTKGetDeviceProperties_v2(struct UPTKDeviceProp * prop,int device)
 {
     if(nullptr == prop)
     {
@@ -1026,12 +3664,340 @@ __host__ UPTKError_t  UPTKHostAlloc(void ** pHost,size_t size,unsigned int flags
     cuda_res = cudaGetDeviceProperties_v2(&cuda_prop, device);
     if ( cuda_res == cudaSuccess )
     {
-        cudaDevicePropToUPTKDeviceProp(&cuda_prop, prop);
+        cudaDeviceProp_v2ToUPTKDeviceProp(&cuda_prop, prop);
     }
     return cudaErrorToUPTKError(cuda_res);
-}*/
+}
 
+__host__ UPTKError UPTKInitDevice(int device, unsigned int deviceFlags, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaInitDevice(device, deviceFlags, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
 
+__host__ UPTKError UPTKFuncGetName(const char **name, const void *func)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaFuncGetName(name, func);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKFuncGetParamInfo(const void *func, size_t paramIndex, size_t *paramOffset, size_t *paramSize)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaFuncGetParamInfo(func, paramIndex, paramOffset, paramSize);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetDriverEntryPointByVersion(const char *symbol, void **funcPtr, unsigned int UPTKVersion, unsigned long long flags, enum UPTKDriverEntryPointQueryResult *driverStatus)
+{
+    cudaError_t cuda_res;
+    //cudaDriverProcAddressQueryResult cuda_driverStatus;
+    
+    if (symbol == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cuda_res = cudaGetDriverEntryPointByVersion(symbol, funcPtr, UPTKVersion, flags, (cudaDriverEntryPointQueryResult *)driverStatus);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetDriverEntryPointByVersion_ptsz(const char *symbol, void **funcPtr, unsigned int UPTKVersion, unsigned long long flags, enum UPTKDriverEntryPointQueryResult *driverStatus)
+{
+    cudaError_t cuda_res;
+    //cudaDriverProcAddressQueryResult cuda_driverStatus;
+    if (symbol == nullptr)
+    {
+        return UPTKErrorInvalidValue;
+    }
+    //const char *cuda_symbol = UPTK_symbolTocuda_symbol_v2(symbol);
+    cuda_res = cudaGetDriverEntryPointByVersion(symbol, funcPtr, UPTKVersion, flags, (cudaDriverEntryPointQueryResult *)driverStatus);
+    //if(cudaSuccess == cuda_res){
+    //    *driverStatus = cudaDriverProcAddressQueryResultToUPTKDriverEntryPointQueryResult(cuda_driverStatus);
+    //}
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGetKernel(UPTKKernel_t *kernelPtr, const void *entryFuncAddr)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGetKernel((cudaKernel_t *) kernelPtr, entryFuncAddr);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddDependencies_v2(UPTKGraph_t graph, const UPTKGraphNode_t *from, const UPTKGraphNode_t *to, const UPTKGraphEdgeData *edgeData, size_t numDependencies)
+{
+    if(edgeData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphAddDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddNode(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, size_t numDependencies, struct UPTKGraphNodeParams *nodeParams)
+{
+    if(nodeParams == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaGraphNodeParams cuda_nodeParams = {};
+    UPTKGraphNodeParamsTocudaGraphNodeParams(nodeParams, &cuda_nodeParams);
+    cuda_res = cudaGraphAddNode((cudaGraphNode_t*) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t*) pDependencies, numDependencies, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphAddNode_v2(UPTKGraphNode_t *pGraphNode, UPTKGraph_t graph, const UPTKGraphNode_t *pDependencies, const UPTKGraphEdgeData *dependencyData, size_t numDependencies, struct UPTKGraphNodeParams *nodeParams)
+{
+    if(dependencyData != nullptr){
+        return UPTKErrorNotSupported;
+    }else if(nodeParams == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaGraphNodeParams cuda_nodeParams = {};
+    UPTKGraphNodeParamsTocudaGraphNodeParams(nodeParams, &cuda_nodeParams);
+    cuda_res = cudaGraphAddNode((cudaGraphNode_t*) pGraphNode, (cudaGraph_t) graph, (const cudaGraphNode_t*) pDependencies, numDependencies, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphConditionalHandleCreate(UPTKGraphConditionalHandle *pHandle_out, UPTKGraph_t graph, unsigned int defaultLaunchValue, unsigned int flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphConditionalHandleCreate((cudaGraphConditionalHandle *) pHandle_out, (cudaGraph_t) graph, defaultLaunchValue, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecGetFlags(UPTKGraphExec_t graphExec, unsigned long long *flags)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphExecGetFlags((cudaGraphExec_t) graphExec, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphExecNodeSetParams(UPTKGraphExec_t graphExec, UPTKGraphNode_t node, struct UPTKGraphNodeParams *nodeParams)
+{
+    if(nodeParams == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaGraphNodeParams cuda_nodeParams = {};
+    UPTKGraphNodeParamsTocudaGraphNodeParams(nodeParams, &cuda_nodeParams);
+    cuda_res = cudaGraphExecNodeSetParams((cudaGraphExec_t) graphExec, (cudaGraphNode_t) node, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphGetEdges_v2(UPTKGraph_t graph, UPTKGraphNode_t *from, UPTKGraphNode_t *to, UPTKGraphEdgeData *edgeData, size_t *numEdges)
+{
+    if(edgeData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphGetEdges((cudaGraph_t) graph, (cudaGraphNode_t*) from, (cudaGraphNode_t*) to, numEdges);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphInstantiateWithParams(UPTKGraphExec_t *pGraphExec, UPTKGraph_t graph, UPTKGraphInstantiateParams *instantiateParams)
+{
+    cudaError_t cuda_res;
+    if (instantiateParams == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+    cudaGraphInstantiateParams cuda_instantiateParams;
+    UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(instantiateParams, &cuda_instantiateParams);
+    cuda_res = cudaGraphInstantiateWithParams((cudaGraphExec_t *) pGraphExec, (cudaGraph_t) graph, &cuda_instantiateParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphInstantiateWithParams_ptsz(UPTKGraphExec_t *pGraphExec, UPTKGraph_t graph, UPTKGraphInstantiateParams *instantiateParams)
+{
+    cudaError_t cuda_res;
+    if (instantiateParams == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+    cudaGraphInstantiateParams cuda_instantiateParams;
+    UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(instantiateParams, &cuda_instantiateParams);
+    cuda_res = cudaGraphInstantiateWithParams((cudaGraphExec_t *) pGraphExec, (cudaGraph_t) graph, &cuda_instantiateParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetDependencies_v2(UPTKGraphNode_t node, UPTKGraphNode_t *pDependencies, UPTKGraphEdgeData *edgeData, size_t *pNumDependencies)
+{
+    if(edgeData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetDependencies((cudaGraphNode_t) node, (cudaGraphNode_t *) pDependencies, pNumDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeGetDependentNodes_v2(UPTKGraphNode_t node, UPTKGraphNode_t *pDependentNodes, UPTKGraphEdgeData *edgeData, size_t *pNumDependentNodes)
+{
+    if(edgeData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphNodeGetDependentNodes((cudaGraphNode_t) node, (cudaGraphNode_t *) pDependentNodes, pNumDependentNodes);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphNodeSetParams(UPTKGraphNode_t node, struct UPTKGraphNodeParams *nodeParams)
+{
+    if(nodeParams == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cudaGraphNodeParams cuda_nodeParams = {};
+    UPTKGraphNodeParamsTocudaGraphNodeParams(nodeParams, &cuda_nodeParams);
+    cuda_res = cudaGraphNodeSetParams((cudaGraphNode_t) node, &cuda_nodeParams);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKGraphRemoveDependencies_v2(UPTKGraph_t graph, const UPTKGraphNode_t *from, const UPTKGraphNode_t *to, const UPTKGraphEdgeData *edgeData, size_t numDependencies)
+{
+    if(edgeData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaGraphRemoveDependencies((cudaGraph_t) graph, (const cudaGraphNode_t *) from, (const cudaGraphNode_t *) to, numDependencies);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemAdvise_v2(const void *devPtr, size_t count, enum UPTKMemoryAdvise advice, struct UPTKMemLocation location)
+{
+    cudaError_t cuda_res;
+    if (!(advice == UPTKMemAdviseSetAccessedBy || advice == UPTKMemAdviseSetPreferredLocation || advice == UPTKMemAdviseSetReadMostly || 
+        advice == UPTKMemAdviseUnsetAccessedBy || advice == UPTKMemAdviseUnsetPreferredLocation || advice == UPTKMemAdviseUnsetReadMostly))
+    {
+        return UPTKErrorInvalidValue;
+    }
+    cudaMemoryAdvise cuda_advice = UPTKMemoryAdviseTocudaMemoryAdvise(advice);
+    cudaMemLocation cuda_location = UPTKMemLocationTocudaMemLocation_v2(location);
+    cuda_res = cudaMemAdvise(devPtr, count, cuda_advice, cuda_location);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPrefetchAsync_v2(const void *devPtr, size_t count, struct UPTKMemLocation location, unsigned int flags, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cudaMemLocation cuda_location = UPTKMemLocationTocudaMemLocation_v2(location);
+    cuda_res = cudaMemPrefetchAsync(devPtr, count, cuda_location, flags, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemPrefetchAsync_v2_ptsz(const void *devPtr, size_t count, struct UPTKMemLocation location, unsigned int flags, UPTKStream_t stream)
+{
+    cudaError_t cuda_res;
+    cudaMemLocation cuda_location = UPTKMemLocationTocudaMemLocation_v2(location);
+    cuda_res = cudaMemPrefetchAsync_v2(devPtr, count, cuda_location, flags, (cudaStream_t) stream);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamBeginCaptureToGraph(UPTKStream_t stream, UPTKGraph_t graph, const UPTKGraphNode_t *dependencies, const UPTKGraphEdgeData *dependencyData, size_t numDependencies, enum UPTKStreamCaptureMode mode)
+{
+    if (dependencyData != nullptr)
+    {
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cudaGraphEdgeData cuda_dependencyData;
+    cudaStreamCaptureMode cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(mode);
+    if(dependencyData == nullptr){
+        cuda_res = cudaStreamBeginCaptureToGraph((cudaStream_t) stream, (cudaGraph_t) graph, (const cudaGraphNode_t*) dependencies, nullptr, numDependencies, cuda_mode);
+    }else{
+        UPTKGraphEdgeDataTocudaGraphEdgeData(dependencyData, &cuda_dependencyData);
+        cuda_res = cudaStreamBeginCaptureToGraph((cudaStream_t) stream, (cudaGraph_t) graph, (const cudaGraphNode_t*) dependencies, &cuda_dependencyData, numDependencies, cuda_mode);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamBeginCaptureToGraph_ptsz(UPTKStream_t stream, UPTKGraph_t graph, const UPTKGraphNode_t *dependencies, const UPTKGraphEdgeData *dependencyData, size_t numDependencies, enum UPTKStreamCaptureMode mode)
+{
+    if (dependencyData != nullptr)
+    {
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cudaGraphEdgeData cuda_dependencyData;
+    cudaStreamCaptureMode cuda_mode = UPTKStreamCaptureModeTocudaStreamCaptureMode(mode);
+    if(dependencyData == nullptr){
+        cuda_res = cudaStreamBeginCaptureToGraph((cudaStream_t) stream, (cudaGraph_t) graph, (const cudaGraphNode_t*) dependencies, nullptr, numDependencies, cuda_mode);
+    }else{
+        UPTKGraphEdgeDataTocudaGraphEdgeData(dependencyData, &cuda_dependencyData);
+        cuda_res = cudaStreamBeginCaptureToGraph((cudaStream_t) stream, (cudaGraph_t) graph, (const cudaGraphNode_t*) dependencies, &cuda_dependencyData, numDependencies, cuda_mode);
+    }
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetCaptureInfo_v3(UPTKStream_t stream, enum UPTKStreamCaptureStatus *captureStatus_out, unsigned long long *id_out, UPTKGraph_t *graph_out, 
+    const UPTKGraphNode_t **dependencies_out, const UPTKGraphEdgeData **edgeData_out, size_t *numDependencies_out)
+{
+    if(edgeData_out != nullptr){
+        return UPTKErrorNotSupported;
+    }else if (captureStatus_out == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetCaptureInfo_v3((cudaStream_t) stream, (cudaStreamCaptureStatus *)captureStatus_out, id_out, (cudaGraph_t *) graph_out, (const cudaGraphNode_t **) dependencies_out, (const cudaGraphEdgeData **)edgeData_out, numDependencies_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetCaptureInfo_v3_ptsz(UPTKStream_t stream, enum UPTKStreamCaptureStatus *captureStatus_out, unsigned long long *id_out, UPTKGraph_t *graph_out, const UPTKGraphNode_t **dependencies_out, const UPTKGraphEdgeData **edgeData_out, size_t *numDependencies_out)
+{
+    if(edgeData_out != nullptr){
+        return UPTKErrorNotSupported;
+    }else if (captureStatus_out == nullptr){
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetCaptureInfo_v3((cudaStream_t) stream, (cudaStreamCaptureStatus *)captureStatus_out, id_out, (cudaGraph_t *) graph_out, (const cudaGraphNode_t **) dependencies_out, (const cudaGraphEdgeData **)edgeData_out, numDependencies_out);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetId(UPTKStream_t hStream, unsigned long long *streamId)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetId((cudaStream_t) hStream, streamId);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamGetId_ptsz(UPTKStream_t hStream, unsigned long long *streamId)
+{
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamGetId((cudaStream_t) hStream, streamId);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamUpdateCaptureDependencies_v2(UPTKStream_t stream, UPTKGraphNode_t *dependencies, const UPTKGraphEdgeData *dependencyData, size_t numDependencies, unsigned int flags)
+{
+    if(dependencyData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamUpdateCaptureDependencies((cudaStream_t) stream, (cudaGraphNode_t *) dependencies, numDependencies, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKStreamUpdateCaptureDependencies_v2_ptsz(UPTKStream_t stream, UPTKGraphNode_t *dependencies, const UPTKGraphEdgeData *dependencyData, size_t numDependencies, unsigned int flags)
+{
+    if(dependencyData != nullptr){
+        return UPTKErrorNotSupported;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaStreamUpdateCaptureDependencies((cudaStream_t) stream, (cudaGraphNode_t *) dependencies, numDependencies, flags);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKOccupancyMaxPotentialBlockSize_internal(int* gridSize, int* blockSize, const void* f, size_t dynSharedMemPerBlk, int blockSizeLimit){
+
+    if ((gridSize == nullptr) || (blockSize == nullptr)) {
+        return UPTKErrorInvalidValue;
+    }
+    cudaError_t cuda_res;
+    cuda_res = cudaOccupancyMaxPotentialBlockSize_internal(gridSize, blockSize, f, dynSharedMemPerBlk, blockSizeLimit);
+    return cudaErrorToUPTKError(cuda_res);
+}
 
 #if defined(__cplusplus)
 }
