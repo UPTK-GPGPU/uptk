@@ -9,12 +9,12 @@
 extern "C" {
 #endif
 
-#define UPTKFFT_VER_MAJOR 11
-#define UPTKFFT_VER_MINOR 3
+#define UPTKFFT_VER_MAJOR 1
+#define UPTKFFT_VER_MINOR 0
 #define UPTKFFT_VER_PATCH 0
-#define UPTKFFT_VER_BUILD 4
+#define UPTKFFT_VER_BUILD 0
 
-#define UPTKFFT_VERSION 11300
+#define UPTKFFT_VERSION 10000
 
 // CUFFT API function return values
 typedef enum UPTKfftResult_t {

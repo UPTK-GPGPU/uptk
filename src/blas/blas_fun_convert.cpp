@@ -1,11 +1,11 @@
 #include "blas.hpp"
-#include "UPTKblas.h"
 
 #if defined(__cplusplus)
 
 extern "C"
 {
 #endif /* __cplusplus */
+
 UPTKBLASAPI UPTKblasStatus_t UPTKblasGetVersion(UPTKblasHandle_t handle, int *version)
 {
     if (nullptr == handle)
@@ -2013,7 +2013,7 @@ UPTKBLASAPI UPTKblasStatus_t UPTKblasGetProperty(libraryPropertyType type, int *
 
 UPTKBLASAPI size_t UPTKblasGetCudartVersion(void)
 {
-    return CUDART_VERSION;
+    return UPTKRT_VERSION;
 }
 
 UPTKBLASAPI UPTKblasStatus_t UPTKblasCgemm3m(UPTKblasHandle_t handle,

@@ -2,16 +2,19 @@
 add_subdirectory(runtime)
 
 # driver
-add_subdirectory(driver)
+#add_subdirectory(driver)
 
 #fft
-add_subdirectory(UPTKfft)
+add_subdirectory(fft)
 
 #blas
-add_subdirectory(UPTKblas)
+add_subdirectory(blas)
 
 #blas
-add_subdirectory(UPTKsparse)
+#add_subdirectory(sparse)
 
 #blas
-add_subdirectory(UPTKrand)
+#add_subdirectory(rand)
+
+#nccl
+add_subdirectory(nccl)
