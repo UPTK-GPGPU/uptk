@@ -4,7 +4,7 @@
 #include "../runtime/runtime.hpp"
 
 #include <cublas_v2.h>
-#include <UPTKblas.h>
+#include <UPTK_blas.h>
  
 #if defined(__cplusplus)
 extern "C" {

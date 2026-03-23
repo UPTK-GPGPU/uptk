@@ -5,7 +5,7 @@
 #include <UPTK_runtime_api.h>
 #include <cufft.h>
 // below is cuda header
-#include <UPTKfft.h>
+#include <UPTK_fft.h>
 
 #if defined(__cplusplus)
 extern "C" {
