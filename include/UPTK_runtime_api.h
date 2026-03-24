@@ -145,7 +145,7 @@
 #include "UPTK_driver_types.h"
 #include "cuda_gl_interop.h"
 
-#ifndef __UPTKCC_RTC_MINIMAL__
+#ifndef __CUDACC_RTC_MINIMAL__
 #if defined(UPTK_API_PER_THREAD_DEFAULT_STREAM) || defined(__UPTK_API_VERSION_INTERNAL)
     #define __UPTKRT_API_PER_THREAD_DEFAULT_STREAM
     #define __UPTKRT_API_PTDS(api) api ## _ptds
@@ -227,7 +227,7 @@
     #define UPTKGetDriverEntryPointByVersion  __UPTKRT_API_PTSZ(UPTKGetDriverEntryPointByVersion)
 #endif
 
-#endif  /* __UPTKCC_RTC_MINIMAL__ */
+#endif  /* __CUDACC_RTC_MINIMAL__ */
 
 /** \cond impl_private */
 #if !defined(__dv)
@@ -246,7 +246,7 @@
 #endif /* !__dv */
 /** \endcond impl_private */
 
-#if (defined(_NVHPC_UPTK) || !defined(__UPTK_ARCH__) || (__UPTK_ARCH__ >= 350))   /** Visible to SM>=3.5 and "__host__ __device__" only **/
+#if (defined(_NVHPC_CUDA) || !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 350))   /** Visible to SM>=3.5 and "__host__ __device__" only **/
 
 #define UPTKRT_DEVICE __device__ 
 
@@ -256,7 +256,7 @@
 
 #endif /** UPTKRT_DEVICE */
 
-#if !defined(__UPTKCC_RTC__)
+#if !defined(__CUDACC_RTC__)
 #define UPTK_EXCLUDE_FROM_RTC
 
 #if defined(__cplusplus)
@@ -14385,7 +14385,7 @@ extern __host__ UPTKError_t UPTKOccupancyMaxPotentialBlockSize_internal(int* gri
 #endif /* __cplusplus */
 
 #undef UPTK_EXCLUDE_FROM_RTC
-#endif /* !__UPTKCC_RTC__ */
+#endif /* !__CUDACC_RTC__ */
 
 #undef __dv
 
