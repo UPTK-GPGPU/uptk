@@ -55,7 +55,7 @@
 #define __UNDEF_UPTK_INCLUDE_COMPILER_INTERNAL_HEADERS_DRIVER_TYPES_H__
 #endif
 
-#ifndef __CUDACC_RTC_MINIMAL__
+#ifndef __UPTKCC_RTC_MINIMAL__
 /**
  * \defgroup UPTKRT_TYPES Data types used by UPTK Runtime
  * \ingroup UPTKRT
@@ -72,10 +72,10 @@
 #if !defined(__UPTK_INTERNAL_COMPILATION__)
 
 
-#if !defined(__CUDACC_RTC__)
+#if !defined(__UPTKCC_RTC__)
 #include <limits.h>
 #include <stddef.h>
-#endif /* !defined(__CUDACC_RTC__) */
+#endif /* !defined(__UPTKCC_RTC__) */
 
 #define UPTKHostAllocDefault                0x00  /**< Default page-locked allocation flag */
 #define UPTKHostAllocPortable               0x01  /**< Pinned memory accessible by all UPTK contexts */
@@ -3662,7 +3662,7 @@ typedef void (*UPTKAsyncCallback)(UPTKAsyncNotificationInfo_t*, void*, UPTKAsync
 /** @} */
 /** @} */ /* END UPTKRT_TYPES */
 
-#endif  /* !__CUDACC_RTC_MINIMAL__ */
+#endif  /* !__UPTKCC_RTC_MINIMAL__ */
 
 #if defined(__UNDEF_UPTK_INCLUDE_COMPILER_INTERNAL_HEADERS_DRIVER_TYPES_H__)
 #undef __UPTK_INCLUDE_COMPILER_INTERNAL_HEADERS__
