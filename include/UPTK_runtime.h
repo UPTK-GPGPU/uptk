@@ -86,7 +86,7 @@ typedef unsigned size_t;
 *******************************************************************************/
 #include "UPTK_runtime_api.h"
 
-#if defined(__UPTKCC__)
+#if defined(__CUDACC__)
 
 #if defined(__UPTKCC_EXTENDED_LAMBDA__)
 #include <functional>
@@ -96,10 +96,10 @@ struct  __device_builtin__ __nv_lambda_preheader_injection { };
 
 #undef EXCLUDE_FROM_RTC
 
-#endif /* __UPTKCC__ */
+#endif /* __CUDACC__ */
 
 #define EXCLUDE_FROM_RTC
-#if defined(__cplusplus) && !defined(__UPTKCC_RTC__)
+#if defined(__cplusplus) && !defined(__CUDACC_RTC__)
 
 #ifdef __cplusplus
   #define __dparm(x) \
@@ -803,7 +803,7 @@ static __inline__ __host__ UPTKError_t UPTKMallocFromPoolAsync(
   return ::UPTKMallocFromPoolAsync((void**)(void*)ptr, size, memPool, stream);
 }
 
-#if defined(__UPTKCC__)
+#if defined(__CUDACC__)
 
 /**
  * \brief \hl Copies data to the given symbol on the device
@@ -1567,7 +1567,7 @@ __host__ UPTKError_t UPTKFuncSetSharedMemConfig(
 #endif
 }
 
-#endif // __UPTKCC__
+#endif // __CUDACC__
 
 /**
  * \brief Returns occupancy for a device function
@@ -2164,7 +2164,7 @@ static __inline__ __host__ UPTKError_t UPTKOccupancyMaxActiveClusters(
     return ::UPTKOccupancyMaxActiveClusters(numClusters, (const void*)func, config);
 }
 
-#if defined __UPTKCC__
+#if defined __CUDACC__
 
 /**
  * \brief \hl Find out attributes for a given function
@@ -2325,13 +2325,13 @@ static  __inline__ __host__ UPTKError_t UPTKGetKernel(
 }
 
 /** @} */ /* END UPTKRT_LIBRARY */
-#endif /* __UPTKCC__ */
+#endif /* __CUDACC__ */
 
 /** @} */ /* END UPTKRT_HIGHLEVEL */
 
-#endif /* __cplusplus && !__UPTKCC_RTC__ */
+#endif /* __cplusplus && !__CUDACC_RTC__ */
 
-#if !defined(__UPTKCC_RTC__)
+#if !defined(__CUDACC_RTC__)
 #if defined(__GNUC__)
 #if defined(__clang__) || (!defined(__PGIC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)))
 #pragma GCC diagnostic pop
