@@ -2646,7 +2646,7 @@ void cudaChannelFormatDescToUPTKChannelFormatDesc(const cudaChannelFormatDesc * 
     UPTK_para->z = cuda_para->z;
 }
 // TODO: UPTKMemAccessDesc generally appears in the form of an array, so special conversion is performed here.
-cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para)
+/*cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para)
 {
     // if (nullptr == UPTK_para) {
     //     fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2656,9 +2656,9 @@ cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc 
     cuda_para.flags = UPTKMemAccessFlagsTocudaMemAccessFlags(UPTK_para.flags);
     UPTKMemLocationTocudaMemLocation(&(UPTK_para.location), &(cuda_para.location));
     return cuda_para;
-}
+}*/
 
-UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para)
+/*UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para)
 {
     // if (nullptr == UPTK_para) {
     //     fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2668,7 +2668,7 @@ UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc c
     UPTK_para.flags = cudaMemAccessFlagsToUPTKMemAccessFlags(cuda_para.flags);
     cudaMemLocationToUPTKMemLocation(&(cuda_para.location), &(UPTK_para.location));
     return UPTK_para;
-}
+}*/
 
 void UPTKExternalMemoryBufferDescTocudaExternalMemoryBufferDesc(const struct UPTKExternalMemoryBufferDesc * UPTK_para, cudaExternalMemoryBufferDesc * cuda_para)
 {
@@ -2964,7 +2964,7 @@ void UPTKKernelNodeAttrValueTocudaKernelNodeAttrValue(const UPTKKernelNodeAttrVa
     }
 }*/
 
-void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para) {
+/*void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
         abort();
@@ -2974,9 +2974,9 @@ void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cuda
     cuda_para->allocType = UPTKMemAllocationTypeTocudaMemAllocationType(UPTK_para->allocType);
     cuda_para->handleTypes = UPTKMemAllocationHandleTypeTocudaMemAllocationHandleType(UPTK_para->handleTypes);
     UPTKMemLocationTocudaMemLocation(&(UPTK_para->location), &(cuda_para->location));
-}
+}*/
 
-void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTKMemPoolProps * UPTK_para) {
+/*void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTKMemPoolProps * UPTK_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2987,7 +2987,7 @@ void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTK
     UPTK_para->allocType = cudaMemAllocationTypeToUPTKMemAllocationType(cuda_para->allocType);
     UPTK_para->handleTypes = cudaMemAllocationHandleTypeToUPTKMemAllocationHandleType(cuda_para->handleTypes);
     cudaMemLocationToUPTKMemLocation(&(cuda_para->location), &(UPTK_para->location));
-}
+}*/
 
 cudaGraphMemAttributeType UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(enum UPTKGraphMemAttributeType para) {
         switch (para) {
@@ -3004,7 +3004,7 @@ cudaGraphMemAttributeType UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(e
         }
 }
 
-void UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParams *UPTK_para, cudaMemAllocNodeParams *cuda_para)
+/*void UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParams *UPTK_para, cudaMemAllocNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -3020,9 +3020,9 @@ void UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(const struct UPTKMemAllocNod
     }
     cuda_para->bytesize = UPTK_para->bytesize;
     cuda_para->dptr = UPTK_para->dptr;
-}
+}*/
 
-void cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(const struct cudaMemAllocNodeParams *cuda_para, UPTKMemAllocNodeParams *UPTK_para)
+/*void cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(const struct cudaMemAllocNodeParams *cuda_para, UPTKMemAllocNodeParams *UPTK_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -3038,7 +3038,7 @@ void cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(const struct cudaMemAllocNod
     }
     UPTK_para->bytesize = cuda_para->bytesize;
     UPTK_para->dptr = cuda_para->dptr;
-}
+}*/
 
 cudaGLDeviceList UPTKGLDeviceListTocudaGLDeviceList(UPTKGLDeviceList para) {
     switch (para) {
@@ -3597,7 +3597,7 @@ cudaExternalSemaphoreWaitNodeParams UPTKExternalSemaphoreWaitNodeParamsV2TocudaE
     return cuda_para;
 }
 
-void UPTKMemAllocNodeParamsV2TocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParamsV2 *UPTK_para, cudaMemAllocNodeParams *cuda_para)
+/*void UPTKMemAllocNodeParamsV2TocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParamsV2 *UPTK_para, cudaMemAllocNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3614,7 +3614,7 @@ void UPTKMemAllocNodeParamsV2TocudaMemAllocNodeParams(const struct UPTKMemAllocN
     }
     cuda_para->bytesize = UPTK_para->bytesize;
     cuda_para->dptr = UPTK_para->dptr;
-}
+}*/
 
 /*void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams *UPTK_para, cudaMemFreeNodeParams *cuda_para)
 {

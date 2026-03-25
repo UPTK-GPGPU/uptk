@@ -131,7 +131,7 @@ void UPTKMemcpy3DParmsTocudaMemcpy3DParms(const struct UPTKMemcpy3DParms * UPTK_
 void cudaMemcpy3DParmsToUPTKMemcpy3DParms(const cudaMemcpy3DParms * cuda_para, struct UPTKMemcpy3DParms * UPTK_para);
 void UPTKHostNodeParamsTocudaHostNodeParams(const struct UPTKHostNodeParams * UPTK_para, cudaHostNodeParams * cuda_para);
 void cudaHostNodeParamsToUPTKHostNodeParams(const cudaHostNodeParams * cuda_para, struct UPTKHostNodeParams * UPTK_para);
-void UPTKMemLocationTocudaMemLocation(const struct UPTKMemLocation * UPTK_para, cudaMemLocation * cuda_para);
+//void UPTKMemLocationTocudaMemLocation(const struct UPTKMemLocation * UPTK_para, cudaMemLocation * cuda_para);
 void UPTKPitchedPtrTocudaPitchedPtr(const struct UPTKPitchedPtr * UPTK_para, cudaPitchedPtr * cuda_para);
 void cudaPitchedPtrToUPTKPitchedPtr(const cudaPitchedPtr * cuda_para, struct UPTKPitchedPtr * UPTK_para);
 void UPTKResourceDescTocudaResourceDesc(const struct UPTKResourceDesc * UPTK_para, cudaResourceDesc * cuda_para);
@@ -176,16 +176,16 @@ enum UPTKAccessProperty cudaAccessPropertyToUPTKAccessProperty(cudaAccessPropert
 void UPTKAccessPolicyWindowTocudaAccessPolicyWindow(const struct UPTKAccessPolicyWindow * UPTK_para, cudaAccessPolicyWindow * cuda_para);
 void cudaAccessPolicyWindowToUPTKAccessPolicyWindow(const cudaAccessPolicyWindow * cuda_para, struct UPTKAccessPolicyWindow * UPTK_para);
 cudaGraphMemAttributeType UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(enum UPTKGraphMemAttributeType para);
-void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
+//void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
 void CUmemPoolPropsTocudaMemPoolProps(const CUmemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
-cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para);
+//cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para);
 cudaMemPoolAttr UPTKMemPoolAttrTocudaMemPoolAttr(enum UPTKMemPoolAttr para);
 void UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParams *UPTK_para, cudaMemAllocNodeParams *cuda_para);
 void cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(const struct cudaMemAllocNodeParams *cuda_para, UPTKMemAllocNodeParams *UPTK_para);
-void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTKMemPoolProps * UPTK_para);
+//void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTKMemPoolProps * UPTK_para);
 UPTKMemAllocationType cudaMemAllocationTypeToUPTKMemAllocationType(enum cudaMemAllocationType para);
 UPTKMemAllocationHandleType cudaMemAllocationHandleTypeToUPTKMemAllocationHandleType(enum cudaMemAllocationHandleType para);
-void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para);
+//void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para);
 //UPTKMemLocationType cudaMemLocationTypeToUPTKMemLocationType(enum cudaMemLocationType para);
 UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para);
 cudaGLDeviceList UPTKGLDeviceListTocudaGLDeviceList(UPTKGLDeviceList para);
@@ -217,7 +217,7 @@ UPTKExternalSemaphoreWaitNodeParams cudaExternalSemaphoreWaitNodeParamsToUPTKExt
 //UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntryPointQueryResult(cudaDriverEntryPointQueryResult para);
 //void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInstantiateParams * UPTK_para, cudaGraphInstantiateParams * cuda_para);
 //cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTKGraphInstantiateResult para);
-cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_para);
+//cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_para);
 //void cudaToUPTKCallback(cudaAsyncNotificationInfo_t* cudaInfo, void* wrappedUserData, cudaAsyncCallbackHandle_t cudaHandle);
 //UPTKAsyncNotificationType cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaAsyncNotificationType para);
 typedef struct {
