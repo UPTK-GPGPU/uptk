@@ -176,9 +176,9 @@ enum UPTKAccessProperty cudaAccessPropertyToUPTKAccessProperty(cudaAccessPropert
 void UPTKAccessPolicyWindowTocudaAccessPolicyWindow(const struct UPTKAccessPolicyWindow * UPTK_para, cudaAccessPolicyWindow * cuda_para);
 void cudaAccessPolicyWindowToUPTKAccessPolicyWindow(const cudaAccessPolicyWindow * cuda_para, struct UPTKAccessPolicyWindow * UPTK_para);
 cudaGraphMemAttributeType UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(enum UPTKGraphMemAttributeType para);
-void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
+//void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
 void CUmemPoolPropsTocudaMemPoolProps(const CUmemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para);
-cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para);
+//cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para);
 cudaMemPoolAttr UPTKMemPoolAttrTocudaMemPoolAttr(enum UPTKMemPoolAttr para);
 void UPTKMemAllocNodeParamsTocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParams *UPTK_para, cudaMemAllocNodeParams *cuda_para);
 void cudaMemAllocNodeParamsToUPTKMemAllocNodeParams(const struct cudaMemAllocNodeParams *cuda_para, UPTKMemAllocNodeParams *UPTK_para);
