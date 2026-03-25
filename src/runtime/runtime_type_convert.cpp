@@ -2646,7 +2646,7 @@ void cudaChannelFormatDescToUPTKChannelFormatDesc(const cudaChannelFormatDesc * 
     UPTK_para->z = cuda_para->z;
 }
 // TODO: UPTKMemAccessDesc generally appears in the form of an array, so special conversion is performed here.
-cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para)
+/*cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc UPTK_para)
 {
     // if (nullptr == UPTK_para) {
     //     fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2656,7 +2656,7 @@ cudaMemAccessDesc UPTKMemAccessDescTocudaMemAccessDesc(struct UPTKMemAccessDesc 
     cuda_para.flags = UPTKMemAccessFlagsTocudaMemAccessFlags(UPTK_para.flags);
     UPTKMemLocationTocudaMemLocation(&(UPTK_para.location), &(cuda_para.location));
     return cuda_para;
-}
+}*/
 
 /*UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para)
 {
@@ -2964,7 +2964,7 @@ void UPTKKernelNodeAttrValueTocudaKernelNodeAttrValue(const UPTKKernelNodeAttrVa
     }
 }*/
 
-void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para) {
+/*void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
         abort();
@@ -2974,7 +2974,7 @@ void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cuda
     cuda_para->allocType = UPTKMemAllocationTypeTocudaMemAllocationType(UPTK_para->allocType);
     cuda_para->handleTypes = UPTKMemAllocationHandleTypeTocudaMemAllocationHandleType(UPTK_para->handleTypes);
     UPTKMemLocationTocudaMemLocation(&(UPTK_para->location), &(cuda_para->location));
-}
+}*/
 
 /*void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTKMemPoolProps * UPTK_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para)
