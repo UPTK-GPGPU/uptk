@@ -174,15 +174,97 @@ cudaDataType UPTKDataTypeTocudaDataType(UPTKDataType para)
     }
 }
 
+cufftXtCallbackType UPTKfftXtCallbackTypeTocufftXtCallbackType(UPTKfftXtCallbackType para) {
+    switch (para) {
+        case UPTKFFT_CB_LD_COMPLEX:
+            return CUFFT_CB_LD_COMPLEX;
+        case UPTKFFT_CB_LD_COMPLEX_DOUBLE:
+            return CUFFT_CB_LD_COMPLEX_DOUBLE;
+        case UPTKFFT_CB_LD_REAL:
+            return CUFFT_CB_LD_REAL;
+        case UPTKFFT_CB_LD_REAL_DOUBLE:
+            return CUFFT_CB_LD_REAL_DOUBLE;
+        case UPTKFFT_CB_ST_COMPLEX:
+            return CUFFT_CB_ST_COMPLEX;
+        case UPTKFFT_CB_ST_COMPLEX_DOUBLE:
+            return CUFFT_CB_ST_COMPLEX_DOUBLE;
+        case UPTKFFT_CB_ST_REAL:
+            return CUFFT_CB_ST_REAL;
+        case UPTKFFT_CB_ST_REAL_DOUBLE:
+            return CUFFT_CB_ST_REAL_DOUBLE;
+        case UPTKFFT_CB_UNDEFINED:
+            return CUFFT_CB_UNDEFINED;
+        default:
+            ERROR_INVALID_ENUM();
+    }
+}
 
-cufftProperty UPTKfftPropertyTocufftProperty(UPTKfftProperty para)
+cufftXtSubFormat UPTKfftXtSubFormatTocuftXtSubFormat(UPTKfftXtSubFormat para)
 {
     switch (para)
     {
-    case UPTKFFT_PLAN_PROPERTY_INT64_PATIENT_JIT:
-        return NVFFT_PLAN_PROPERTY_INT64_PATIENT_JIT;
-    case UPTKFFT_PLAN_PROPERTY_INT64_MAX_NUM_HOST_THREADS:
-        return NVFFT_PLAN_PROPERTY_INT64_MAX_NUM_HOST_THREADS;
+    case UPTKFFT_XT_FORMAT_INPUT:
+        return CUFFT_XT_FORMAT_INPUT;
+    case UPTKFFT_XT_FORMAT_OUTPUT:
+        return CUFFT_XT_FORMAT_OUTPUT;
+    case UPTKFFT_XT_FORMAT_INPLACE:
+        return CUFFT_XT_FORMAT_INPLACE;
+    case UPTKFFT_XT_FORMAT_INPLACE_SHUFFLED:
+        return CUFFT_XT_FORMAT_INPLACE_SHUFFLED;
+    case UPTKFFT_XT_FORMAT_1D_INPUT_SHUFFLED:
+        return CUFFT_XT_FORMAT_1D_INPUT_SHUFFLED;
+    case UPTKFFT_XT_FORMAT_DISTRIBUTED_INPUT:
+        return CUFFT_XT_FORMAT_DISTRIBUTED_INPUT;
+    case UPTKFFT_XT_FORMAT_DISTRIBUTED_OUTPUT:
+        return CUFFT_XT_FORMAT_DISTRIBUTED_OUTPUT;
+    case UPTKFFT_FORMAT_UNDEFINED:
+        return CUFFT_FORMAT_UNDEFINED;
+    default:
+        ERROR_INVALID_ENUM();
+    }
+}
+
+cufftXtCopyType UPTKfftXtCopyTypeTocufftXtCopyType(UPTKfftXtCopyType para)
+{
+    switch (para)
+    {
+    case UPTKFFT_COPY_HOST_TO_DEVICE:
+        return CUFFT_COPY_HOST_TO_DEVICE;
+    case UPTKFFT_COPY_DEVICE_TO_HOST:
+        return CUFFT_COPY_DEVICE_TO_HOST;
+    case UPTKFFT_COPY_DEVICE_TO_DEVICE:
+        return CUFFT_COPY_DEVICE_TO_DEVICE;
+    case UPTKFFT_COPY_UNDEFINED:
+        return CUFFT_COPY_UNDEFINED;
+    default:
+        ERROR_INVALID_ENUM();
+    }
+}
+
+
+cufftXtQueryType UPTKfftXtQueryTypeTohcufftXtQueryType(UPTKfftXtQueryType para)
+{
+    switch (para)
+    {
+    case UPTKFFT_QUERY_1D_FACTORS:
+        return CUFFT_QUERY_1D_FACTORS;
+        case UPTKFFT_QUERY_UNDEFINED:
+    default:
+        ERROR_INVALID_ENUM();
+    }
+}
+
+
+cufftXtWorkAreaPolicy UPTKfftXtWorkAreaPolicyTocufftXtWorkAreaPolicy(UPTKfftXtWorkAreaPolicy para)
+{
+    switch (para)
+    {
+    case UPTKFFT_WORKAREA_MINIMAL:
+        return CUFFT_WORKAREA_MINIMAL;
+    case UPTKFFT_WORKAREA_USER:
+        return CUFFT_WORKAREA_USER;
+    case UPTKFFT_WORKAREA_PERFORMANCE:
+        return CUFFT_WORKAREA_PERFORMANCE;
     default:
         ERROR_INVALID_ENUM();
     }

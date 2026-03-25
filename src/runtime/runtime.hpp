@@ -64,7 +64,7 @@ void __cudaUnregisterFatBinary(void *modules);
 void __cudaRegisterTexture(void *modules, void *hostVar, char *hostVarName, char *deviceVarName, int texType, int normalized, int isExternal);
 void __cudaRegisterSurface(void *modules, void *hostVar, char *hostVarName, char *deviceVarName, int surfType, int isExternal);
 extern __host__ cudaError_t cudaBindSurfaceToArray(const struct surfaceReference *surfref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc);
-extern __host__ cudaError_t cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
+//extern __host__ cudaError_t cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
 extern __host__ cudaError_t cudaBindTexture2D(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t width, size_t height, size_t pitch);
 extern __host__ cudaError_t cudaBindTextureToArray(const struct textureReference *texref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc);
 extern __host__ cudaError_t cudaBindTextureToMipmappedArray(const struct textureReference *texref, cudaMipmappedArray_const_t mipmappedArray, const struct cudaChannelFormatDesc *desc);
@@ -106,7 +106,7 @@ cudaExternalSemaphoreHandleType UPTKExternalSemaphoreHandleTypeTocudaExternalSem
 
 enum cudaLimit UPTKLimitTocudaLimit(enum UPTKLimit para);
 cudaMemoryAdvise UPTKMemoryAdviseTocudaMemoryAdvise(enum UPTKMemoryAdvise para);
-cudaMemLocationType UPTKMemLocationTypeTocudaMemLocationType(enum UPTKMemLocationType para);
+//cudaMemLocationType UPTKMemLocationTypeTocudaMemLocationType(enum UPTKMemLocationType para);
 cudaMemRangeAttribute UPTKMemRangeAttributeTocudaMemRangeAttribute(enum UPTKMemRangeAttribute para);
 enum UPTKMemRangeAttribute cudaMemRangeAttributeToUPTKMemRangeAttribute(cudaMemRangeAttribute para);
 cudaMemcpyKind UPTKMemcpyKindTocudaMemcpyKind(enum UPTKMemcpyKind para);
@@ -166,7 +166,7 @@ cudaResourceType UPTKResourceTypeTocudaResourceType(enum UPTKResourceType para);
 enum UPTKResourceType cudaResourceTypeToUPTKResourceType(cudaResourceType para);
 
 void UPTKKernelNodeAttrValueTocudaKernelNodeAttrValue(const UPTKKernelNodeAttrValue *UPTK_para, cudaKernelNodeAttrValue *cuda_para, UPTKKernelNodeAttrID attr);
-void cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(const cudaKernelNodeAttrValue *cuda_para, UPTKKernelNodeAttrValue *UPTK_para, UPTKKernelNodeAttrID attr);
+//void cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(const cudaKernelNodeAttrValue *cuda_para, UPTKKernelNodeAttrValue *UPTK_para, UPTKKernelNodeAttrID attr);
 cudaMemAccessFlags UPTKMemAccessFlagsTocudaMemAccessFlags(UPTKMemAccessFlags para);
 UPTKMemAccessFlags cudaMemAccessFlagsToUPTKMemAccessFlags(cudaMemAccessFlags para);
 cudaMemAllocationType UPTKMemAllocationTypeTocudaMemAllocationType(enum UPTKMemAllocationType para);
@@ -186,7 +186,7 @@ void cudaMemPoolPropsToUPTKMemPoolProps(const cudaMemPoolProps * cuda_para, UPTK
 UPTKMemAllocationType cudaMemAllocationTypeToUPTKMemAllocationType(enum cudaMemAllocationType para);
 UPTKMemAllocationHandleType cudaMemAllocationHandleTypeToUPTKMemAllocationHandleType(enum cudaMemAllocationHandleType para);
 void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para);
-UPTKMemLocationType cudaMemLocationTypeToUPTKMemLocationType(enum cudaMemLocationType para);
+//UPTKMemLocationType cudaMemLocationTypeToUPTKMemLocationType(enum cudaMemLocationType para);
 UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para);
 cudaGLDeviceList UPTKGLDeviceListTocudaGLDeviceList(UPTKGLDeviceList para);
 cudaExternalSemaphoreWaitParams UPTKExternalSemaphoreWaitParamsTocudaExternalSemaphoreWaitParams(struct UPTKExternalSemaphoreWaitParams UPTK_para);
@@ -214,33 +214,33 @@ cudaExternalSemaphoreSignalNodeParams UPTKExternalSemaphoreSignalNodeParamsTocud
 UPTKExternalSemaphoreSignalNodeParams cudaExternalSemaphoreSignalNodeParamsToUPTKExternalSemaphoreSignalNodeParams(cudaExternalSemaphoreSignalNodeParams cuda_para);
 cudaExternalSemaphoreWaitNodeParams UPTKExternalSemaphoreWaitNodeParamsTocudaExternalSemaphoreWaitNodeParams(UPTKExternalSemaphoreWaitNodeParams UPTK_para);
 UPTKExternalSemaphoreWaitNodeParams cudaExternalSemaphoreWaitNodeParamsToUPTKExternalSemaphoreWaitNodeParams(cudaExternalSemaphoreWaitNodeParams cuda_para);
-UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntryPointQueryResult(cudaDriverEntryPointQueryResult para);
-void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInstantiateParams * UPTK_para, cudaGraphInstantiateParams * cuda_para);
-cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTKGraphInstantiateResult para);
+//UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntryPointQueryResult(cudaDriverEntryPointQueryResult para);
+//void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInstantiateParams * UPTK_para, cudaGraphInstantiateParams * cuda_para);
+//cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTKGraphInstantiateResult para);
 cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_para);
-void cudaToUPTKCallback(cudaAsyncNotificationInfo_t* cudaInfo, void* wrappedUserData, cudaAsyncCallbackHandle_t cudaHandle);
-UPTKAsyncNotificationType cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaAsyncNotificationType para);
+//void cudaToUPTKCallback(cudaAsyncNotificationInfo_t* cudaInfo, void* wrappedUserData, cudaAsyncCallbackHandle_t cudaHandle);
+//UPTKAsyncNotificationType cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaAsyncNotificationType para);
 typedef struct {
   UPTKAsyncCallback userCallback;
   void* userData;
 } CallbackWrapperData;
-void cudaGraphExecUpdateResultInfoToUPTKGraphExecUpdateResultInfo(const cudaGraphExecUpdateResultInfo * cuda_para, UPTKGraphExecUpdateResultInfo * UPTK_para);
+//void cudaGraphExecUpdateResultInfoToUPTKGraphExecUpdateResultInfo(const cudaGraphExecUpdateResultInfo * cuda_para, UPTKGraphExecUpdateResultInfo * UPTK_para);
 
-void UPTKGraphNodeParamsTocudaGraphNodeParams(const UPTKGraphNodeParams * UPTK_para, cudaGraphNodeParams * cuda_para);
+//void UPTKGraphNodeParamsTocudaGraphNodeParams(const UPTKGraphNodeParams * UPTK_para, cudaGraphNodeParams * cuda_para);
 //void UPTKKernelNodeParamsV2TocudaKernelNodeParams(const UPTKKernelNodeParamsV2 * UPTK_para, cudaKernelNodeParams * cuda_para);
-void UPTKMemcpyNodeParamsTocudaMemcpyNodeParams(const UPTKMemcpyNodeParams * UPTK_para, cudaMemcpyNodeParams * cuda_para);
+//void UPTKMemcpyNodeParamsTocudaMemcpyNodeParams(const UPTKMemcpyNodeParams * UPTK_para, cudaMemcpyNodeParams * cuda_para);
 void UPTKMemsetParamsV2TocudaMemsetParams(const UPTKMemsetParamsV2 * UPTK_para, cudaMemsetParams * cuda_para);
 void UPTKHostNodeParamsV2TocudaHostNodeParams(const UPTKHostNodeParamsV2 * UPTK_para, cudaHostNodeParams * cuda_para);
-void UPTKChildGraphNodeParamsTocudaChildGraphNodeParams(const UPTKChildGraphNodeParams* UPTK_para, cudaChildGraphNodeParams * cuda_para);
-void UPTKEventWaitNodeParamsTocudaEventWaitNodeParams(const UPTKEventWaitNodeParams * UPTK_para, cudaEventWaitNodeParams * cuda_para);
-void UPTKEventRecordNodeParamsTocudaEventRecordNodeParams(const UPTKEventRecordNodeParams * UPTK_para, cudaEventRecordNodeParams * cuda_para);
+//void UPTKChildGraphNodeParamsTocudaChildGraphNodeParams(const UPTKChildGraphNodeParams* UPTK_para, cudaChildGraphNodeParams * cuda_para);
+//void UPTKEventWaitNodeParamsTocudaEventWaitNodeParams(const UPTKEventWaitNodeParams * UPTK_para, cudaEventWaitNodeParams * cuda_para);
+//void UPTKEventRecordNodeParamsTocudaEventRecordNodeParams(const UPTKEventRecordNodeParams * UPTK_para, cudaEventRecordNodeParams * cuda_para);
 cudaExternalSemaphoreSignalNodeParams UPTKExternalSemaphoreSignalNodeParamsV2TocudaExternalSemaphoreSignalNodeParams(UPTKExternalSemaphoreSignalNodeParamsV2 UPTK_para);
 cudaExternalSemaphoreWaitNodeParams UPTKExternalSemaphoreWaitNodeParamsV2TocudaExternalSemaphoreWaitNodeParams(UPTKExternalSemaphoreWaitNodeParamsV2 UPTK_para);
 void UPTKMemAllocNodeParamsV2TocudaMemAllocNodeParams(const struct UPTKMemAllocNodeParamsV2 *UPTK_para, cudaMemAllocNodeParams *cuda_para);
-void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams * UPTK_para, cudaMemFreeNodeParams * cuda_para);
-void UPTKGraphEdgeDataTocudaGraphEdgeData(const UPTKGraphEdgeData* UPTK_para, cudaGraphEdgeData* cuda_para);
-void UPTKConditionalNodeParamsTocudaConditionalNodeParams(const UPTKConditionalNodeParams *UPTK_para, cudaConditionalNodeParams *cuda_para);
-cudaGraphConditionalNodeType UPTKConditionalNodeTypeTocudaConditionalNodeType(enum UPTKGraphConditionalNodeType para);
+//void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams * UPTK_para, cudaMemFreeNodeParams * cuda_para);
+//void UPTKGraphEdgeDataTocudaGraphEdgeData(const UPTKGraphEdgeData* UPTK_para, cudaGraphEdgeData* cuda_para);
+//void UPTKConditionalNodeParamsTocudaConditionalNodeParams(const UPTKConditionalNodeParams *UPTK_para, cudaConditionalNodeParams *cuda_para);
+//cudaGraphConditionalNodeType UPTKConditionalNodeTypeTocudaConditionalNodeType(enum UPTKGraphConditionalNodeType para);
 const char* UPTK_symbolTocuda_symbol_v2(const char *UPTK_symbol);
 typedef struct {
     const char *UPTK_symbol;

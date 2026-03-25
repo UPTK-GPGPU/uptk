@@ -724,8 +724,8 @@ cudaError_t UPTKErrorTocudaError(enum UPTKError para) {
             return cudaErrorUnmapBufferObjectFailed;
         case UPTKErrorUnsupportedLimit:
             return cudaErrorUnsupportedLimit;
-        case UPTKErrorInvalidResourceType:
-            return cudaErrorInvalidResourceType;
+//        case UPTKErrorInvalidResourceType:
+//            return cudaErrorInvalidResourceType;
         // UPTK12.6 Added error codes do not correspond to cuda error codes
         // case UPTKErrorFunctionNotLoaded:
         //     return ;      
@@ -958,8 +958,8 @@ enum UPTKError cudaErrorToUPTKError(cudaError_t para) {
             return UPTKErrorUnmapBufferObjectFailed;
         case cudaErrorUnsupportedLimit:
             return UPTKErrorUnsupportedLimit;
-        case cudaErrorInvalidResourceType:
-            return UPTKErrorInvalidResourceType;    
+        //case cudaErrorInvalidResourceType:
+        //    return UPTKErrorInvalidResourceType;    
         case cudaSuccess:
             return UPTKSuccess;
         default:
@@ -1189,8 +1189,8 @@ enum UPTKError cudaErrorToUPTKError_v2(cudaError_t para) {
             return UPTKErrorUnmapBufferObjectFailed;
         case cudaErrorUnsupportedLimit:
             return UPTKErrorUnsupportedLimit;
-        case cudaErrorInvalidResourceType:
-            return UPTKErrorInvalidResourceType;        
+        //case cudaErrorInvalidResourceType:
+        //    return UPTKErrorInvalidResourceType;        
         case cudaSuccess:
             return UPTKSuccess;
         default:
@@ -1396,8 +1396,8 @@ cudaGraphNodeType UPTKGraphNodeTypeTocudaGraphNodeType(enum UPTKGraphNodeType pa
             return cudaGraphNodeTypeMemAlloc;
         case UPTKGraphNodeTypeMemFree:
             return cudaGraphNodeTypeMemFree;
-        case UPTKGraphNodeTypeConditional:
-            return cudaGraphNodeTypeConditional;
+        //case UPTKGraphNodeTypeConditional:
+        //   return cudaGraphNodeTypeConditional;
         default: 
             ERROR_INVALID_ENUM();
     }
@@ -1431,8 +1431,8 @@ enum UPTKGraphNodeType cudaGraphNodeTypeToUPTKGraphNodeType(cudaGraphNodeType pa
             return UPTKGraphNodeTypeMemAlloc;
         case cudaGraphNodeTypeMemFree:
             return UPTKGraphNodeTypeMemFree;
-        case cudaGraphNodeTypeConditional:
-            return UPTKGraphNodeTypeConditional;
+        //case cudaGraphNodeTypeConditional:
+        //    return UPTKGraphNodeTypeConditional;
         default: 
             ERROR_INVALID_ENUM();
     }
@@ -1620,7 +1620,7 @@ UPTKMemAllocationHandleType cudaMemAllocationHandleTypeToUPTKMemAllocationHandle
     }
 }
 
-cudaMemLocationType UPTKMemLocationTypeTocudaMemLocationType(enum UPTKMemLocationType para) {
+/*cudaMemLocationType UPTKMemLocationTypeTocudaMemLocationType(enum UPTKMemLocationType para) {
     switch (para) {
         case UPTKMemLocationTypeDevice:
             return cudaMemLocationTypeDevice;
@@ -1652,7 +1652,7 @@ UPTKMemLocationType cudaMemLocationTypeToUPTKMemLocationType(enum cudaMemLocatio
         default:
             ERROR_INVALID_ENUM();
     }
-}
+}*/
 
 cudaMemPoolAttr UPTKMemPoolAttrTocudaMemPoolAttr(enum UPTKMemPoolAttr para) {
     switch (para) {
@@ -2798,7 +2798,7 @@ void cudaHostNodeParamsToUPTKHostNodeParams(const cudaHostNodeParams * cuda_para
     UPTK_para->userData = cuda_para->userData;
 }
 
-void UPTKMemLocationTocudaMemLocation(const struct UPTKMemLocation * UPTK_para, cudaMemLocation * cuda_para)
+/*void UPTKMemLocationTocudaMemLocation(const struct UPTKMemLocation * UPTK_para, cudaMemLocation * cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2806,9 +2806,9 @@ void UPTKMemLocationTocudaMemLocation(const struct UPTKMemLocation * UPTK_para, 
     }
     cuda_para->id = UPTK_para->id;
     cuda_para->type = UPTKMemLocationTypeTocudaMemLocationType(UPTK_para->type);
-}
+}*/
 
-void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para)
+/*void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2816,7 +2816,7 @@ void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, 
     }
     UPTK_para->id = cuda_para->id;
     UPTK_para->type = cudaMemLocationTypeToUPTKMemLocationType(cuda_para->type);
-}
+}*/
 
 void UPTKPitchedPtrTocudaPitchedPtr(const struct UPTKPitchedPtr * UPTK_para, cudaPitchedPtr * cuda_para)
 {
@@ -2948,7 +2948,7 @@ void UPTKKernelNodeAttrValueTocudaKernelNodeAttrValue(const UPTKKernelNodeAttrVa
     }
 }
 
-void cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(const cudaKernelNodeAttrValue *cuda_para, UPTKKernelNodeAttrValue *UPTK_para, UPTKKernelNodeAttrID attr)
+/*void cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(const cudaKernelNodeAttrValue *cuda_para, UPTKKernelNodeAttrValue *UPTK_para, UPTKKernelNodeAttrID attr)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -2962,7 +2962,7 @@ void cudaKernelNodeAttrValueToUPTKKernelNodeAttrValue(const cudaKernelNodeAttrVa
     else if (attr == UPTKKernelNodeAttributeAccessPolicyWindow) {
         cudaAccessPolicyWindowToUPTKAccessPolicyWindow(&(cuda_para->accessPolicyWindow), &(UPTK_para->accessPolicyWindow));
     }
-}
+}*/
 
 void UPTKMemPoolPropsTocudaMemPoolProps(const UPTKMemPoolProps * UPTK_para, cudaMemPoolProps * cuda_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
@@ -3442,7 +3442,7 @@ enum UPTKTextureReadMode cudaTextureReadModeToUPTKTextureReadMode(enum cudaTextu
     }
 }*/
 
-void UPTKConditionalNodeParamsTocudaConditionalNodeParams(const UPTKConditionalNodeParams *UPTK_para, cudaConditionalNodeParams *cuda_para)
+/*void UPTKConditionalNodeParamsTocudaConditionalNodeParams(const UPTKConditionalNodeParams *UPTK_para, cudaConditionalNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3467,7 +3467,7 @@ cudaGraphConditionalNodeType UPTKConditionalNodeTypeTocudaConditionalNodeType(en
     default:
         ERROR_INVALID_ENUM();
     }
-}
+}*/
 
 void UPTKKernelNodeParamsV2TocudaKernelNodeParams(const UPTKKernelNodeParamsV2 *UPTK_para, cudaKernelNodeParams *cuda_para)
 {
@@ -3493,7 +3493,7 @@ void UPTKKernelNodeParamsV2TocudaKernelNodeParams(const UPTKKernelNodeParamsV2 *
 #endif
 }
 
-void UPTKMemcpyNodeParamsTocudaMemcpyNodeParams(const UPTKMemcpyNodeParams *UPTK_para, cudaMemcpyNodeParams *cuda_para)
+/*void UPTKMemcpyNodeParamsTocudaMemcpyNodeParams(const UPTKMemcpyNodeParams *UPTK_para, cudaMemcpyNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3503,7 +3503,7 @@ void UPTKMemcpyNodeParamsTocudaMemcpyNodeParams(const UPTKMemcpyNodeParams *UPTK
     cuda_para->flags = UPTK_para->flags;
     memcpy(&(cuda_para->reserved), &(UPTK_para->reserved), sizeof(int[3]));
     UPTKMemcpy3DParmsTocudaMemcpy3DParms(&(UPTK_para->copyParams), &(cuda_para->copyParams));
-}
+}*/
 
 void UPTKMemsetParamsV2TocudaMemsetParams(const UPTKMemsetParamsV2 *UPTK_para, cudaMemsetParams *cuda_para)
 {
@@ -3531,7 +3531,7 @@ void UPTKHostNodeParamsV2TocudaHostNodeParams(const UPTKHostNodeParamsV2 *UPTK_p
     cuda_para->userData = UPTK_para->userData;
 }
 
-void UPTKChildGraphNodeParamsTocudaChildGraphNodeParams(const UPTKChildGraphNodeParams *UPTK_para, cudaChildGraphNodeParams *cuda_para)
+/*void UPTKChildGraphNodeParamsTocudaChildGraphNodeParams(const UPTKChildGraphNodeParams *UPTK_para, cudaChildGraphNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3539,9 +3539,9 @@ void UPTKChildGraphNodeParamsTocudaChildGraphNodeParams(const UPTKChildGraphNode
         abort();
     }
     cuda_para->graph = (cudaGraph_t)UPTK_para->graph;
-}
+}*/
 
-void UPTKEventWaitNodeParamsTocudaEventWaitNodeParams(const UPTKEventWaitNodeParams *UPTK_para, cudaEventWaitNodeParams *cuda_para)
+/*void UPTKEventWaitNodeParamsTocudaEventWaitNodeParams(const UPTKEventWaitNodeParams *UPTK_para, cudaEventWaitNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3549,9 +3549,9 @@ void UPTKEventWaitNodeParamsTocudaEventWaitNodeParams(const UPTKEventWaitNodePar
         abort();
     }
     cuda_para->event = (cudaEvent_t)UPTK_para->event;
-}
+}*/
 
-void UPTKEventRecordNodeParamsTocudaEventRecordNodeParams(const UPTKEventRecordNodeParams *UPTK_para, cudaEventRecordNodeParams *cuda_para)
+/*void UPTKEventRecordNodeParamsTocudaEventRecordNodeParams(const UPTKEventRecordNodeParams *UPTK_para, cudaEventRecordNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3559,7 +3559,7 @@ void UPTKEventRecordNodeParamsTocudaEventRecordNodeParams(const UPTKEventRecordN
         abort();
     }
     cuda_para->event = (cudaEvent_t)UPTK_para->event;
-}
+}*/
 
 cudaExternalSemaphoreSignalNodeParams UPTKExternalSemaphoreSignalNodeParamsV2TocudaExternalSemaphoreSignalNodeParams(UPTKExternalSemaphoreSignalNodeParamsV2 UPTK_para)
 {
@@ -3616,7 +3616,7 @@ void UPTKMemAllocNodeParamsV2TocudaMemAllocNodeParams(const struct UPTKMemAllocN
     cuda_para->dptr = UPTK_para->dptr;
 }
 
-void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams *UPTK_para, cudaMemFreeNodeParams *cuda_para)
+/*void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams *UPTK_para, cudaMemFreeNodeParams *cuda_para)
 {
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
@@ -3624,9 +3624,9 @@ void UPTKMemFreeNodeParamsTocudaMemFreeNodeParams(const UPTKMemFreeNodeParams *U
         abort();
     }
     cuda_para->dptr = UPTK_para->dptr;
-}
+}*/
 
-void UPTKGraphEdgeDataTocudaGraphEdgeData(const UPTKGraphEdgeData* UPTK_para, cudaGraphEdgeData* cuda_para){
+/*void UPTKGraphEdgeDataTocudaGraphEdgeData(const UPTKGraphEdgeData* UPTK_para, cudaGraphEdgeData* cuda_para){
     if (nullptr == UPTK_para || nullptr == cuda_para)
     {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -3636,9 +3636,9 @@ void UPTKGraphEdgeDataTocudaGraphEdgeData(const UPTKGraphEdgeData* UPTK_para, cu
     cuda_para->to_port = UPTK_para->to_port;
     cuda_para->type = UPTK_para->type;
     memcpy(&(cuda_para->reserved), &(UPTK_para->reserved), sizeof(unsigned char[5]));
-}
+}*/
 
-UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntryPointQueryResult(cudaDriverEntryPointQueryResult para) {
+/*UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntryPointQueryResult(cudaDriverEntryPointQueryResult para) {
     switch (para) {
         case cudaDriverEntryPointSuccess:
             return UPTKDriverEntryPointSuccess;
@@ -3649,9 +3649,9 @@ UPTKDriverEntryPointQueryResult cudaDriverEntryPointQueryResultToUPTKDriverEntry
         default:
             ERROR_INVALID_ENUM();    
     }
-}
+}*/
 
-void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInstantiateParams * UPTK_para, cudaGraphInstantiateParams * cuda_para) {
+/*void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInstantiateParams * UPTK_para, cudaGraphInstantiateParams * cuda_para) {
     if (nullptr == UPTK_para || nullptr == cuda_para) {
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
         abort();
@@ -3660,9 +3660,9 @@ void UPTKGraphInstantiateParamsTocudaGraphInstantiateParams(const UPTKGraphInsta
     cuda_para->uploadStream = (cudaStream_t) UPTK_para->uploadStream;
     cuda_para->errNode_out = (cudaGraphNode_t) UPTK_para->errNode_out;
     cuda_para->result_out = UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTK_para->result_out);
-}
+}*/
 
-cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTKGraphInstantiateResult para) {
+/*cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResult(UPTKGraphInstantiateResult para) {
     switch(para) {
         case UPTKGraphInstantiateSuccess:
             return cudaGraphInstantiateSuccess;
@@ -3677,9 +3677,9 @@ cudaGraphInstantiateResult UPTKGraphInstantiateResultTocudaGraphInstantiateResul
         default:
             ERROR_INVALID_ENUM();    
     }
-}
+}*/
 
-cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_para)
+/*cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_para)
 {
     // if (nullptr == UPTK_para || nullptr == cuda_para) {
     //     fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
@@ -3689,16 +3689,16 @@ cudaMemLocation UPTKMemLocationTocudaMemLocation_v2(struct UPTKMemLocation UPTK_
     cuda_para.id = UPTK_para.id;
     cuda_para.type = UPTKMemLocationTypeTocudaMemLocationType(UPTK_para.type);
     return cuda_para;
-}
+}*/
 
-UPTKAsyncNotificationType cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaAsyncNotificationType para){
+/*UPTKAsyncNotificationType cudaAsyncNotificationTypeToUPTKAsyncNotificationType(cudaAsyncNotificationType para){
     switch(para) {
     case cudaAsyncNotificationTypeOverBudget:
         return UPTKAsyncNotificationTypeOverBudget;
     default:
         ERROR_INVALID_ENUM();    
     }
-}
+}*/
 
 /*void cudaGraphExecUpdateResultInfoToUPTKGraphExecUpdateResultInfo(const cudaGraphExecUpdateResultInfo * cuda_para, UPTKGraphExecUpdateResultInfo * UPTK_para){
     if (nullptr == UPTK_para || nullptr == cuda_para) {

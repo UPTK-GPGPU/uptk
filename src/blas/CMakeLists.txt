@@ -1,5 +1,5 @@
 # build target libUPTKblas.so
-add_library(UPTKblas SHARED blas_type_convert.cpp blas_fun_convert.cpp )
+add_library(UPTKblas SHARED blas_type_convert.cpp blas_fun_convert.cpp blasXt_fun_convert.cpp)
 target_link_libraries(UPTKblas PRIVATE cublas)
 
 

@@ -322,7 +322,7 @@ __host__ UPTKError UPTKDeviceGetAttribute(int* value, enum UPTKDeviceAttr attr, 
         return UPTKErrorInvalidDevice;
     }
     cudaDeviceProp prop = {0};
-    cuda_res = cudaGetDeviceProperties_v2(&prop, device);
+    cuda_res = cudaGetDeviceProperties(&prop, device);
     if (cuda_res != cudaSuccess) {
         return cudaErrorToUPTKError(cuda_res);
     }
@@ -1344,18 +1344,12 @@ __host__ UPTKError UPTKGraphExecMemsetNodeSetParams(UPTKGraphExec_t hGraphExec,U
     return cudaErrorToUPTKError(cuda_res);
 }
 
-__host__ UPTKError UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec, UPTKGraph_t hGraph, UPTKGraphExecUpdateResultInfo *resultInfo)
-{   
-    if (nullptr == resultInfo){
+__host__ UPTKError UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec,UPTKGraph_t hGraph,UPTKGraphNode_t * hErrorNode_out,enum UPTKGraphExecUpdateResult * updateResult_out)
+{
+    if (nullptr == updateResult_out)
         return UPTKErrorInvalidValue;
-    }
     cudaError_t cuda_res;
-    cudaGraphExecUpdateResultInfo cuda_resultInfo;
-    cuda_res = cudaGraphExecUpdate((cudaGraphExec_t) hGraphExec, (cudaGraph_t) hGraph, &cuda_resultInfo);
-    // The return value cudaErrorGraphExecUpdateFailure is also a valuable output.
-    if(cudaSuccess == cuda_res || cudaErrorGraphExecUpdateFailure == cuda_res){
-        cudaGraphExecUpdateResultInfoToUPTKGraphExecUpdateResultInfo(&cuda_resultInfo, resultInfo);
-    }
+    cuda_res = cudaGraphExecUpdate((cudaGraphExec_t) hGraphExec, (cudaGraph_t) hGraph, (cudaGraphNode_t *) hErrorNode_out, (cudaGraphExecUpdateResult *)updateResult_out);
     return cudaErrorToUPTKError(cuda_res);
 }
 
