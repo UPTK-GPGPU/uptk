@@ -248,23 +248,6 @@ UPTKfftResult UPTKFFTAPI UPTKfftGetVersion(int *version);
 UPTKfftResult UPTKFFTAPI UPTKfftGetProperty(UPTKlibraryPropertyType type,
                                       int *value);
 
-//
-// Set/Get PlanProperty APIs configures per-plan behavior 
-//
-typedef enum UPTKfftProperty_t {
-    UPTKFFT_PLAN_PROPERTY_INT64_PATIENT_JIT = 0x1,
-    UPTKFFT_PLAN_PROPERTY_INT64_MAX_NUM_HOST_THREADS = 0x2,
-} UPTKfftProperty;
-
-UPTKfftResult UPTKFFTAPI UPTKfftSetPlanPropertyInt64(UPTKfftHandle plan, 
-                                               UPTKfftProperty property, 
-                                               const long long int inputValueInt);
-
-UPTKfftResult UPTKFFTAPI UPTKfftGetPlanPropertyInt64(UPTKfftHandle plan, 
-                                               UPTKfftProperty property, 
-                                               long long int* returnPtrValue);
-
-UPTKfftResult UPTKFFTAPI UPTKfftResetPlanProperty(UPTKfftHandle plan, UPTKfftProperty property);
 
 #ifdef __cplusplus
 }

@@ -270,30 +270,6 @@ UPTKfftResult UPTKFFTAPI UPTKfftSetWorkArea(UPTKfftHandle plan, void *workArea)
     return cufftResultToUPTKfftResult(cuda_res);
 }
 
-UPTKfftResult UPTKFFTAPI UPTKfftSetPlanPropertyInt64(UPTKfftHandle plan,
-                                                        UPTKfftProperty property,
-                                                        const long long int inputValueInt)
-{
-    cufftResult cuda_res;
-    cuda_res = cufftSetPlanPropertyInt64((cufftHandle)plan, UPTKfftPropertyTocufftProperty(property), inputValueInt);
-    return cufftResultToUPTKfftResult(cuda_res);
-}
-
-UPTKfftResult UPTKFFTAPI UPTKfftGetPlanPropertyInt64(UPTKfftHandle plan,
-                                                        UPTKfftProperty property,
-                                                        long long int *returnPtrValue)
-{
-    cufftResult cuda_res;
-    cuda_res = cufftGetPlanPropertyInt64((cufftHandle)plan, UPTKfftPropertyTocufftProperty(property), returnPtrValue);
-    return cufftResultToUPTKfftResult(cuda_res);
-}
-UPTKfftResult UPTKFFTAPI UPTKfftResetPlanProperty(UPTKfftHandle plan, UPTKfftProperty property)
-{
-    cufftResult cuda_res;
-    cuda_res = cufftResetPlanProperty((cufftHandle)plan, UPTKfftPropertyTocufftProperty(property));
-    return cufftResultToUPTKfftResult(cuda_res);
-}
-
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus */

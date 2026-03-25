@@ -1,6 +1,7 @@
 libUPTKfft.so.1
 {
 global:
+
 	UPTKfftCreate;
 	UPTKfftDestroy;
 	UPTKfftEstimate1d;
@@ -33,9 +34,27 @@ global:
 	UPTKfftSetAutoAllocation;
 	UPTKfftSetStream;
 	UPTKfftSetWorkArea;
-	UPTKfftGetPlanPropertyInt64;
-	UPTKfftResetPlanProperty;
-	UPTKfftSetPlanPropertyInt64;
+	
+	UPTKfftXtClearCallback;
+	UPTKfftXtExec;
+	UPTKfftXtExecDescriptor;
+	UPTKfftXtExecDescriptorC2C;
+	UPTKfftXtExecDescriptorC2R;
+	UPTKfftXtExecDescriptorD2Z;
+	UPTKfftXtExecDescriptorR2C;
+	UPTKfftXtExecDescriptorZ2D;
+	UPTKfftXtExecDescriptorZ2Z;
+	UPTKfftXtFree;
+	UPTKfftXtGetSizeMany;
+	UPTKfftXtMakePlanMany;
+	UPTKfftXtMalloc;
+	UPTKfftXtMemcpy;
+	UPTKfftXtQueryPlan;
+	UPTKfftXtSetCallback;
+	UPTKfftXtSetCallbackSharedSize;
+	UPTKfftXtSetGPUs;
+	UPTKfftXtSetWorkArea;
+	UPTKfftXtSetWorkAreaPolicy;
 local:
 	*;
 };

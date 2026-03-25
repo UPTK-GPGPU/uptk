@@ -1,5 +1,5 @@
 # build target libUPTKfft.so
-add_library(UPTKfft SHARED fft_type_convert.cpp fft_fun_convert.cpp)
+add_library(UPTKfft SHARED fft_type_convert.cpp fft_fun_convert.cpp fftXt_fun_convert.cpp)
 target_link_libraries(UPTKfft PRIVATE cufft)
 
 
