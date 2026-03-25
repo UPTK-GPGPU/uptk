@@ -372,6 +372,20 @@ enum UPTKGLDeviceList
   UPTKGLDeviceListNextFrame     = 3  /**< The UPTK devices for the GPUs to be used by the current OpenGL context in the next frame  */
 };
 
+extern __host__ UPTKError_t UPTKBindSurfaceToArray(const struct surfaceReference *surfref, UPTKArray_const_t array, const struct UPTKChannelFormatDesc *desc);
+extern __host__ UPTKError_t UPTKBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct UPTKChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
+extern __host__ UPTKError_t UPTKBindTexture2D(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct UPTKChannelFormatDesc *desc, size_t width, size_t height, size_t pitch);
+extern __host__ UPTKError_t UPTKBindTextureToArray(const struct textureReference *texref, UPTKArray_const_t array, const struct UPTKChannelFormatDesc *desc);
+extern __host__ UPTKError_t UPTKBindTextureToMipmappedArray(const struct textureReference *texref, UPTKMipmappedArray_const_t mipmappedArray, const struct UPTKChannelFormatDesc *desc);
+extern __host__ UPTKError_t UPTKCreateTextureObject_v2(UPTKTextureObject_t *pTexObject, const struct UPTKResourceDesc *pResDesc, const struct UPTKTextureDesc_v2 *pTexDesc, const struct UPTKResourceViewDesc *pResViewDesc);
+extern __host__ UPTKError_t UPTKGetDeviceProperties(struct UPTKDeviceProp *prop, int device);
+extern __host__ const char* UPTKGetErrorName(UPTKError_t error);
+extern __host__ UPTKError_t UPTKGetSurfaceReference(const struct surfaceReference **surfref, const void *symbol);
+extern __host__ UPTKError_t UPTKGetTextureAlignmentOffset(size_t *offset, const struct textureReference *texref);
+extern __host__ UPTKError_t UPTKGetTextureObjectTextureDesc_v2(struct UPTKTextureDesc_v2 *pTexDesc, UPTKTextureObject_t texObject);
+extern __host__ UPTKError_t UPTKGetTextureReference(const struct textureReference **texref, const void *symbol);
+extern __host__ UPTKError_t UPTKProfilerInitialize(const char * configFile,const char * outputFile,UPTKOutputMode_t outputMode);
+extern __host__ UPTKError_t UPTKUnbindTexture(const struct textureReference *texref);
 extern __host__ UPTKError_t UPTKGLGetDevices(unsigned int *pUPTKDeviceCount, int *pUPTKDevices, unsigned int UPTKDeviceCount, enum UPTKGLDeviceList deviceList);
 extern __host__ UPTKError_t UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource **resource, GLuint image, GLenum target, unsigned int flags);
 extern __host__ UPTKError_t UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource **resource, GLuint buffer, unsigned int flags);
@@ -1580,23 +1594,6 @@ extern __host__ UPTKError_t UPTKPeekAtLastError(void);
  * ::cuGetErrorName
  */
 extern __host__ const char* UPTKGetErrorName(UPTKError_t error);
-
-/**
- * \brief Returns the description string for an error code
- *
- * Returns the description string for an error code.  If the error
- * code is not recognized, "unrecognized error code" is returned.
- *
- * \param error - Error code to convert to string
- *
- * \return
- * \p char* pointer to a NULL-terminated string
- *
- * \sa ::UPTKGetErrorName, ::UPTKGetLastError, ::UPTKPeekAtLastError, ::UPTKError,
- * ::cuGetErrorString
- */
-extern __host__ const char* UPTKGetErrorString(UPTKError_t error);
-/** @} */ /* END UPTKRT_ERROR */
 
 /**
  * \addtogroup UPTKRT_DEVICE 
@@ -5526,7 +5523,7 @@ extern __host__ UPTKError_t UPTKMalloc(void **devPtr, size_t size);
  * ::UPTKFreeHost, ::UPTKHostAlloc,
  * ::cuMemAllocHost
  */
-extern __host__ UPTKError_t UPTKMallocHost(void **ptr, size_t size);
+extern __host__ UPTKError_t UPTKMallocHost(void **ptr, size_t size, unsigned int flags);
 
 /**
  * \brief Allocates pitched memory on the device

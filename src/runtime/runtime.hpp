@@ -19,6 +19,23 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** \cond impl_private */
+#if !defined(__dv)
+
+#if defined(__cplusplus)
+
+#define __dv(v) \
+        = v
+
+#else /* __cplusplus */
+
+#define __dv(v)
+
+#endif /* __cplusplus */
+
+#endif /* !__dv */
+/** \endcond impl_private */
+
 #define ERROR_INVALID_ENUM() do{printf("Error invalid enum. Fun: %s, para: %d\n", __FUNCTION__, para); abort(); }while(0)
 #define ERROR_INVALID_OR_UNSUPPORTED_ENUM() do{printf("[ERROR] The enumeration passed in is invalid, or the functionality for the enumeration is currently not supported. Fun: %s, para: %d\n", __FUNCTION__, para); abort(); }while(0)
 
@@ -37,6 +54,32 @@ const int SM_VERSION_MINOR = 5;
 #define UPTKStreamAttrIDTocudaStreamAttrID UPTKLaunchAttributeIDTocudaLaunchAttributeID
 #define cudaStreamAttrValueToUPTKStreamAttrValue cudaLaunchAttributeValueToUPTKLaunchAttributeValue
 #define UPTKStreamAttrValueTocudaStreamAttrValue UPTKLaunchAttributeValueTocudaLaunchAttributeValue
+
+cudaError_t __cudaPopCallConfiguration(dim3 *gridDim, dim3 *blockDim, size_t *sharedMem, cudaStream_t *stream);
+void *__cudaRegisterFatBinary(const void *data);
+void __cudaRegisterFunction(void * modules, const void *hostFunction, char *deviceFunction, const char *deviceFunctionName, unsigned int threadLimit, uint3 *tid, uint3 *bid, dim3 *blockDim, dim3 *gridDim, int *wSize);
+void __cudaRegisterManagedVar(void *modules, void *ManagedPtr, void *variblePtr, const char *hostVarName, size_t varSize, int varAlignment);
+void __cudaRegisterVar(void *modules, void *hostVar, char *deviceVar, const char *deviceVarName, int isExternal, std::size_t size, int isConstant, int isGlobal);
+void __cudaUnregisterFatBinary(void *modules);
+void __cudaRegisterTexture(void *modules, void *hostVar, char *hostVarName, char *deviceVarName, int texType, int normalized, int isExternal);
+void __cudaRegisterSurface(void *modules, void *hostVar, char *hostVarName, char *deviceVarName, int surfType, int isExternal);
+extern __host__ cudaError_t cudaBindSurfaceToArray(const struct surfaceReference *surfref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc);
+extern __host__ cudaError_t cudaBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
+extern __host__ cudaError_t cudaBindTexture2D(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct cudaChannelFormatDesc *desc, size_t width, size_t height, size_t pitch);
+extern __host__ cudaError_t cudaBindTextureToArray(const struct textureReference *texref, cudaArray_const_t array, const struct cudaChannelFormatDesc *desc);
+extern __host__ cudaError_t cudaBindTextureToMipmappedArray(const struct textureReference *texref, cudaMipmappedArray_const_t mipmappedArray, const struct cudaChannelFormatDesc *desc);
+extern __host__ cudaError_t cudaCreateTextureObject_v2(cudaTextureObject_t *pTexObject, const struct cudaResourceDesc *pResDesc, const struct cudaTextureDesc_v2 *pTexDesc, const struct cudaResourceViewDesc *pResViewDesc);
+extern __host__ cudaError_t cudaGetDeviceProperties(struct cudaDeviceProp *prop, int device);
+extern __host__ const char* cudaGetErrorName(cudaError_t error);
+extern __host__ const char* cudaGetErrorString(cudaError_t error);
+extern __host__ cudaError_t cudaGetSurfaceReference(const struct surfaceReference **surfref, const void *symbol);
+extern __host__ cudaError_t cudaGetTextureAlignmentOffset(size_t *offset, const struct textureReference *texref);
+extern __host__ cudaError_t cudaGetTextureObjectTextureDesc_v2(struct cudaTextureDesc_v2 *pTexDesc, cudaTextureObject_t texObject);
+extern __host__ cudaError_t cudaGetTextureReference(const struct textureReference **texref, const void *symbol);
+extern __host__ cudaError_t cudaUnbindTexture(const struct textureReference *texref);
+extern __host__ cudaError_t cudaGLGetDevices(unsigned int *pcudaDeviceCount, int *pcudaDevices, unsigned int cudaDeviceCount, enum cudaGLDeviceList deviceList);
+extern __host__ cudaError_t cudaGraphicsGLRegisterImage(struct cudaGraphicsResource **resource, GLuint image, GLenum target, unsigned int flags);
+extern __host__ cudaError_t cudaGraphicsGLRegisterBuffer(struct cudaGraphicsResource **resource, GLuint buffer, unsigned int flags);
 
 cudaError_t UPTKErrorTocudaError(enum UPTKError para);
 enum UPTKError cudaErrorToUPTKError(cudaError_t para);

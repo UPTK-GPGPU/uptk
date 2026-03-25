@@ -1835,11 +1835,20 @@ enum UPTKMemRangeAttribute
     UPTKMemRangeAttributeReadMostly                 = 1, /**< Whether the range will mostly be read and only occassionally be written to */
     UPTKMemRangeAttributePreferredLocation          = 2, /**< The preferred location of the range */
     UPTKMemRangeAttributeAccessedBy                 = 3, /**< Memory range has ::UPTKMemAdviseSetAccessedBy set for specified device */
-    UPTKMemRangeAttributeLastPrefetchLocation       = 4  /**< The last location to which the range was prefetched */
-    , UPTKMemRangeAttributePreferredLocationType    = 5  /**< The preferred location type of the range */
-    , UPTKMemRangeAttributePreferredLocationId      = 6  /**< The preferred location id of the range */
-    , UPTKMemRangeAttributeLastPrefetchLocationType = 7  /**< The last location type to which the range was prefetched */
-    , UPTKMemRangeAttributeLastPrefetchLocationId   = 8  /**< The last location id to which the range was prefetched */
+    UPTKMemRangeAttributeLastPrefetchLocation       = 4,  /**< The last location to which the range was prefetched */
+    UPTKMemRangeAttributePreferredLocationType    = 5,  /**< The preferred location type of the range */
+    UPTKMemRangeAttributePreferredLocationId      = 6,  /**< The preferred location id of the range */
+    UPTKMemRangeAttributeLastPrefetchLocationType = 7,  /**< The last location type to which the range was prefetched */
+    UPTKMemRangeAttributeLastPrefetchLocationId   = 8  /**< The last location id to which the range was prefetched */
+};
+
+/**
+ *  * CUDA Profiler Output modes
+ *   */
+enum __device_builtin__ UPTKOutputMode
+{
+    UPTKKeyValuePair    = 0x00, /**< Output mode Key-Value pair format. */
+    UPTKCSV             = 0x01  /**< Output mode Comma separated values format. */
 };
 
 /**
@@ -2886,6 +2895,11 @@ typedef struct CUevent_st *UPTKEvent_t;
  * UPTK graphics resource types
  */
 typedef struct UPTKGraphicsResource *UPTKGraphicsResource_t;
+
+/**
+ *  * CUDA output file modes
+ *   */
+typedef enum UPTKOutputMode UPTKOutputMode_t;
 
 /**
  * UPTK external memory
