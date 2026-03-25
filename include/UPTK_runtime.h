@@ -461,14 +461,14 @@ static __inline__ __host__ UPTKError_t UPTKGraphInstantiate(
  * \ref ::UPTKMallocHost(void**, size_t) "UPTKMallocHost (C API)",
  * ::UPTKFreeHost, ::UPTKHostAlloc
  */
-static __inline__ __host__ UPTKError_t UPTKMallocHost(
+/*static __inline__ __host__ UPTKError_t UPTKMallocHost(
   void         **ptr,
   size_t         size,
   unsigned int   flags
 )
 {
   return ::UPTKHostAlloc(ptr, size, flags);
-}
+}*/
 
 template<class T>
 static __inline__ __host__ UPTKError_t UPTKHostAlloc(
