@@ -306,7 +306,7 @@ typedef enum { UPTKncclInt8       = 0, UPTKncclChar       = 0,
                UPTKncclFloat32    = 7, UPTKncclFloat      = 7,
                UPTKncclFloat64    = 8, UPTKncclDouble     = 8,
                UPTKncclBfloat16   = 9,
-#if defined(UPTKRCCL_FLOAT8)
+#if defined(UPT_KRCCL_FLOAT8)
                UPTKncclFp8E4M3    = 10,
                UPTKncclFp8E5M2    = 11,
                UPTKncclNumTypes   = 12 } UPTKncclDataType_t;
