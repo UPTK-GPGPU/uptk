@@ -4,6 +4,7 @@
 
 #include "cuComplex.h"
 #include "UPTK_library_types.h"
+#include <UPTK_driver_types.h>
 
 #ifdef __cplusplus
 extern "C" {
