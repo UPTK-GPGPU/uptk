@@ -118,7 +118,7 @@ ncclDataType_t UPTKncclDataTypeToncclDataType(UPTKncclDataType_t para)
     case UPTKncclBfloat16:
         return ncclBfloat16;
 
-#if defined(UPTKRCCL_FLOAT8) && defined(NCCL_HAS_FP8)
+#if defined(UPT_KRCCL_FLOAT8) && defined(NCCL_HAS_FP8)
     case UPTKncclFp8E4M3:
         return ncclFp8E4M3;
     case UPTKncclFp8E5M2:
