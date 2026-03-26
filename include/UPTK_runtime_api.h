@@ -1380,6 +1380,8 @@ extern __host__ UPTKError_t UPTKThreadSetLimit(enum UPTKLimit limit, size_t valu
  */
 extern __host__ UPTKError_t UPTKThreadGetLimit(size_t *pValue, enum UPTKLimit limit);
 
+extern __host__ const char * UPTKGetErrorString(UPTKError error);
+
 /**
  * \brief Returns the preferred cache configuration for the current device.
  *
