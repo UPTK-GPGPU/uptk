@@ -5525,7 +5525,7 @@ extern __host__ UPTKError_t UPTKMalloc(void **devPtr, size_t size);
  * ::UPTKFreeHost, ::UPTKHostAlloc,
  * ::cuMemAllocHost
  */
-extern __host__ UPTKError_t UPTKMallocHost(void **ptr, size_t size, unsigned int flags);
+//extern __host__ UPTKError_t UPTKMallocHost(void **ptr, size_t size, unsigned int flags);
 
 /**
  * \brief Allocates pitched memory on the device
