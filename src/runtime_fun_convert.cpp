@@ -147,8 +147,25 @@ __host__ UPTKError_t  UPTKMemcpy(void * dst,const void * src,size_t count,enum U
 
 __host__ UPTKError_t  UPTKIpcGetMemHandle(UPTKIpcMemHandle_t * handle,void * devPtr)
 {
-    hipError_t hip_res;
-    hip_res = hipIpcGetMemHandle((hipIpcMemHandle_t *) handle, devPtr);
+    if (handle == nullptr) {
+        return UPTKErrorInvalidValue;
+    }
+
+    hipIpcMemHandle_t hip_handle{};
+    hipError_t hip_res = hipIpcGetMemHandle(&hip_handle, devPtr);
+    if (hip_res != hipSuccess) {
+        return hipErrorToUPTKError(hip_res);
+    }
+
+    // Copy only the reserved bytes to avoid struct size mismatches.
+    int len = min(UPTK_IPC_HANDLE_SIZE, HIP_IPC_HANDLE_SIZE);
+    for (int i = 0; i < len; ++i) {
+        handle->reserved[i] = (char)hip_handle.reserved[i];
+    }
+    // Zero any remaining bytes (if UPTK handle is larger than HIP handle).
+    for (int i = len; i < UPTK_IPC_HANDLE_SIZE; ++i) {
+        handle->reserved[i] = 0;
+    }
     return hipErrorToUPTKError(hip_res);
 }
 

@@ -17,14 +17,7 @@ extern "C"
 
     /** \cond impl_private */
 #if !defined(__dv)
-
-#if defined(__NVCC__)
-#define UPTKStream_t cudaStream_t
-#endif 
-#if defined(__HIPCC__)
-#define UPTKStream_t hipStream_t
-#endif 
-
+typedef void *UPTKStream_t;
 #if defined(__cplusplus)
 
 #define __dv(v) \

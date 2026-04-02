@@ -285,6 +285,9 @@ void UPTKIpcMemHandleTohipIpcMemHandle(const UPTKIpcMemHandle_t * UPTK_para, hip
         fprintf(stderr, "%s para is nullptr\n", __FUNCTION__);
         abort();
     }
+    // Ensure the temporary hip handle is fully initialized to avoid
+    // invalid handles when the underlying struct sizes differ.
+    memset(hip_para, 0, sizeof(*hip_para));
     int len = min(UPTK_IPC_HANDLE_SIZE, HIP_IPC_HANDLE_SIZE);
     for (int i = 0; i < len; ++i) {
         hip_para->reserved[i] = UPTK_para->reserved[i];

@@ -50,14 +50,10 @@ install(FILES ${CMAKE_SOURCE_DIR}/env.sh
         DESTINATION .
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_EXECUTE)
 
-
-
-
-
-
-
-
-
-
-
-
+if(BUILD_TESTS)
+    message(STATUS "========== The compilation test program has been activated ==========")
+    add_definitions(-DBUILD_TESTS)
+    add_subdirectory(tests)
+else()
+    message(STATUS "========== The compilation test program has been shut down ==========")
+endif()
