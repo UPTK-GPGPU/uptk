@@ -17,7 +17,7 @@ extern "C" {
 /**
  * cublas status convert function
  */
-cublasStatus_t UPTKblasStatusStatusTocublasStatus(UPTKblasStatus_t para);
+cublasStatus_t UPTKblasStatusTocublasStatus(UPTKblasStatus_t para);
 UPTKblasStatus_t cublasStatusToUPTKblasStatus(cublasStatus_t para);
 
 /**
