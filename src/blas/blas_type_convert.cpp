@@ -341,7 +341,7 @@ extern "C"
         }
     }
 
-    cublasStatus_t UPTKblasStatusStatusTocublasStatus(UPTKblasStatus_t para)
+    /*cublasStatus_t UPTKblasStatusTocublasStatus(UPTKblasStatus_t para)
     {
         switch (para)
         {
@@ -368,7 +368,7 @@ extern "C"
         default:
             ERROR_INVALID_ENUM();
         }
-    }
+    }*/
 
     UPTKblasStatus_t hipblasStatusTocublasStatus(cublasStatus_t para)
     {
