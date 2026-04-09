@@ -621,6 +621,9 @@ UPTKblasStatus_t UPTKBLASAPI
 UPTKblasIsamin(UPTKblasHandle_t handle, int n, const float* x, int incx, int* result); /* host or device pointer */
 
 UPTKblasStatus_t UPTKBLASAPI
+UPTKblasIzamax(UPTKblasHandle_t handle, int n, const cuDoubleComplex *x, int incx, int *result); /* host or device pointer */
+
+UPTKblasStatus_t UPTKBLASAPI
 UPTKblasIdamin(UPTKblasHandle_t handle, int n, const double* x, int incx, int* result); /* host or device pointer */
 
 UPTKblasStatus_t UPTKBLASAPI
