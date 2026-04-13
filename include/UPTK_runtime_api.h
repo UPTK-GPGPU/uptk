@@ -2150,7 +2150,7 @@ extern __host__ UPTKError_t UPTKDeviceGetAttribute(int *value, enum UPTKDeviceAt
  *
  * \sa ::cuDeviceGetDefaultMemPool, ::UPTKMallocAsync, ::UPTKMemPoolTrimTo, ::UPTKMemPoolGetAttribute, ::UPTKDeviceSetMemPool, ::UPTKMemPoolSetAttribute, ::UPTKMemPoolSetAccess
  */
-extern __host__ UPTKError_t UPTKDeviceGetDefaultMemPool(UPTKMemPool_t *memPool, int device);
+extern __host__ UPTKError_t UPTKDeviceGetDefaultMemPool(UPTKMemPool_t *memPool, int dev);
 
 
 /**
@@ -2693,6 +2693,12 @@ extern __host__ UPTKError_t UPTKStreamCreateWithFlags(UPTKStream_t *pStream, uns
  */
 extern __host__ UPTKError_t UPTKStreamCreateWithPriority(UPTKStream_t *pStream, unsigned int flags, int priority);
 
+
+
+extern __host__ UPTKError_t UPTKStreamCopyAttributes(UPTKStream_t dst, UPTKStream_t src);
+extern __host__ UPTKError_t UPTKStreamGetAttribute(UPTKStream_t hStream, UPTKStreamAttrID attr, UPTKStreamAttrValue *value_out);
+
+extern __host__ UPTKError_t UPTKStreamSetAttribute(UPTKStream_t hStream, UPTKStreamAttrID attr, const UPTKStreamAttrValue *value);
 /**
  * \brief Query the priority of a stream
  *
@@ -2816,7 +2822,6 @@ extern __host__ UPTKError_t UPTKCtxResetPersistingL2Cache(void);
  * ::UPTKAccessPolicyWindow
  */
 extern __host__ UPTKError_t UPTKStreamCopyAttributes(UPTKStream_t dst, UPTKStream_t src);
-
  /**
  * \brief Queries stream attribute.
  *
@@ -9648,6 +9653,8 @@ extern __host__ UPTKError_t UPTKGetChannelDesc(struct UPTKChannelFormatDesc *des
  */
 extern __host__ struct UPTKChannelFormatDesc UPTKCreateChannelDesc(int x, int y, int z, int w, enum UPTKChannelFormatKind f);
 
+extern __host__ struct UPTKChannelFormatDesc UPTKCreateChannelDescHalf(void);
+
 /**
  * \brief Creates a texture object
  *
@@ -13394,7 +13401,7 @@ extern __host__ UPTKError_t UPTKGraphNodeGetEnabled(UPTKGraphExec_t hGraphExec, 
  * \sa
  * ::UPTKGraphInstantiate
  */
-extern __host__ UPTKError_t UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec, UPTKGraph_t hGraph, UPTKGraphExecUpdateResultInfo *resultInfo);
+extern __host__ UPTKError_t UPTKGraphExecUpdate(UPTKGraphExec_t hGraphExec,UPTKGraph_t hGraph,UPTKGraphNode_t * hErrorNode_out,enum UPTKGraphExecUpdateResult * updateResult_out);
 
 /**
  * \brief Uploads an executable graph in a stream

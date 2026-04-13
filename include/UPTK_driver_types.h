@@ -1238,6 +1238,18 @@ struct UPTKPitchedPtr
     size_t  ysize;    /**< Logical height of allocation in elements */
 };
 
+static __inline__ __host__ struct UPTKPitchedPtr make_UPTKPitchedPtr(void *d, size_t p, size_t xsz, size_t ysz) 
+{
+  struct UPTKPitchedPtr s;
+
+  s.ptr   = d;
+  s.pitch = p;
+  s.xsize = xsz;
+  s.ysize = ysz;
+
+  return s;
+}
+
 /**
  * UPTK extent
  *
@@ -1250,6 +1262,17 @@ struct UPTKExtent
     size_t depth;     /**< Depth in elements */
 };
 
+static __inline__ __host__ struct UPTKExtent make_UPTKExtent(size_t w, size_t h, size_t d) 
+{
+  struct UPTKExtent e;
+
+  e.width  = w;
+  e.height = h;
+  e.depth  = d;
+
+  return e;
+}
+
 /**
  * UPTK 3D position
  *
@@ -1261,6 +1284,19 @@ struct UPTKPos
     size_t y;     /**< y */
     size_t z;     /**< z */
 };
+
+//struct UPTKPos make_UPTKPos(size_t x, size_t y, size_t z);
+
+static __inline__ __host__ struct UPTKPos  make_UPTKPos(size_t x, size_t y, size_t z) 
+{
+  struct UPTKPos p;
+
+  p.x = x;
+  p.y = y;
+  p.z = z;
+
+  return p;
+}
 
 /**
  * UPTK 3D memory copying parameters
@@ -3671,6 +3707,647 @@ typedef struct UPTKAsyncNotificationInfo
 } UPTKAsyncNotificationInfo_t;
 
 typedef void (*UPTKAsyncCallback)(UPTKAsyncNotificationInfo_t*, void*, UPTKAsyncCallbackHandle_t);
+
+
+/**
+ * Error codes
+ */
+typedef enum UPTKError_enum {
+    /**
+     * The API call returned with no errors. In the case of query calls, this
+     * also means that the operation being queried is complete (see
+     * ::cuEventQuery() and ::cuStreamQuery()).
+     */
+    UPTK_SUCCESS                              = 0,
+
+    /**
+     * This indicates that one or more of the parameters passed to the API call
+     * is not within an acceptable range of values.
+     */
+    UPTK_ERROR_INVALID_VALUE                  = 1,
+
+    /**
+     * The API call failed because it was unable to allocate enough memory or
+     * other resources to perform the requested operation.
+     */
+    UPTK_ERROR_OUT_OF_MEMORY                  = 2,
+
+    /**
+     * This indicates that the UPTK driver has not been initialized with
+     * ::cuInit() or that initialization has failed.
+     */
+    UPTK_ERROR_NOT_INITIALIZED                = 3,
+
+    /**
+     * This indicates that the UPTK driver is in the process of shutting down.
+     */
+    UPTK_ERROR_DEINITIALIZED                  = 4,
+
+    /**
+     * This indicates profiler is not initialized for this run. This can
+     * happen when the application is running with external profiling tools
+     * like visual profiler.
+     */
+    UPTK_ERROR_PROFILER_DISABLED              = 5,
+
+    /**
+     * \deprecated
+     * This error return is deprecated as of UPTK 5.0. It is no longer an error
+     * to attempt to enable/disable the profiling via ::cuProfilerStart or
+     * ::cuProfilerStop without initialization.
+     */
+    UPTK_ERROR_PROFILER_NOT_INITIALIZED       = 6,
+
+    /**
+     * \deprecated
+     * This error return is deprecated as of UPTK 5.0. It is no longer an error
+     * to call cuProfilerStart() when profiling is already enabled.
+     */
+    UPTK_ERROR_PROFILER_ALREADY_STARTED       = 7,
+
+    /**
+     * \deprecated
+     * This error return is deprecated as of UPTK 5.0. It is no longer an error
+     * to call cuProfilerStop() when profiling is already disabled.
+     */
+    UPTK_ERROR_PROFILER_ALREADY_STOPPED       = 8,
+
+    /**
+     * This indicates that the UPTK driver that the application has loaded is a
+     * stub library. Applications that run with the stub rather than a real
+     * driver loaded will result in UPTK API returning this error.
+     */
+    UPTK_ERROR_STUB_LIBRARY                   = 34,
+
+    /**  
+     * This indicates that requested UPTK device is unavailable at the current
+     * time. Devices are often unavailable due to use of
+     * ::UPTK_COMPUTEMODE_EXCLUSIVE_PROCESS or ::UPTK_COMPUTEMODE_PROHIBITED.
+     */
+    UPTK_ERROR_DEVICE_UNAVAILABLE            = 46,
+
+    /**
+     * This indicates that no UPTK-capable devices were detected by the installed
+     * UPTK driver.
+     */
+    UPTK_ERROR_NO_DEVICE                      = 100,
+
+    /**
+     * This indicates that the device ordinal supplied by the user does not
+     * correspond to a valid UPTK device or that the action requested is
+     * invalid for the specified device.
+     */
+    UPTK_ERROR_INVALID_DEVICE                 = 101,
+
+    /**
+     * This error indicates that the Grid license is not applied.
+     */
+    UPTK_ERROR_DEVICE_NOT_LICENSED            = 102,
+
+    /**
+     * This indicates that the device kernel image is invalid. This can also
+     * indicate an invalid UPTK module.
+     */
+    UPTK_ERROR_INVALID_IMAGE                  = 200,
+
+    /**
+     * This most frequently indicates that there is no context bound to the
+     * current thread. This can also be returned if the context passed to an
+     * API call is not a valid handle (such as a context that has had
+     * ::cuCtxDestroy() invoked on it). This can also be returned if a user
+     * mixes different API versions (i.e. 3010 context with 3020 API calls).
+     * See ::cuCtxGetApiVersion() for more details.
+     * This can also be returned if the green context passed to an API call
+     * was not converted to a ::UPTKcontext using ::cuCtxFromGreenCtx API.
+     */
+    UPTK_ERROR_INVALID_CONTEXT                = 201,
+
+    /**
+     * This indicated that the context being supplied as a parameter to the
+     * API call was already the active context.
+     * \deprecated
+     * This error return is deprecated as of UPTK 3.2. It is no longer an
+     * error to attempt to push the active context via ::cuCtxPushCurrent().
+     */
+    UPTK_ERROR_CONTEXT_ALREADY_CURRENT        = 202,
+
+    /**
+     * This indicates that a map or register operation has failed.
+     */
+    UPTK_ERROR_MAP_FAILED                     = 205,
+
+    /**
+     * This indicates that an unmap or unregister operation has failed.
+     */
+    UPTK_ERROR_UNMAP_FAILED                   = 206,
+
+    /**
+     * This indicates that the specified array is currently mapped and thus
+     * cannot be destroyed.
+     */
+    UPTK_ERROR_ARRAY_IS_MAPPED                = 207,
+
+    /**
+     * This indicates that the resource is already mapped.
+     */
+    UPTK_ERROR_ALREADY_MAPPED                 = 208,
+
+    /**
+     * This indicates that there is no kernel image available that is suitable
+     * for the device. This can occur when a user specifies code generation
+     * options for a particular UPTK source file that do not include the
+     * corresponding device configuration.
+     */
+    UPTK_ERROR_NO_BINARY_FOR_GPU              = 209,
+
+    /**
+     * This indicates that a resource has already been acquired.
+     */
+    UPTK_ERROR_ALREADY_ACQUIRED               = 210,
+
+    /**
+     * This indicates that a resource is not mapped.
+     */
+    UPTK_ERROR_NOT_MAPPED                     = 211,
+
+    /**
+     * This indicates that a mapped resource is not available for access as an
+     * array.
+     */
+    UPTK_ERROR_NOT_MAPPED_AS_ARRAY            = 212,
+
+    /**
+     * This indicates that a mapped resource is not available for access as a
+     * pointer.
+     */
+    UPTK_ERROR_NOT_MAPPED_AS_POINTER          = 213,
+
+    /**
+     * This indicates that an uncorrectable ECC error was detected during
+     * execution.
+     */
+    UPTK_ERROR_ECC_UNCORRECTABLE              = 214,
+
+    /**
+     * This indicates that the ::UPTKlimit passed to the API call is not
+     * supported by the active device.
+     */
+    UPTK_ERROR_UNSUPPORTED_LIMIT              = 215,
+
+    /**
+     * This indicates that the ::UPTKcontext passed to the API call can
+     * only be bound to a single CPU thread at a time but is already
+     * bound to a CPU thread.
+     */
+    UPTK_ERROR_CONTEXT_ALREADY_IN_USE         = 216,
+
+    /**
+     * This indicates that peer access is not supported across the given
+     * devices.
+     */
+    UPTK_ERROR_PEER_ACCESS_UNSUPPORTED        = 217,
+
+    /**
+     * This indicates that a PTX JIT compilation failed.
+     */
+    UPTK_ERROR_INVALID_PTX                    = 218,
+
+    /**
+     * This indicates an error with OpenGL or DirectX context.
+     */
+    UPTK_ERROR_INVALID_GRAPHICS_CONTEXT       = 219,
+
+    /**
+    * This indicates that an uncorrectable NVLink error was detected during the
+    * execution.
+    */
+    UPTK_ERROR_NVLINK_UNCORRECTABLE           = 220,
+
+    /**
+    * This indicates that the PTX JIT compiler library was not found.
+    */
+    UPTK_ERROR_JIT_COMPILER_NOT_FOUND         = 221,
+
+    /**
+     * This indicates that the provided PTX was compiled with an unsupported toolchain.
+     */
+
+    UPTK_ERROR_UNSUPPORTED_PTX_VERSION        = 222,
+
+    /**
+     * This indicates that the PTX JIT compilation was disabled.
+     */
+    UPTK_ERROR_JIT_COMPILATION_DISABLED       = 223,
+
+    /**
+     * This indicates that the ::UPTKexecAffinityType passed to the API call is not
+     * supported by the active device.
+     */ 
+    UPTK_ERROR_UNSUPPORTED_EXEC_AFFINITY      = 224,
+
+    /**
+     * This indicates that the code to be compiled by the PTX JIT contains
+     * unsupported call to UPTKDeviceSynchronize.
+     */
+    UPTK_ERROR_UNSUPPORTED_DEVSIDE_SYNC       = 225,
+
+    /**
+     * This indicates that the device kernel source is invalid. This includes
+     * compilation/linker errors encountered in device code or user error.
+     */
+    UPTK_ERROR_INVALID_SOURCE                 = 300,
+
+    /**
+     * This indicates that the file specified was not found.
+     */
+    UPTK_ERROR_FILE_NOT_FOUND                 = 301,
+
+    /**
+     * This indicates that a link to a shared object failed to resolve.
+     */
+    UPTK_ERROR_SHARED_OBJECT_SYMBOL_NOT_FOUND = 302,
+
+    /**
+     * This indicates that initialization of a shared object failed.
+     */
+    UPTK_ERROR_SHARED_OBJECT_INIT_FAILED      = 303,
+
+    /**
+     * This indicates that an OS call failed.
+     */
+    UPTK_ERROR_OPERATING_SYSTEM               = 304,
+
+    /**
+     * This indicates that a resource handle passed to the API call was not
+     * valid. Resource handles are opaque types like ::UPTKstream and ::UPTKevent.
+     */
+    UPTK_ERROR_INVALID_HANDLE                 = 400,
+
+    /**
+     * This indicates that a resource required by the API call is not in a
+     * valid state to perform the requested operation.
+     */
+    UPTK_ERROR_ILLEGAL_STATE                  = 401,
+
+    /**
+     * This indicates an attempt was made to introspect an object in a way that
+     * would discard semantically important information. This is either due to
+     * the object using funtionality newer than the API version used to
+     * introspect it or omission of optional return arguments.
+     */
+    UPTK_ERROR_LOSSY_QUERY                    = 402,
+
+    /**
+     * This indicates that a named symbol was not found. Examples of symbols
+     * are global/constant variable names, driver function names, texture names,
+     * and surface names.
+     */
+    UPTK_ERROR_NOT_FOUND                      = 500,
+
+    /**
+     * This indicates that asynchronous operations issued previously have not
+     * completed yet. This result is not actually an error, but must be indicated
+     * differently than ::UPTK_SUCCESS (which indicates completion). Calls that
+     * may return this value include ::cuEventQuery() and ::cuStreamQuery().
+     */
+    UPTK_ERROR_NOT_READY                      = 600,
+
+    /**
+     * While executing a kernel, the device encountered a
+     * load or store instruction on an invalid memory address.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_ILLEGAL_ADDRESS                = 700,
+
+    /**
+     * This indicates that a launch did not occur because it did not have
+     * appropriate resources. This error usually indicates that the user has
+     * attempted to pass too many arguments to the device kernel, or the
+     * kernel launch specifies too many threads for the kernel's register
+     * count. Passing arguments of the wrong size (i.e. a 64-bit pointer
+     * when a 32-bit int is expected) is equivalent to passing too many
+     * arguments and can also result in this error.
+     */
+    UPTK_ERROR_LAUNCH_OUT_OF_RESOURCES        = 701,
+
+    /**
+     * This indicates that the device kernel took too long to execute. This can
+     * only occur if timeouts are enabled - see the device attribute
+     * ::UPTK_DEVICE_ATTRIBUTE_KERNEL_EXEC_TIMEOUT for more information.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_LAUNCH_TIMEOUT                 = 702,
+
+    /**
+     * This error indicates a kernel launch that uses an incompatible texturing
+     * mode.
+     */
+    UPTK_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING  = 703,
+
+    /**
+     * This error indicates that a call to ::cuCtxEnablePeerAccess() is
+     * trying to re-enable peer access to a context which has already
+     * had peer access to it enabled.
+     */
+    UPTK_ERROR_PEER_ACCESS_ALREADY_ENABLED    = 704,
+
+    /**
+     * This error indicates that ::cuCtxDisablePeerAccess() is
+     * trying to disable peer access which has not been enabled yet
+     * via ::cuCtxEnablePeerAccess().
+     */
+    UPTK_ERROR_PEER_ACCESS_NOT_ENABLED        = 705,
+
+    /**
+     * This error indicates that the primary context for the specified device
+     * has already been initialized.
+     */
+    UPTK_ERROR_PRIMARY_CONTEXT_ACTIVE         = 708,
+
+    /**
+     * This error indicates that the context current to the calling thread
+     * has been destroyed using ::cuCtxDestroy, or is a primary context which
+     * has not yet been initialized.
+     */
+    UPTK_ERROR_CONTEXT_IS_DESTROYED           = 709,
+
+    /**
+     * A device-side assert triggered during kernel execution. The context
+     * cannot be used anymore, and must be destroyed. All existing device
+     * memory allocations from this context are invalid and must be
+     * reconstructed if the program is to continue using UPTK.
+     */
+    UPTK_ERROR_ASSERT                         = 710,
+
+    /**
+     * This error indicates that the hardware resources required to enable
+     * peer access have been exhausted for one or more of the devices
+     * passed to ::cuCtxEnablePeerAccess().
+     */
+    UPTK_ERROR_TOO_MANY_PEERS                 = 711,
+
+    /**
+     * This error indicates that the memory range passed to ::cuMemHostRegister()
+     * has already been registered.
+     */
+    UPTK_ERROR_HOST_MEMORY_ALREADY_REGISTERED = 712,
+
+    /**
+     * This error indicates that the pointer passed to ::cuMemHostUnregister()
+     * does not correspond to any currently registered memory region.
+     */
+    UPTK_ERROR_HOST_MEMORY_NOT_REGISTERED     = 713,
+
+    /**
+     * While executing a kernel, the device encountered a stack error.
+     * This can be due to stack corruption or exceeding the stack size limit.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_HARDWARE_STACK_ERROR           = 714,
+
+    /**
+     * While executing a kernel, the device encountered an illegal instruction.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_ILLEGAL_INSTRUCTION            = 715,
+
+    /**
+     * While executing a kernel, the device encountered a load or store instruction
+     * on a memory address which is not aligned.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_MISALIGNED_ADDRESS             = 716,
+
+    /**
+     * While executing a kernel, the device encountered an instruction
+     * which can only operate on memory locations in certain address spaces
+     * (global, shared, or local), but was supplied a memory address not
+     * belonging to an allowed address space.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_INVALID_ADDRESS_SPACE          = 717,
+
+    /**
+     * While executing a kernel, the device program counter wrapped its address space.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_INVALID_PC                     = 718,
+
+    /**
+     * An exception occurred on the device while executing a kernel. Common
+     * causes include dereferencing an invalid device pointer and accessing
+     * out of bounds shared memory. Less common cases can be system specific - more
+     * information about these cases can be found in the system specific user guide.
+     * This leaves the process in an inconsistent state and any further UPTK work
+     * will return the same error. To continue using UPTK, the process must be terminated
+     * and relaunched.
+     */
+    UPTK_ERROR_LAUNCH_FAILED                  = 719,
+
+    /**
+     * This error indicates that the number of blocks launched per grid for a kernel that was
+     * launched via either ::cuLaunchCooperativeKernel or ::cuLaunchCooperativeKernelMultiDevice
+     * exceeds the maximum number of blocks as allowed by ::cuOccupancyMaxActiveBlocksPerMultiprocessor
+     * or ::cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags times the number of multiprocessors
+     * as specified by the device attribute ::UPTK_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT.
+     */
+    UPTK_ERROR_COOPERATIVE_LAUNCH_TOO_LARGE   = 720,
+
+    /**
+     * This error indicates that the attempted operation is not permitted.
+     */
+    UPTK_ERROR_NOT_PERMITTED                  = 800,
+
+    /**
+     * This error indicates that the attempted operation is not supported
+     * on the current system or device.
+     */
+    UPTK_ERROR_NOT_SUPPORTED                  = 801,
+
+    /**
+     * This error indicates that the system is not yet ready to start any UPTK
+     * work.  To continue using UPTK, verify the system configuration is in a
+     * valid state and all required driver daemons are actively running.
+     * More information about this error can be found in the system specific
+     * user guide.
+     */
+    UPTK_ERROR_SYSTEM_NOT_READY               = 802,
+
+    /**
+     * This error indicates that there is a mismatch between the versions of
+     * the display driver and the UPTK driver. Refer to the compatibility documentation
+     * for supported versions.
+     */
+    UPTK_ERROR_SYSTEM_DRIVER_MISMATCH         = 803,
+
+    /**
+     * This error indicates that the system was upgraded to run with forward compatibility
+     * but the visible hardware detected by UPTK does not support this configuration.
+     * Refer to the compatibility documentation for the supported hardware matrix or ensure
+     * that only supported hardware is visible during initialization via the UPTK_VISIBLE_DEVICES
+     * environment variable.
+     */
+    UPTK_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE = 804,
+
+    /**
+     * This error indicates that the MPS client failed to connect to the MPS control daemon or the MPS server.
+     */
+    UPTK_ERROR_MPS_CONNECTION_FAILED          = 805,
+
+    /**
+     * This error indicates that the remote procedural call between the MPS server and the MPS client failed.
+     */
+    UPTK_ERROR_MPS_RPC_FAILURE                = 806,
+
+    /**
+     * This error indicates that the MPS server is not ready to accept new MPS client requests.
+     * This error can be returned when the MPS server is in the process of recovering from a fatal failure.
+     */
+    UPTK_ERROR_MPS_SERVER_NOT_READY           = 807,
+
+    /**
+     * This error indicates that the hardware resources required to create MPS client have been exhausted.
+     */
+    UPTK_ERROR_MPS_MAX_CLIENTS_REACHED        = 808,
+
+    /**
+     * This error indicates the the hardware resources required to support device connections have been exhausted.
+     */
+    UPTK_ERROR_MPS_MAX_CONNECTIONS_REACHED    = 809,
+
+    /**
+     * This error indicates that the MPS client has been terminated by the server. To continue using UPTK, the process must be terminated and relaunched.
+     */
+    UPTK_ERROR_MPS_CLIENT_TERMINATED          = 810,
+
+    /**
+     * This error indicates that the module is using UPTK Dynamic Parallelism, but the current configuration, like MPS, does not support it.
+     */
+    UPTK_ERROR_CDP_NOT_SUPPORTED              = 811,
+
+    /**
+     * This error indicates that a module contains an unsupported interaction between different versions of UPTK Dynamic Parallelism.
+     */
+    UPTK_ERROR_CDP_VERSION_MISMATCH           = 812,
+
+    /**
+     * This error indicates that the operation is not permitted when
+     * the stream is capturing.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_UNSUPPORTED     = 900,
+
+    /**
+     * This error indicates that the current capture sequence on the stream
+     * has been invalidated due to a previous error.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_INVALIDATED     = 901,
+
+    /**
+     * This error indicates that the operation would have resulted in a merge
+     * of two independent capture sequences.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_MERGE           = 902,
+
+    /**
+     * This error indicates that the capture was not initiated in this stream.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_UNMATCHED       = 903,
+
+    /**
+     * This error indicates that the capture sequence contains a fork that was
+     * not joined to the primary stream.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_UNJOINED        = 904,
+
+    /**
+     * This error indicates that a dependency would have been created which
+     * crosses the capture sequence boundary. Only implicit in-stream ordering
+     * dependencies are allowed to cross the boundary.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_ISOLATION       = 905,
+
+    /**
+     * This error indicates a disallowed implicit dependency on a current capture
+     * sequence from UPTKStreamLegacy.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_IMPLICIT        = 906,
+
+    /**
+     * This error indicates that the operation is not permitted on an event which
+     * was last recorded in a capturing stream.
+     */
+    UPTK_ERROR_CAPTURED_EVENT                 = 907,
+
+    /**
+     * A stream capture sequence not initiated with the ::UPTK_STREAM_CAPTURE_MODE_RELAXED
+     * argument to ::cuStreamBeginCapture was passed to ::cuStreamEndCapture in a
+     * different thread.
+     */
+    UPTK_ERROR_STREAM_CAPTURE_WRONG_THREAD    = 908,
+
+    /**
+     * This error indicates that the timeout specified for the wait operation has lapsed.
+     */
+    UPTK_ERROR_TIMEOUT                        = 909,
+
+    /**
+     * This error indicates that the graph update was not performed because it included 
+     * changes which violated constraints specific to instantiated graph update.
+     */
+    UPTK_ERROR_GRAPH_EXEC_UPDATE_FAILURE      = 910,
+
+    /**
+     * This indicates that an async error has occurred in a device outside of UPTK.
+     * If UPTK was waiting for an external device's signal before consuming shared data,
+     * the external device signaled an error indicating that the data is not valid for
+     * consumption. This leaves the process in an inconsistent state and any further UPTK
+     * work will return the same error. To continue using UPTK, the process must be
+     * terminated and relaunched.
+     */
+    UPTK_ERROR_EXTERNAL_DEVICE               = 911,
+
+    /**
+     * Indicates a kernel launch error due to cluster misconfiguration.
+     */
+    UPTK_ERROR_INVALID_CLUSTER_SIZE           = 912,
+
+    /**
+     * Indiciates a function handle is not loaded when calling an API that requires
+     * a loaded function.
+    */
+    UPTK_ERROR_FUNCTION_NOT_LOADED            = 913,
+
+    /**
+     * This error indicates one or more resources passed in are not valid resource
+     * types for the operation.
+    */
+    UPTK_ERROR_INVALID_RESOURCE_TYPE          = 914,
+
+    /**
+     * This error indicates one or more resources are insufficient or non-applicable for
+     * the operation.
+    */
+    UPTK_ERROR_INVALID_RESOURCE_CONFIGURATION = 915,
+
+    /**
+     * This indicates that an unknown internal error has occurred.
+     */
+    UPTK_ERROR_UNKNOWN                        = 999
+} UPTKresult;
 
 
 /** @} */
