@@ -365,13 +365,6 @@ struct UPTKTextureDesc
 typedef unsigned long long UPTKTextureObject_t;
 
 
-enum UPTKGLDeviceList
-{
-  UPTKGLDeviceListAll           = 1, /**< The UPTK devices for all GPUs used by the current OpenGL context */
-  UPTKGLDeviceListCurrentFrame  = 2, /**< The UPTK devices for the GPUs used by the current OpenGL context in its currently rendering frame */
-  UPTKGLDeviceListNextFrame     = 3  /**< The UPTK devices for the GPUs to be used by the current OpenGL context in the next frame  */
-};
-
 extern __host__ UPTKError_t UPTKBindSurfaceToArray(const struct surfaceReference *surfref, UPTKArray_const_t array, const struct UPTKChannelFormatDesc *desc);
 extern __host__ UPTKError_t UPTKBindTexture(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct UPTKChannelFormatDesc *desc, size_t size __dv(UINT_MAX));
 extern __host__ UPTKError_t UPTKBindTexture2D(size_t *offset, const struct textureReference *texref, const void *devPtr, const struct UPTKChannelFormatDesc *desc, size_t width, size_t height, size_t pitch);
@@ -386,31 +379,6 @@ extern __host__ UPTKError_t UPTKGetTextureObjectTextureDesc_v2(struct UPTKTextur
 extern __host__ UPTKError_t UPTKGetTextureReference(const struct textureReference **texref, const void *symbol);
 extern __host__ UPTKError_t UPTKProfilerInitialize(const char * configFile,const char * outputFile,UPTKOutputMode_t outputMode);
 extern __host__ UPTKError_t UPTKUnbindTexture(const struct textureReference *texref);
-extern __host__ UPTKError_t UPTKGLGetDevices(unsigned int *pUPTKDeviceCount, int *pUPTKDevices, unsigned int UPTKDeviceCount, enum UPTKGLDeviceList deviceList);
-extern __host__ UPTKError_t UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource **resource, GLuint image, GLenum target, unsigned int flags);
-extern __host__ UPTKError_t UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource **resource, GLuint buffer, unsigned int flags);
-enum UPTKGLMapFlags
-{
-  UPTKGLMapFlagsNone         = 0,  /**< Default; Assume resource can be read/written */
-  UPTKGLMapFlagsReadOnly     = 1,  /**< UPTK kernels will not write to this resource */
-  UPTKGLMapFlagsWriteDiscard = 2   /**< UPTK kernels will only write to and will not read from this resource */
-};
-
-extern __host__ UPTKError_t UPTKGLSetGLDevice(int device);
-
-extern __host__ UPTKError_t UPTKGLRegisterBufferObject(GLuint bufObj);
-
-extern __host__ UPTKError_t UPTKGLMapBufferObject(void **devPtr, GLuint bufObj);
-
-extern __host__ UPTKError_t UPTKGLUnmapBufferObject(GLuint bufObj);
-
-extern __host__ UPTKError_t UPTKGLUnregisterBufferObject(GLuint bufObj);
-
-extern __host__ UPTKError_t UPTKGLSetBufferObjectMapFlags(GLuint bufObj, unsigned int flags);
-
-extern __host__ UPTKError_t UPTKGLMapBufferObjectAsync(void **devPtr, GLuint bufObj, UPTKStream_t stream);
-
-extern __host__ UPTKError_t UPTKGLUnmapBufferObjectAsync(GLuint bufObj, UPTKStream_t stream);
 
 enum UPTKSurfaceBoundaryMode
 {
