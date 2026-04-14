@@ -7189,6 +7189,8 @@ extern __host__ UPTKError_t UPTKMemcpyToSymbol(const void *symbol, const void *s
  */
 extern __host__ UPTKError_t UPTKMemcpyFromSymbol(void *dst, const void *symbol, size_t count, size_t offset __dv(0), enum UPTKMemcpyKind kind __dv(UPTKMemcpyDeviceToHost));
 
+extern __host__ UPTKError_t UPTKMemcpyFromSymbol_ptds(void *dst, const void *symbol, size_t count, size_t offset __dv(0), enum UPTKMemcpyKind kind __dv(UPTKMemcpyDeviceToHost));
+
 
 /**
  * \brief Copies data between host and device
@@ -7509,6 +7511,8 @@ extern __host__ UPTKError_t UPTKMemcpy2DFromArrayAsync(void *dst, size_t dpitch,
  * ::cuMemcpyDtoDAsync
  */
 extern __host__ UPTKError_t UPTKMemcpyToSymbolAsync(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream __dv(0));
+
+extern __host__ UPTKError_t UPTKMemcpyToSymbol_ptds(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind, UPTKStream_t stream __dv(0));
 
 /**
  * \brief Copies data from the given symbol on the device

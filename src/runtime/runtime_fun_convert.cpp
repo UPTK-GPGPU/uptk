@@ -2415,7 +2415,23 @@ __host__ UPTKError UPTKMemcpyFromSymbol(void *dst, const void *symbol, size_t co
     return cudaErrorToUPTKError(cuda_res);
 }
 
+__host__ UPTKError UPTKMemcpyFromSymbol_ptds(void *dst, const void *symbol, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyFromSymbol(dst, symbol, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
 __host__ UPTKError UPTKMemcpyToSymbol(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
+{
+    cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
+    cudaError_t cuda_res;
+    cuda_res = cudaMemcpyToSymbol(symbol, src, count, offset, cuda_kind);
+    return cudaErrorToUPTKError(cuda_res);
+}
+
+__host__ UPTKError UPTKMemcpyToSymbol_ptds(const void *symbol, const void *src, size_t count, size_t offset, enum UPTKMemcpyKind kind)
 {
     cudaMemcpyKind cuda_kind = UPTKMemcpyKindTocudaMemcpyKind(kind);
     cudaError_t cuda_res;
