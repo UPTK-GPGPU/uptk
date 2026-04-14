@@ -77,9 +77,6 @@ extern __host__ cudaError_t cudaGetTextureAlignmentOffset(size_t *offset, const 
 extern __host__ cudaError_t cudaGetTextureObjectTextureDesc_v2(struct cudaTextureDesc_v2 *pTexDesc, cudaTextureObject_t texObject);
 extern __host__ cudaError_t cudaGetTextureReference(const struct textureReference **texref, const void *symbol);
 extern __host__ cudaError_t cudaUnbindTexture(const struct textureReference *texref);
-extern __host__ cudaError_t cudaGLGetDevices(unsigned int *pcudaDeviceCount, int *pcudaDevices, unsigned int cudaDeviceCount, enum cudaGLDeviceList deviceList);
-extern __host__ cudaError_t cudaGraphicsGLRegisterImage(struct cudaGraphicsResource **resource, GLuint image, GLenum target, unsigned int flags);
-extern __host__ cudaError_t cudaGraphicsGLRegisterBuffer(struct cudaGraphicsResource **resource, GLuint buffer, unsigned int flags);
 
 cudaError_t UPTKErrorTocudaError(enum UPTKError para);
 enum UPTKError cudaErrorToUPTKError(cudaError_t para);
@@ -188,7 +185,6 @@ UPTKMemAllocationHandleType cudaMemAllocationHandleTypeToUPTKMemAllocationHandle
 //void cudaMemLocationToUPTKMemLocation(const struct cudaMemLocation * cuda_para, UPTKMemLocation * UPTK_para);
 //UPTKMemLocationType cudaMemLocationTypeToUPTKMemLocationType(enum cudaMemLocationType para);
 UPTKMemAccessDesc cudaMemAccessDescTUPTKMemAccessDesc(struct cudaMemAccessDesc cuda_para);
-cudaGLDeviceList UPTKGLDeviceListTocudaGLDeviceList(UPTKGLDeviceList para);
 cudaExternalSemaphoreWaitParams UPTKExternalSemaphoreWaitParamsTocudaExternalSemaphoreWaitParams(struct UPTKExternalSemaphoreWaitParams UPTK_para);
 UPTKExternalSemaphoreWaitParams cudaExternalSemaphoreWaitParamsToUPTKExternalSemaphoreWaitParams(cudaExternalSemaphoreWaitParams cuda_para);
 cudaExternalSemaphoreSignalParams UPTKExternalSemaphoreSignalParamsTocudaExternalSemaphoreSignalParams(struct UPTKExternalSemaphoreSignalParams UPTK_para);

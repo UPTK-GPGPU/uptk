@@ -1309,19 +1309,6 @@ enum UPTKFuncCache cudaFuncCacheToUPTKFuncCache(cudaFuncCache para) {
     }
 }
 
-// enum cudaGLMapFlags UPTKGLMapFlagsTocudaGLMapFlags(enum UPTKGLMapFlags para) {
-//     switch (para) {
-//         case UPTKGLMapFlagsNone:
-//             return cudaGLMapFlagsNone;
-//         case UPTKGLMapFlagsReadOnly:
-//             return cudaGLMapFlagsReadOnly;
-//         case UPTKGLMapFlagsWriteDiscard:
-//             return cudaGLMapFlagsWriteDiscard;
-//         default:
-//             ERROR_INVALID_ENUM();
-//     }
-// }
-
 cudaGraphExecUpdateResult UPTKGraphExecUpdateResultTocudaGraphExecUpdateResult(enum UPTKGraphExecUpdateResult para) {
     switch (para) {
         case UPTKGraphExecUpdateError:
@@ -3039,19 +3026,6 @@ cudaGraphMemAttributeType UPTKGraphMemAttributeTypeTocudaGraphMemAttributeType(e
     UPTK_para->bytesize = cuda_para->bytesize;
     UPTK_para->dptr = cuda_para->dptr;
 }*/
-
-cudaGLDeviceList UPTKGLDeviceListTocudaGLDeviceList(UPTKGLDeviceList para) {
-    switch (para) {
-        case UPTKGLDeviceListAll:
-            return cudaGLDeviceListAll;
-        case UPTKGLDeviceListCurrentFrame:
-            return cudaGLDeviceListCurrentFrame;
-        case UPTKGLDeviceListNextFrame:
-            return cudaGLDeviceListNextFrame;
-        default:
-            ERROR_INVALID_ENUM();
-    }
-}
 
 void UPTKExternalMemoryMipmappedArrayDescTocudaExternalMemoryMipmappedArrayDesc(const UPTKExternalMemoryMipmappedArrayDesc * UPTK_para, cudaExternalMemoryMipmappedArrayDesc * cuda_para)
 {

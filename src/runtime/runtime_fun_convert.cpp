@@ -905,23 +905,6 @@ __host__ UPTKError UPTKFuncSetSharedMemConfig(const void * func,enum UPTKSharedM
     return cudaErrorToUPTKError(cuda_res);
 }
 
-#if UPTK_ENABLE_GL==0
-__host__ UPTKError UPTKGLGetDevices(unsigned int * pUPTKDeviceCount,int * pUPTKDevices,unsigned int UPTKDeviceCount,enum UPTKGLDeviceList deviceList)
-{
-    Debug();
-    return UPTKErrorNotSupported;
-}
-#else
-__host__ UPTKError UPTKGLGetDevices(unsigned int * pUPTKDeviceCount,int * pUPTKDevices,unsigned int UPTKDeviceCount,enum UPTKGLDeviceList deviceList)
-{
-    cudaError_t cuda_res;
-    cudaGLDeviceList cuda_deviceList;
-    cuda_deviceList = UPTKGLDeviceListTocudaGLDeviceList(deviceList);
-    cuda_res = cudaGLGetDevices(pUPTKDeviceCount, pUPTKDevices, UPTKDeviceCount, cuda_deviceList);
-    return cudaErrorToUPTKError(cuda_res);
-}
-#endif
-
 __host__ UPTKError UPTKGetChannelDesc(struct UPTKChannelFormatDesc * desc,UPTKArray_const_t array)
 {
     if(nullptr == desc)
@@ -1945,19 +1928,6 @@ __host__ UPTKError UPTKGraphUpload(UPTKGraphExec_t graphExec,UPTKStream_t stream
     return cudaErrorToUPTKError(cuda_res);
 }
 
-#if UPTK_ENABLE_GL==0
-__host__ UPTKError UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource ** resource,GLuint buffer,unsigned int flags)
-{
-    Debug();
-    return UPTKErrorNotSupported;
-}
-
-__host__ UPTKError UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource ** resource,GLuint image,GLenum target,unsigned int flags)
-{
-    Debug();
-    return UPTKErrorNotSupported;
-}
-
 __host__ UPTKError UPTKGraphicsMapResources(int count, UPTKGraphicsResource_t *resources, UPTKStream_t stream)
 {
     Debug();
@@ -1981,57 +1951,6 @@ __host__ UPTKError UPTKGraphicsUnregisterResource(UPTKGraphicsResource_t resourc
     Debug();
     return UPTKErrorNotSupported;
 }
-#else
-__host__ UPTKError UPTKGraphicsGLRegisterBuffer(struct UPTKGraphicsResource ** resource,GLuint buffer,unsigned int flags)
-{
-    cudaGraphicsResource *cuda_resource;
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsGLRegisterBuffer(&cuda_resource, buffer, flags);
-    if (cuda_res == cudaSuccess){
-        *resource = (struct UPTKGraphicsResource *) cuda_resource;
-    }
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError UPTKGraphicsGLRegisterImage(struct UPTKGraphicsResource ** resource,GLuint image,GLenum target,unsigned int flags)
-{
-    cudaGraphicsResource *cuda_resource;
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsGLRegisterImage(&cuda_resource, image, target, flags);
-    if (cuda_res == cudaSuccess){
-        *resource = (struct UPTKGraphicsResource *) cuda_resource;
-    }
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError UPTKGraphicsMapResources(int count, UPTKGraphicsResource_t *resources, UPTKStream_t stream)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsMapResources(count, (cudaGraphicsResource_t *) resources, (cudaStream_t) stream);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError UPTKGraphicsResourceGetMappedPointer(void ** devPtr,size_t * size,UPTKGraphicsResource_t resource)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsResourceGetMappedPointer(devPtr, size, (cudaGraphicsResource_t) resource);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError UPTKGraphicsSubResourceGetMappedArray(UPTKArray_t * array,UPTKGraphicsResource_t resource,unsigned int arrayIndex,unsigned int mipLevel)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsSubResourceGetMappedArray((cudaArray_t *) array, (cudaGraphicsResource_t) resource, arrayIndex, mipLevel);
-    return cudaErrorToUPTKError(cuda_res);
-}
-
-__host__ UPTKError UPTKGraphicsUnregisterResource(UPTKGraphicsResource_t resource)
-{
-    cudaError_t cuda_res;
-    cuda_res = cudaGraphicsUnregisterResource((cudaGraphicsResource_t) resource);
-    return cudaErrorToUPTKError(cuda_res);
-}
-#endif
 // UNSUPPORTED
 __host__ UPTKError UPTKGraphicsResourceGetMappedMipmappedArray(UPTKMipmappedArray_t * mipmappedArray,UPTKGraphicsResource_t resource)
 {
