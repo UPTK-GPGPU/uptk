@@ -3,57 +3,48 @@
 #include <hip/hip_runtime.h>
 #include <UPTK_runtime_api.h>
 
-void print_result(int pass) {
-    if (pass)
-        printf("Result: ὜~E TEST PASSED\n\n");
-    else
-        printf("Result: Ὕ~L TEST FAILED\n\n");
-}
-
 void test_EventCreate() {
-    printf("=== Test: UPTKEventCreate ===\n");
+    printf("===== Test: UPTKEventCreate =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
 
     UPTKEvent_t e;
     int pass = (UPTKEventCreate(&e) == UPTKSuccess && e != NULL);
 
-    printf("Actual: event = %p\n", e);
-    print_result(pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKEventDestroy(e);
 }
 
 void test_EventCreateWithFlags() {
-    printf("=== Test: UPTKEventCreateWithFlags ===\n");
+    printf("===== Test: UPTKEventCreateWithFlags =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
 
     UPTKEvent_t e;
     int pass = (UPTKEventCreateWithFlags(&e, 0) == UPTKSuccess && e != NULL);
 
-    printf("Actual: eventWithFlags = %p\n", e);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
 }
 
 void test_EventDestroy() {
-    printf("=== Test: UPTKEventDestroy ===\n");
+    printf("===== Test: UPTKEventDestroy =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
 
     UPTKEvent_t e;
     int pass = (UPTKEventCreate(&e) == UPTKSuccess && e != NULL);
 
-    printf("Actual: event = %p\n", e);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
 }
 
 void test_EventSynchronize() {
-    printf("=== Test: UPTKEventSynchronize ===\n");
+    printf("===== Test: UPTKEventSynchronize =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
 
@@ -66,34 +57,34 @@ void test_EventSynchronize() {
     }
     int pass = (pass_create && ret_sync == UPTKSuccess);
 
-    printf("Actual: event = %p ret_sync=%d\n", e, ret_sync);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
 }
 
 void test_EventQuery() {
-    printf("=== Test: UPTKEventQuery ===\n");
+    printf("===== Test: UPTKEventQuery =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
     
     UPTKEvent_t e;
     int pass_create = (UPTKEventCreate(&e) == UPTKSuccess && e != NULL);
     UPTKError_t ret_query = UPTKErrorInvalidValue;
+    UPTKEventRecord(e, 0);
+    UPTKEventSynchronize(e);
     if (pass_create) {
         (void)UPTKEventRecord(e, 0);
         ret_query = UPTKEventQuery(e);
     }
     int pass = (pass_create && ret_query == UPTKSuccess);
 
-    printf("Actual: event = %p ret_query=%d\n", e, ret_query);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
 }
 
 void test_EventRecord() {
-    printf("=== Test: UPTKEventRecord ===\n");
+    printf("===== Test: UPTKEventRecord =====\n");
     printf("Input: create event\n");
     printf("Expected: success\n");
 
@@ -105,14 +96,13 @@ void test_EventRecord() {
     }
     int pass = (pass_create && ret_record == UPTKSuccess);
 
-    printf("Actual: event = %p ret_record=%d\n", e, ret_record);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
 }
 
 void test_EventElapsedTime() {
-    printf("=== Test: UPTKEventElapsedTime ===\n");
+    printf("===== Test: UPTKEventElapsedTime =====\n");
     printf("Input: record two events\n");
     printf("Expected: elapsed time >= 0\n");
 
@@ -128,9 +118,8 @@ void test_EventElapsedTime() {
 
     int pass = (UPTKEventElapsedTime(&ms, start, stop) == UPTKSuccess && ms >= 0);
 
-    printf("Actual: elapsed time = %f ms\n", ms);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(start);
     UPTKEventDestroy(stop);
 }

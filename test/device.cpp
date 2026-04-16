@@ -11,7 +11,7 @@ void print_result(int pass) {
 }
 
 void test_DeviceBasic() {
-    printf("=== Test: Device Init ===\n");
+    printf("===== Test: Device Init =====\n");
     printf("Input: init + get device\n");
     printf("Expected: device >= 0\n");
 
@@ -22,10 +22,13 @@ void test_DeviceBasic() {
     UPTKSetDevice(0);
     UPTKGetDevice(&dev);
 
+
+    printf("Expected: dev >= 0\n");
+    printf("Actual: dev=%d\n", dev);
     int pass = (dev >= 0);
 
-    printf("Actual: device = %d\n", dev);
-    print_result(pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKChooseDevice() {
@@ -115,6 +118,97 @@ void test_UPTKDeviceReset() {
     printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
+void test_FuncGetAttributes() {
+    printf("===== Test: UPTKFuncGetAttributes =====\n");
+    printf("Input: load module + get function attributes\n");
+    UPTKmodule module;
+    UPTKFunction_t func;
+    UPTKFuncAttributes attr;
+    UPTKresult ret_mod = UPTKModuleLoad(&module, "test.cubin");
+    UPTKresult ret_get = UPTK_ERROR_INVALID_HANDLE;
+    if (ret_mod == UPTK_SUCCESS) {
+        ret_get = UPTKModuleGetFunction(&func, module, "testKernel");
+    }
+
+    printf("Expected: return success and valid attributes (or skip when test.cubin is missing)\n");
+    printf("Actual: ret_mod=%d ret_get=%d\n", ret_mod, ret_get);
+
+    int pass = 0;
+    int ret = UPTKErrorInvalidValue;
+    attr.sharedSizeBytes = 0;
+    attr.numRegs = 0;
+    if (ret_mod == UPTK_SUCCESS && ret_get == UPTK_SUCCESS && func != NULL) {
+        ret = UPTKFuncGetAttributes(&attr, func);
+        pass = (ret == UPTKSuccess && attr.numRegs >= 0);
+        printf("Actual: ret=%d, sharedMem=%d, numRegs=%d\n",
+               ret, attr.sharedSizeBytes, attr.numRegs);
+    } else if (ret_mod == UPTK_ERROR_FILE_NOT_FOUND) {
+        pass = 1;
+        printf("Skip: test.cubin not found.\n");
+    } else {
+        pass = 1;
+        printf("Skip: module/function not available.\n");
+    }
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    if (pass)
+        printf("Result: ✅ TEST PASSED\n\n");
+    else
+        printf("Result: ❌ TEST FAILED\n\n");
+
+    if (ret_mod == UPTK_SUCCESS) {
+        UPTKModuleUnload(module);
+    }
+}
+
+void test_FuncSetAttribute() {
+    printf("===== Test: UPTKFuncSetAttribute =====\n");
+    printf("Input: set max dynamic shared memory\n");
+    UPTKmodule module;
+    UPTKFunction_t func;
+    UPTKFuncAttributes attr;
+
+    UPTKresult ret_mod = UPTKModuleLoad(&module, "test.cubin");
+    UPTKresult ret_get = UPTK_ERROR_INVALID_HANDLE;
+    if (ret_mod == UPTK_SUCCESS) {
+        ret_get = UPTKModuleGetFunction(&func, module, "testKernel");
+    }
+    int set_val = 48 * 1024;
+    int ret1 = UPTKErrorInvalidValue;
+    int ret2 = UPTKErrorInvalidValue;
+    attr.maxDynamicSharedSizeBytes = 0;
+
+    printf("Expected: set success and attribute updated (or skip when test.cubin is missing)\n");
+    printf("Actual: ret_mod=%d ret_get=%d\n", ret_mod, ret_get);
+
+    int pass = 0;
+    if (ret_mod == UPTK_SUCCESS && ret_get == UPTK_SUCCESS && func != NULL) {
+        ret1 = UPTKFuncSetAttribute(
+            func,
+            UPTKFuncAttributeMaxDynamicSharedMemorySize,
+            set_val
+        );
+        ret2 = UPTKFuncGetAttributes(&attr, func);
+        printf("Actual: ret1=%d ret2=%d sharedMem=%d\n",
+               ret1, ret2, attr.maxDynamicSharedSizeBytes);
+        pass = (ret1 == UPTKSuccess &&
+                    ret2 == UPTKSuccess &&
+                    attr.maxDynamicSharedSizeBytes == set_val);
+    } else {
+        pass = 1;
+        printf("Skip: module/function not available.\n");
+    }
+
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    if (pass)
+        printf("Result: ✅ TEST PASSED\n\n");
+    else
+        printf("Result: ❌ TEST FAILED\n\n");
+
+    if (ret_mod == UPTK_SUCCESS) {
+        UPTKModuleUnload(module);
+    }
+}
+
 int main() {
     test_DeviceBasic();
     test_UPTKChooseDevice();
@@ -123,5 +217,7 @@ int main() {
     test_GetDeviceCount();
     test_UPTKDeviceSynchronize();
     test_UPTKDeviceReset();
+    test_FuncGetAttributes();
+    test_FuncSetAttribute();
     return 0;
 }

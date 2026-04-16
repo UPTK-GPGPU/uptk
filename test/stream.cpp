@@ -3,13 +3,6 @@
 #include <hip/hip_runtime.h>
 #include <UPTK_runtime_api.h>
 
-void print_result(int pass) {
-    if (pass)
-        printf("Result: ✅ TEST PASSED\n\n");
-    else
-        printf("Result: ❌ TEST FAILED\n\n");
-}
-
 void test_StreamCreate() {
     printf("===== Test: UPTKStreamCreate =====\n");
     printf("Input: Create default stream\n");
@@ -19,8 +12,8 @@ void test_StreamCreate() {
     int pass = (UPTKStreamCreate(&s) == UPTKSuccess && s != NULL);
 
     printf("Actual: stream = %p\n", s);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -33,8 +26,8 @@ void test_StreamCreateWithFlags() {
     int pass = (UPTKStreamCreateWithFlags(&s, UPTKStreamNonBlocking) == UPTKSuccess);
 
     printf("Actual: stream = %p\n", s);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -47,8 +40,8 @@ void test_StreamCreateWithPriority() {
     int pass = (UPTKStreamCreateWithPriority(&s, UPTKStreamDefault, 0) == UPTKSuccess);
 
     printf("Actual: stream = %p\n", s);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -62,7 +55,8 @@ void test_StreamDestroy() {
 
     int pass = (UPTKStreamDestroy(s) == UPTKSuccess);
     printf("Actual: destroy called\n");
-    print_result(pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_StreamSynchronize() {
@@ -76,8 +70,8 @@ void test_StreamSynchronize() {
     int pass = (UPTKStreamSynchronize(s) == UPTKSuccess);
 
     printf("Actual: sync done\n");
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -96,8 +90,8 @@ void test_StreamWaitEvent() {
     int pass = (UPTKStreamWaitEvent(s, e, 0) == UPTKSuccess);
 
     printf("Actual: wait event done\n");
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKEventDestroy(e);
     UPTKStreamDestroy(s);
 }
@@ -114,8 +108,8 @@ void test_StreamGetDevice() {
     int pass = (UPTKStreamGetDevice(s, &device) == UPTKSuccess && device >= 0);
 
     printf("Actual: device = %d\n", device);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -133,8 +127,8 @@ void test_StreamCapture() {
     int pass = (UPTKStreamEndCapture(s, &graph) == UPTKSuccess);
 
     printf("Actual: capture ended\n");
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 
@@ -157,8 +151,8 @@ void test_StreamIsCapturing() {
     UPTKStreamEndCapture(s, &graph);
 
     printf("Actual: status = %d\n", status);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKStreamDestroy(s);
 }
 

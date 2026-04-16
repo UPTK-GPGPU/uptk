@@ -8,15 +8,6 @@ static const char* err_name(UPTKError_t e) {
     return UPTKGetErrorName(e);
 }
 
-static void print_case(const char* input, const char* expected, const char* actual, int pass) {
-    printf("Input: %s\n", input);
-    printf("Expected: %s\n", expected);
-    printf("Actual: %s\n", actual);
-    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
-    return;
-}
-
 static UPTKGraphNode_t add_empty_node(UPTKGraph_t graph, UPTKError_t* out_ret) {
     UPTKGraphNode_t node = NULL;
     // UPTKGraphNodeParams contains a non-trivial union variant.
@@ -36,7 +27,8 @@ static void test_GraphCreate() {
     char actual[256];
     snprintf(actual, sizeof(actual), "ret=%d(%s) graph=%p", ret, err_name(ret), g);
     int pass = (ret == UPTKSuccess && g != NULL);
-    print_case("create graph", "UPTK_SUCCESS + graph != NULL", actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     (void)UPTKGraphDestroy(g);
 }
 
@@ -49,7 +41,8 @@ static void test_GraphCloneDestroy() {
     snprintf(actual, sizeof(actual), "ret1=%d(%s) ret2=%d(%s) g1=%p g2=%p",
              ret1, err_name(ret1), ret2, err_name(ret2), g1, g2);
     int pass = (ret1 == UPTKSuccess && ret2 == UPTKSuccess && g1 != NULL && g2 != NULL);
-    print_case("clone graph then destroy", "UPTK_SUCCESS + both graphs valid", actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     (void)UPTKGraphDestroy(g1);
     (void)UPTKGraphDestroy(g2);
 }
@@ -111,9 +104,8 @@ static void test_GraphAddNode_GetNodes_NodeGetType_DestroyNode() {
                 destroy_ok &&
                 (nodes.empty() || (did_query_type && ret_type == UPTKSuccess)));
 
-    print_case("add empty nodes then query type",
-               "UPTK_SUCCESS for supported backends; otherwise InvalidValue/NotSupported accepted",
-               actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 static void test_GraphDependencies() {
@@ -166,9 +158,8 @@ static void test_GraphDependencies() {
                 (ret_add2 == UPTKSuccess || ret_add2 == UPTKErrorInvalidValue || ret_add2 == UPTKErrorNotSupported) &&
                 deps_ok);
 
-    print_case("add/remove dependencies between two nodes",
-               "UPTK_SUCCESS when nodes are supported; otherwise InvalidValue/NotSupported accepted and dependency ops skipped",
-               actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 static void test_GraphInstantiate_Launch_ExecDestroy() {
@@ -210,9 +201,8 @@ static void test_GraphInstantiate_Launch_ExecDestroy() {
                 ret_launch == UPTKSuccess &&
                 ret_exec_destroy == UPTKSuccess);
 
-    print_case("instantiate and launch graph",
-               "UPTK_SUCCESS for instantiate/launch/execDestroy; empty-node insertion may be unsupported",
-               actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 static void test_GraphExecUpdate() {
@@ -245,7 +235,8 @@ static void test_GraphExecUpdate() {
     // Update may be not supported on empty graph update, or on this backend.
     int pass = (ret_upd == UPTKSuccess || ret_upd == UPTKErrorNotSupported);
 
-    print_case("update instantiated graph exec", "UPTK_SUCCESS or UPTKErrorNotSupported", actual, pass);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 int main() {

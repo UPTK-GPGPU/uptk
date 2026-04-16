@@ -11,7 +11,7 @@ void print_result(int pass) {
 }
 
 void test_Context() {
-    printf("=== Test: UPTKCtxCreate ===\n");
+    printf("===== Test: UPTKCtxCreate =====\n");
     printf("Input: create context\n");
     printf("Expected: success\n");
 
@@ -19,9 +19,10 @@ void test_Context() {
     int pass = (UPTKCtxCreate(&ctx, 0, 0) == UPTK_SUCCESS);
 
     printf("Actual: ctx = %p\n", ctx);
-    print_result(pass);
 
     UPTKCtxDestroy(ctx);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKCtxSynchronize() {

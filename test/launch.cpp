@@ -3,13 +3,6 @@
 #include <hip/hip_runtime.h>
 #include <UPTK_runtime_api.h>
 
-void print_result(int pass) {
-    if (pass)
-        printf("Result: ὜~E TEST PASSED\n\n");
-    else
-        printf("Result: Ὕ~L TEST FAILED\n\n");
-}
-
 __global__ void testKernel(int* d) {
     d[0] = 42;
 }
@@ -45,12 +38,6 @@ void test_UPTKLaunchKernel() {
     UPTKMemcpy(h_data, d_data, sizeof(h_data),
                UPTKMemcpyDeviceToHost);
 
-    printf("Expected: each element +1\n");
-    printf("Actual: ret=%d(%s) ret_mod=%d ret_get=%d data=%d,%d,%d,%d\n",
-           ret, UPTKGetErrorName((UPTKError_t)ret),
-           ret_mod, ret_get,
-           h_data[0], h_data[1], h_data[2], h_data[3]);
-
     int pass = 1;
     if (ret_mod == UPTK_SUCCESS && ret_get == UPTK_SUCCESS) {
         pass = (ret == UPTKSuccess && h_data[0] == 2);
@@ -59,8 +46,7 @@ void test_UPTKLaunchKernel() {
     }
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
-
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKFree(d_data);
     if (ret_mod == UPTK_SUCCESS) {
         UPTKModuleUnload(module);
@@ -81,16 +67,13 @@ void test_UPTKLaunchCooperativeKernelMultiDevice() {
     UPTKError_t ret = UPTKLaunchCooperativeKernelMultiDevice(
         params, 1, 0);
 
-    printf("Expected: success or NOT_SUPPORTED\n");
-    printf("Actual: ret=%d\n", ret);
-
     int pass = (ret == UPTKSuccess ||
                 ret == UPTKErrorNotSupported ||
                 ret == UPTKErrorInvalidSymbol ||
                 ret == UPTKErrorInvalidValue);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKFuncSetAttribute() {
@@ -112,9 +95,6 @@ void test_UPTKFuncSetAttribute() {
         UPTKFuncAttributeMaxDynamicSharedMemorySize,
         1024);
 
-    printf("Expected: success or supported\n");
-    printf("Actual: ret=%d\n", ret);
-
     int pass = 1;
     if (ret_mod == UPTK_SUCCESS && ret_get == UPTK_SUCCESS) {
         pass = (ret == UPTKSuccess || ret == UPTKErrorNotSupported);
@@ -123,8 +103,7 @@ void test_UPTKFuncSetAttribute() {
     }
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
-
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret_mod == UPTK_SUCCESS) {
         UPTKModuleUnload(module);
     }
@@ -157,11 +136,7 @@ void test_FuncGetAttributes() {
         printf("Skip: module/function not available.\n");
     }
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    if (pass)
-        printf("Result: ὜~E TEST PASSED\n\n");
-    else
-        printf("Result: Ὕ~L TEST FAILED\n\n");
-
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret_mod == UPTK_SUCCESS) {
         UPTKModuleUnload(module);
     }

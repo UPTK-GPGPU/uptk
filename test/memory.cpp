@@ -12,14 +12,6 @@
 #endif
 
 static const char* g_self_path = NULL;
-
-void print_result(int pass) {
-    if (pass)
-        printf("Result: ὜~E TEST PASSED\n\n");
-    else
-        printf("Result: Ὕ~L TEST FAILED\n\n");
-}
-
 #if defined(__unix__) || defined(__linux__) || defined(__APPLE__)
 static int ipc_consumer_impl(const char* shm_name, const int* expected_src, size_t count_ints) {
     int h_dst[4] = {0};
@@ -74,7 +66,7 @@ static int ipc_consumer_impl(const char* shm_name, const int* expected_src, size
 #endif
 
 void test_MallocFree() {
-    printf("=== Test: UPTKMalloc / UPTKFree ===\n");
+    printf("===== Test: UPTKMalloc / UPTKFree =====\n");
     printf("Input: allocate 1024 bytes\n");
     printf("Expected: pointer != NULL\n");
 
@@ -82,13 +74,13 @@ void test_MallocFree() {
     int pass = (UPTKMalloc(&ptr, 1024) == UPTKSuccess && ptr != NULL);
 
     printf("Actual: ptr = %p\n", ptr);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKFree(ptr);
 }
 
 void test_Free() {
-    printf("=== Test: UPTKMalloc / UPTKFree ===\n");
+    printf("===== Test: UPTKMalloc / UPTKFree =====\n");
     printf("Input: allocate 1024 bytes\n");
     printf("Expected: pointer != NULL\n");
 
@@ -96,13 +88,13 @@ void test_Free() {
     int pass = (UPTKMalloc(&ptr, 1024) == UPTKSuccess && ptr != NULL);
 
     printf("Actual: ptr = %p\n", ptr);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKFree(ptr);
 }
 
 void test_Memcpy() {
-    printf("=== Test: UPTKMemcpy ===\n");
+    printf("===== Test: UPTKMemcpy =====\n");
     printf("Input: copy int array\n");
     printf("Expected: data一致\n");
 
@@ -118,8 +110,8 @@ void test_Memcpy() {
     for (int i=0;i<4;i++) if (h_dst[i] != h_src[i]) pass = 0;
 
     printf("Actual: [%d %d %d %d]\n", h_dst[0],h_dst[1],h_dst[2],h_dst[3]);
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKFree(d);
 }
 
@@ -198,7 +190,6 @@ void test_MemcpyAsync() {
                 h_dst[3] == 8);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-
     printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKFree(d_ptr);
@@ -309,6 +300,7 @@ void test_IPC() {
     printf("Actual: ret=%d,%d,%d,%d data=%d,%d,%d,%d\n",
            ret1, ret2, ret_mem, ret3,
            h_dst[0], h_dst[1], h_dst[2], h_dst[3]);
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
     printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     UPTKFree(d_ptr);
 #endif

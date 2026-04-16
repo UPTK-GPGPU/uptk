@@ -3,13 +3,6 @@
 #include <hip/hip_runtime.h>
 #include <UPTK_runtime_api.h>
 
-void print_result(int pass) {
-    if (pass)
-        printf("Result: ὜~E TEST PASSED\n\n");
-    else
-        printf("Result: Ὕ~L TEST FAILED\n\n");
-}
-
 static int is_skip_result(UPTKresult ret) {
     // These tests rely on test cubin/PTX content. In many environments, the
     // file may be missing or the PTX stub intentionally invalid.
@@ -21,7 +14,7 @@ static int is_skip_result(UPTKresult ret) {
 }
 
 void test_ModuleLoad() {
-    printf("=== Test: UPTKModuleLoad ===\n");
+    printf("===== Test: UPTKModuleLoad =====\n");
     printf("Input: load module file\n");
     printf("Expected: success\n");
 
@@ -32,8 +25,8 @@ void test_ModuleLoad() {
     printf("Expected: UPTK_SUCCESS (or skip when test.cubin missing)\n");
     printf("Actual: ret=%d\n", ret);
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    print_result(pass);
-
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret == UPTK_SUCCESS) {
         UPTKModuleUnload(mod);
     }
