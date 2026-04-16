@@ -4,7 +4,7 @@ import sys
 import os
 
 MODULES = ["device", "context", "memory", "module", "stream", "event", "graph", "launch"]
-TEST_DIR = "../build/tests"
+TEST_DIR = "../build/test"
 
 def run_and_parse(module):
     exe = os.path.join(TEST_DIR, module)
