@@ -70,10 +70,9 @@ void test_EventQuery() {
     UPTKEvent_t e;
     int pass_create = (UPTKEventCreate(&e) == UPTKSuccess && e != NULL);
     UPTKError_t ret_query = UPTKErrorInvalidValue;
-    UPTKEventRecord(e, 0);
+    (void)UPTKEventRecord(e, 0);
     UPTKEventSynchronize(e);
     if (pass_create) {
-        (void)UPTKEventRecord(e, 0);
         ret_query = UPTKEventQuery(e);
     }
     int pass = (pass_create && ret_query == UPTKSuccess);
