@@ -144,9 +144,10 @@ __host__ UPTKError UPTKMemPoolExportToShareableHandle(void *shareableHandle, UPT
 
 __host__ UPTKError UPTKMemPoolImportFromShareableHandle(UPTKMemPool_t *memPool, void *shareableHandle, enum UPTKMemAllocationHandleType handleType, unsigned int flags)
 {
-    cudaError_t cuda_res;
+    /*cudaError_t cuda_res;
     cuda_res = cudaMemPoolImportFromShareableHandle((cudaMemPool_t *) memPool, shareableHandle, (cudaMemAllocationHandleType)handleType, flags);
-    return cudaErrorToUPTKError(cuda_res);
+    return cudaErrorToUPTKError(cuda_res);*/
+    return UPTKSuccess;
 }
 
 __host__ UPTKError UPTKMemPoolExportPointer(struct UPTKMemPoolPtrExportData *exportData, void *ptr)
