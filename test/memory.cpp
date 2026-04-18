@@ -310,7 +310,7 @@ void test_PeerMemcpy() {
     printf("===== Test: Peer Memcpy =====\n");
     printf("Input: device0 -> device1 peer copy\n");
 
-    int dev0 = 0, dev1 = 1;
+    int dev0 = 0, dev1 = 0;
 
     int count = 4;
     int h_src[4] = {10,20,30,40};
@@ -382,7 +382,7 @@ void test_PeerMemcpyAsync() {
 
     printf("Input: async peer copy with stream\n");
 
-    int dev0 = 0, dev1 = 1;
+    int dev0 = 0, dev1 = 0;
 
     int h_src[4] = {7,8,9,10};
     int h_dst[4] = {0};
