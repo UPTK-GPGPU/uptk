@@ -25,7 +25,6 @@ void test_ModuleLoad() {
     printf("Expected: UPTK_SUCCESS (or skip when test.cubin missing)\n");
     printf("Actual: ret=%d\n", ret);
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
     printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret == UPTK_SUCCESS) {
         UPTKModuleUnload(mod);
@@ -73,7 +72,7 @@ void test_ModuleLoadData() {
     int pass = (ret == UPTK_SUCCESS || ret == UPTK_ERROR_INVALID_PTX);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : "TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     if (ret == UPTK_SUCCESS) UPTKModuleUnload(module);
 }
@@ -98,7 +97,7 @@ void test_ModuleGetFunction() {
     int pass = (ret == UPTK_SUCCESS && func != NULL) || (ret_load != UPTK_SUCCESS);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : "TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKModuleUnload(module);
 }
@@ -125,7 +124,7 @@ void test_ModuleGetGlobal() {
     int pass = (ret == UPTK_SUCCESS && size > 0) || (ret_load != UPTK_SUCCESS);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKModuleUnload(module);
 }
@@ -153,7 +152,7 @@ void test_UPTKLinkCreate() {
     int pass = (ret == UPTK_SUCCESS && state != NULL);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     if (state) {
         UPTKLinkDestroy(state);
@@ -177,7 +176,7 @@ void test_UPTKLinkDestroy() {
     int pass = 1;
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKLinkComplete() {
@@ -206,7 +205,7 @@ void test_UPTKLinkComplete() {
                 (ret == UPTK_ERROR_INVALID_HANDLE);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKLinkDestroy(state);
 }
@@ -236,7 +235,7 @@ void test_UPTKLinkAddData() {
                 (ret == UPTK_ERROR_INVALID_HANDLE);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     UPTKLinkDestroy(state);
 }

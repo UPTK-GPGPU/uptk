@@ -75,7 +75,7 @@ void test_DeviceGetName() {
     printf("Actual: ret=%d name=%s\n", ret, name);
     int pass = (ret == UPTK_SUCCESS && name[0] != '\0');
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_GetDeviceCount() {
@@ -89,7 +89,7 @@ void test_GetDeviceCount() {
     int pass = (ret == UPTKSuccess && count >= 0);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" :" TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKDeviceSynchronize() {
@@ -150,11 +150,7 @@ void test_FuncGetAttributes() {
         printf("Skip: module/function not available.\n");
     }
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    if (pass)
-        printf("Result: ✅ TEST PASSED\n\n");
-    else
-        printf("Result: ❌ TEST FAILED\n\n");
-
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret_mod == UPTK_SUCCESS) {
         UPTKModuleUnload(module);
     }
@@ -199,11 +195,7 @@ void test_FuncSetAttribute() {
     }
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    if (pass)
-        printf("Result: ✅ TEST PASSED\n\n");
-    else
-        printf("Result: ❌ TEST FAILED\n\n");
-
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
     if (ret_mod == UPTK_SUCCESS) {
         UPTKModuleUnload(module);
     }

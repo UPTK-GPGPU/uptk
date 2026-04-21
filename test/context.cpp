@@ -54,7 +54,7 @@ void test_UPTKCtxGetLimit() {
     int pass = (ret == UPTK_SUCCESS);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKCtxSetLimit() {
@@ -82,7 +82,7 @@ void test_UPTKCtxSetLimit() {
                 getVal >= setVal);  // 有些实现会对齐
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 }
 
 void test_UPTKCtxSetCurrent() {
@@ -107,7 +107,7 @@ void test_UPTKCtxSetCurrent() {
                 ctx != NULL);
 
     printf("Compare: %s\n", pass ? "Match" : "Mismatch");
-    printf("Result: %s\n\n", pass ? " TEST PASSED" : " TEST FAILED");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
 
     if (ctx != NULL) {
         (void)UPTKCtxDestroy(ctx);
