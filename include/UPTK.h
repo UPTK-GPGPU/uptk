@@ -701,7 +701,7 @@ struct  UPTKMemAllocNodeParamsV2 {
      /**
       * This indicates that a resource has already been acquired.
       */
-     UPTKErrorAlreadyAcquiredD              =     900,
+     UPTKErrorAlreadyAcquired              =     900,
  
      /**
       * This indicates that a resource is not mapped.

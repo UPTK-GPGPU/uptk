@@ -7,7 +7,7 @@ extern "C" {
 UPTKError CUresultToUPTKError(CUresult para) {
     switch (para) {
         case CUDA_ERROR_ALREADY_ACQUIRED:
-            return UPTKErrorAlreadyAcquiredD;
+            return UPTKErrorAlreadyAcquired;
         case CUDA_ERROR_ALREADY_MAPPED:
             return UPTKErrorAlreadyMapped;
         case CUDA_ERROR_ARRAY_IS_MAPPED:
