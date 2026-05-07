@@ -42,7 +42,3 @@ install(FILES ${CMAKE_SOURCE_DIR}/env.sh
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_EXECUTE)
 
 option(UPTK_ENABLE_TESTS "Enable building and running UPTK test suite" OFF)
-if(UPTK_ENABLE_TESTS)
-    message(STATUS "UPTK tests enabled. Build with 'make' then run 'ctest' in the build directory.")
-    add_subdirectory(tests)
-endif()

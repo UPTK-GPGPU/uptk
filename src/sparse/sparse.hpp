@@ -3,7 +3,7 @@
 
 #include "../runtime/runtime.hpp"
 
-#include <UPTKsparse.h>
+#include <UPTK_sparse.h>
 #include <cusparse.h>
 
 #if defined(__cplusplus)
@@ -11,14 +11,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
- * UPTKsparse status convert function
- */
+ *  * UPTKsparse status convert function
+ *   */
 cusparseStatus_t UPTKsparseStatusTocusparseStatus(UPTKsparseStatus_t para);
 UPTKsparseStatus_t cusparseStatusToUPTKsparseStatus(cusparseStatus_t para);
 
 /**
- * UPTKsparse data type convert function
- */
+ *  * UPTKsparse data type convert function
+ *   */
 cusparseAction_t UPTKsparseActionTocusparseAction(UPTKsparseAction_t para);
 
 cusparseSpMMAlg_t UPTKsparseSpMMAlgTocusparseSpMMAlg(UPTKsparseSpMMAlg_t para);
@@ -69,12 +69,6 @@ cusparseSpSMAlg_t UPTKsparseSpSMAlgTocusparseSpSMAlg(UPTKsparseSpSMAlg_t para);
 cusparseSpGEMMAlg_t UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(UPTKsparseSpGEMMAlg_t para);
 cusparseSDDMMAlg_t UPTKsparseSDDMMAlgTocusparseSDDMMAlg(UPTKsparseSDDMMAlg_t para);
 
-cusparseSpSMUpdate_t UPTKsparseSpSMUpdateTocusparseSpSMUpdate(UPTKsparseSpSMUpdate_t para);
-UPTKsparseSpSMUpdate_t cusparseSpSMUpdateToUPTKsparseSpSMUpdate(cusparseSpSMUpdate_t para);
- 
-cusparseSpSVUpdate_t UPTKsparseSpSVUpdateTocusparseSpSVUpdate(UPTKsparseSpSVUpdate_t para);
-UPTKsparseSpSVUpdate_t cusparseSpSVUpdateToUPTKsparseSpSVUpdate(cusparseSpSVUpdate_t para);
-
 cusparseSpMMOpAlg_t UPTKsparseSpMMOpAlgTocusparseSpMMOpAlg(UPTKsparseSpMMOpAlg_t para);
 
 
@@ -83,3 +77,4 @@ cusparseSpMMOpAlg_t UPTKsparseSpMMOpAlgTocusparseSpMMOpAlg(UPTKsparseSpMMOpAlg_t
 #endif /* __cplusplus */
 
 #endif // __SPARSE_HPP__
+

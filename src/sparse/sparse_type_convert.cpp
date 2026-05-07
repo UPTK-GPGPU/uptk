@@ -35,8 +35,6 @@ cusparseSpMMAlg_t UPTKsparseSpMMAlgTocusparseSpMMAlg(UPTKsparseSpMMAlg_t para) {
             return CUSPARSE_SPMM_CSR_ALG3;
         case UPTKSPARSE_SPMM_BLOCKED_ELL_ALG1:
             return CUSPARSE_SPMM_BLOCKED_ELL_ALG1;
-        case UPTKSPARSE_SPMM_BSR_ALG1:
-            return CUSPARSE_SPMM_BSR_ALG1;
         default:
             ERROR_INVALID_ENUM();
     }
@@ -54,8 +52,6 @@ cusparseSpMVAlg_t UPTKsparseSpMVAlgTocusparseSpMVAlg(UPTKsparseSpMVAlg_t para) {
             return CUSPARSE_SPMV_COO_ALG1;
         case UPTKSPARSE_SPMV_COO_ALG2:
             return CUSPARSE_SPMV_COO_ALG2;
-        case UPTKSPARSE_SPMV_SELL_ALG1:
-            return CUSPARSE_SPMV_SELL_ALG1;
         default:
             ERROR_INVALID_ENUM();
     }
@@ -63,7 +59,6 @@ cusparseSpMVAlg_t UPTKsparseSpMVAlgTocusparseSpMVAlg(UPTKsparseSpMVAlg_t para) {
 
 cusparseCsr2CscAlg_t UPTKsparseCsr2CscAlgTocusparseCsr2CscAlg(UPTKsparseCsr2CscAlg_t para) {
     switch (para) {
-        //case UPTKSPARSE_CSR2CSC_ALG_DEFAULT:
         case UPTKSPARSE_CSR2CSC_ALG1:
             return CUSPARSE_CSR2CSC_ALG1;
         default:
@@ -136,10 +131,6 @@ cusparseFormat_t UPTKsparseFormatTocusparseFormat(UPTKsparseFormat_t para) {
             return CUSPARSE_FORMAT_COO;
         case UPTKSPARSE_FORMAT_BLOCKED_ELL:
             return CUSPARSE_FORMAT_BLOCKED_ELL;
-        case UPTKSPARSE_FORMAT_BSR:
-            return CUSPARSE_FORMAT_BSR;
-        case UPTKSPARSE_FORMAT_SLICED_ELLPACK:
-            return CUSPARSE_FORMAT_SLICED_ELLPACK;
         default:
             ERROR_INVALID_ENUM();
     }
@@ -155,10 +146,6 @@ UPTKsparseFormat_t cusparseFormatToUPTKsparseFormat(cusparseFormat_t para) {
             return UPTKSPARSE_FORMAT_CSR;
         case CUSPARSE_FORMAT_BLOCKED_ELL:
             return UPTKSPARSE_FORMAT_BLOCKED_ELL;
-        case CUSPARSE_FORMAT_BSR:
-            return UPTKSPARSE_FORMAT_BSR;
-        case CUSPARSE_FORMAT_SLICED_ELLPACK:
-            return UPTKSPARSE_FORMAT_SLICED_ELLPACK;
         default:
             ERROR_INVALID_ENUM();
     }
@@ -589,12 +576,6 @@ cusparseSpGEMMAlg_t UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(UPTKsparseSpGEMMAlg_t
         return CUSPARSE_SPGEMM_CSR_ALG_DETERMINITIC;
     case UPTKSPARSE_SPGEMM_CSR_ALG_NONDETERMINITIC:
         return CUSPARSE_SPGEMM_CSR_ALG_NONDETERMINITIC;
-    case UPTKSPARSE_SPGEMM_ALG1:
-        return CUSPARSE_SPGEMM_ALG1;
-    case UPTKSPARSE_SPGEMM_ALG2:
-        return CUSPARSE_SPGEMM_ALG2;
-    case UPTKSPARSE_SPGEMM_ALG3:
-        return CUSPARSE_SPGEMM_ALG3;
     default:
        ERROR_INVALID_ENUM();
     }
@@ -606,58 +587,6 @@ cusparseSDDMMAlg_t UPTKsparseSDDMMAlgTocusparseSDDMMAlg(UPTKsparseSDDMMAlg_t par
     {
     case UPTKSPARSE_SDDMM_ALG_DEFAULT:
         return CUSPARSE_SDDMM_ALG_DEFAULT;
-    default:
-        ERROR_INVALID_ENUM();
-    }
-}
-
-cusparseSpSMUpdate_t UPTKsparseSpSMUpdateTocusparseSpSMUpdate(UPTKsparseSpSMUpdate_t para)
-{
-    switch (para)
-    {
-    case UPTKSPARSE_SPSM_UPDATE_GENERAL:
-        return CUSPARSE_SPSM_UPDATE_GENERAL;
-     case UPTKSPARSE_SPSM_UPDATE_DIAGONAL:
-        return CUSPARSE_SPSM_UPDATE_DIAGONAL;
-    default:
-        ERROR_INVALID_ENUM();
-    }
-}
-
-UPTKsparseSpSMUpdate_t cusparseSpSMUpdateToUPTKsparseSpSMUpdate(cusparseSpSMUpdate_t para)
-{
-    switch (para)
-    {
-    case CUSPARSE_SPSM_UPDATE_GENERAL:
-        return UPTKSPARSE_SPSM_UPDATE_GENERAL;
-    case CUSPARSE_SPSM_UPDATE_DIAGONAL:
-        return UPTKSPARSE_SPSM_UPDATE_DIAGONAL;
-    default:
-        ERROR_INVALID_ENUM();
-    }
-}
-
-cusparseSpSVUpdate_t UPTKsparseSpSVUpdateTocusparseSpSVUpdate(UPTKsparseSpSVUpdate_t para)
-{
-    switch (para)
-    {
-    case UPTKSPARSE_SPSV_UPDATE_GENERAL:
-        return CUSPARSE_SPSV_UPDATE_GENERAL;
-     case UPTKSPARSE_SPSV_UPDATE_DIAGONAL:
-        return CUSPARSE_SPSV_UPDATE_DIAGONAL;
-    default:
-        ERROR_INVALID_ENUM();
-    }
-}
-
-UPTKsparseSpSVUpdate_t cusparseSpSVUpdateToUPTKsparseSpSVUpdate(cusparseSpSVUpdate_t para)
-{
-    switch (para)
-    {
-    case CUSPARSE_SPSV_UPDATE_GENERAL:
-        return UPTKSPARSE_SPSV_UPDATE_GENERAL;
-    case CUSPARSE_SPSV_UPDATE_DIAGONAL:
-        return UPTKSPARSE_SPSV_UPDATE_DIAGONAL;
     default:
         ERROR_INVALID_ENUM();
     }

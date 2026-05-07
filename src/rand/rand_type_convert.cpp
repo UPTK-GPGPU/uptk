@@ -69,7 +69,7 @@ UPTKrandDirectionVectorSet_t curandDirectionVectorSetToUPTKrandDirectionVectorSe
     }
 }
 
-curandOrdering_t UPTKrandOrderingTocurandOrdering(UPTKrandOrdering_t para) {
+/*curandOrdering_t UPTKrandOrderingTocurandOrdering(UPTKrandOrdering_t para) {
     switch (para) {
         case UPTKRAND_ORDERING_PSEUDO_BEST:
             return CURAND_ORDERING_PSEUDO_BEST;
@@ -86,7 +86,7 @@ curandOrdering_t UPTKrandOrderingTocurandOrdering(UPTKrandOrdering_t para) {
         default:
             ERROR_INVALID_ENUM();
     }
-}
+}*/
 
 curandRngType_t UPTKrandRngTypeTocurandRngType(UPTKrandRngType_t para) {
     switch (para) {
