@@ -8,7 +8,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-/*UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -17,7 +17,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -26,7 +26,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -34,7 +34,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_bufferSize(UPTKsparseHandle_
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -43,7 +43,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -52,7 +52,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -60,7 +60,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_bufferSize(UPTKsparseHandle
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKbsrilu02Info_t info, int enable_boost, double *tol, cuComplex *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_numericBoost(UPTKsparseHandle_t handle, bsrilu02Info_t info, int enable_boost, double *tol, cuComplex *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCbsrilu02_numericBoost((cusparseHandle_t)handle, (bsrilu02Info_t)info, enable_boost, tol, boost_val);
@@ -86,7 +86,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrmv(UPTKsparseHandle_t handle, UPT
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -97,7 +97,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -107,7 +107,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const cuComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, const cuComplex *B, int ldb, cuComplex *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const cuComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, const cuComplex *B, int ldb, cuComplex *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -118,7 +118,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_solve(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -128,7 +128,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -137,7 +137,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, UPTKbsrsv2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, bsrsv2Info_t info, size_t *pBufferSize)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -146,7 +146,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_bufferSizeExt(UPTKsparseHandl
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const cuComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, const cuComplex *f, cuComplex *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const cuComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, const cuComplex *f, cuComplex *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -180,7 +180,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsr2csr_compress(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsr2csru((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
@@ -224,7 +224,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrgeam2_bufferSizeExt(UPTKsparseHan
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -232,7 +232,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02(UPTKsparseHandle_t handle, i
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -240,21 +240,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsric02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csric02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csric02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsric02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csric02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -262,7 +262,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -270,35 +270,35 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsrilu02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csrilu02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csrilu02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsrilu02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csrilu02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKcsrilu02Info_t info, int enable_boost, double *tol, cuComplex *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsrilu02_numericBoost(UPTKsparseHandle_t handle, csrilu02Info_t info, int enable_boost, double *tol, cuComplex *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsrilu02_numericBoost((cusparseHandle_t)handle, (csrilu02Info_t)info, enable_boost, tol, boost_val);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsru2csr((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, cuComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCcsru2csr_bufferSizeExt((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBufferSizeInBytes);
@@ -467,28 +467,28 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreate(UPTKsparseHandle_t *handle)
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsric02Info(UPTKbsric02Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsric02Info(bsric02Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateBsric02Info((bsric02Info_t *)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrilu02Info(UPTKbsrilu02Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrilu02Info(bsrilu02Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateBsrilu02Info((bsrilu02Info_t *)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrsm2Info(UPTKbsrsm2Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrsm2Info(bsrsm2Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateBsrsm2Info((bsrsm2Info_t *)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrsv2Info(UPTKbsrsv2Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateBsrsv2Info(bsrsv2Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateBsrsv2Info((bsrsv2Info_t *)info);
@@ -523,21 +523,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsr(UPTKsparseSpMatDescr_t *spM
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsric02Info(UPTKcsric02Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsric02Info(csric02Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateCsric02Info((csric02Info_t *)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsrilu02Info(UPTKcsrilu02Info_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsrilu02Info(csrilu02Info_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateCsrilu02Info((csrilu02Info_t *)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsru2csrInfo(UPTKcsru2csrInfo_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsru2csrInfo(csru2csrInfo_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreateCsru2csrInfo((csru2csrInfo_t *)info);
@@ -575,7 +575,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateMatDescr(UPTKsparseMatDescr_t *
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreatePruneInfo(UPTKpruneInfo_t *info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreatePruneInfo(pruneInfo_t *info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseCreatePruneInfo((pruneInfo_t *)info);
@@ -615,7 +615,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -624,7 +624,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -633,7 +633,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -641,7 +641,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_bufferSize(UPTKsparseHandle_
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -650,7 +650,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -659,7 +659,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -667,7 +667,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_bufferSize(UPTKsparseHandle
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKbsrilu02Info_t info, int enable_boost, double *tol, double *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_numericBoost(UPTKsparseHandle_t handle, bsrilu02Info_t info, int enable_boost, double *tol, double *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDbsrilu02_numericBoost((cusparseHandle_t)handle, (bsrilu02Info_t)info, enable_boost, tol, boost_val);
@@ -693,7 +693,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrmv(UPTKsparseHandle_t handle, UPT
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -704,7 +704,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -714,7 +714,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const double *alpha, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, const double *B, int ldb, double *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const double *alpha, const UPTKsparseMatDescr_t descrA, const double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, const double *B, int ldb, double *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -725,7 +725,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_solve(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -735,7 +735,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -744,7 +744,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, UPTKbsrsv2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, bsrsv2Info_t info, size_t *pBufferSize)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -753,7 +753,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_bufferSizeExt(UPTKsparseHandl
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const double *alpha, const UPTKsparseMatDescr_t descrA, const double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, const double *f, double *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const double *alpha, const UPTKsparseMatDescr_t descrA, const double *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, const double *f, double *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -787,7 +787,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsr2csr_compress(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, double *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, double *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsr2csru((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
@@ -831,7 +831,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrgeam2_bufferSizeExt(UPTKsparseHan
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -839,7 +839,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02(UPTKsparseHandle_t handle, i
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -847,21 +847,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsric02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csric02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csric02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsric02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csric02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -869,7 +869,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -877,35 +877,35 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsrilu02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csrilu02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, double *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csrilu02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsrilu02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csrilu02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKcsrilu02Info_t info, int enable_boost, double *tol, double *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsrilu02_numericBoost(UPTKsparseHandle_t handle, csrilu02Info_t info, int enable_boost, double *tol, double *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsrilu02_numericBoost((cusparseHandle_t)handle, (csrilu02Info_t)info, enable_boost, tol, boost_val);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, double *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, double *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsru2csr((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, double *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, double *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDcsru2csr_bufferSizeExt((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBufferSizeInBytes);
@@ -919,28 +919,28 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroy(UPTKsparseHandle_t handle)
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsric02Info(UPTKbsric02Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsric02Info(bsric02Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyBsric02Info((bsric02Info_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrilu02Info(UPTKbsrilu02Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrilu02Info(bsrilu02Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyBsrilu02Info((bsrilu02Info_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrsm2Info(UPTKbsrsm2Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrsm2Info(bsrsm2Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyBsrsm2Info((bsrsm2Info_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrsv2Info(UPTKbsrsv2Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyBsrsv2Info(bsrsv2Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyBsrsv2Info((bsrsv2Info_t)info);
@@ -954,38 +954,38 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyColorInfo(UPTKsparseColorInfo_
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsric02Info(UPTKcsric02Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsric02Info(csric02Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyCsric02Info((csric02Info_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsrilu02Info(UPTKcsrilu02Info_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsrilu02Info(csrilu02Info_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyCsrilu02Info((csrilu02Info_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsru2csrInfo(UPTKcsru2csrInfo_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyCsru2csrInfo(csru2csrInfo_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyCsru2csrInfo((csru2csrInfo_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyDnMat(UPTKsparseConstDnMatDescr_t dnMatDescr)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyDnMat(UPTKsparseDnMatDescr_t dnMatDescr)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyDnMat((cusparseDnMatDescr_t)dnMatDescr);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyDnVec(UPTKsparseConstDnVecDescr_t dnVecDescr)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyDnVec(UPTKsparseDnVecDescr_t dnVecDescr)
 {
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseDestroyDnVec((cusparseConstDnVecDescr_t)dnVecDescr);
+    cuda_res = cusparseDestroyDnVec((cusparseDnVecDescr_t)dnVecDescr);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -996,21 +996,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyMatDescr(UPTKsparseMatDescr_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyPruneInfo(UPTKpruneInfo_t info)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroyPruneInfo(pruneInfo_t info)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroyPruneInfo((pruneInfo_t)info);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroySpMat(UPTKsparseConstSpMatDescr_t spMatDescr)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroySpMat(UPTKsparseSpMatDescr_t spMatDescr)
 {
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseDestroySpMat((cusparseConstSpMatDescr_t)spMatDescr);
+    cuda_res = cusparseDestroySpMat((cusparseSpMatDescr_t)spMatDescr);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroySpVec(UPTKsparseConstSpVecDescr_t spVecDescr)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDestroySpVec(UPTKsparseSpVecDescr_t spVecDescr)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDestroySpVec((cusparseSpVecDescr_t)spVecDescr);
@@ -1156,9 +1156,9 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDnMatGet(const UPTKsparseDnMatDescr_t
 }
 
 // UNSUPPORTED
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDnMatGetStridedBatch(const UPTKsparseConstDnMatDescr_t dnMatDescr, int *batchCount, int64_t *batchStride)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDnMatGetStridedBatch(const UPTKsparseDnMatDescr_t dnMatDescr, int *batchCount, int64_t *batchStride)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseDnMatGetStridedBatch((const cusparseConstDnMatDescr_t)dnMatDescr, batchCount, batchStride));
+    return cusparseStatusToUPTKsparseStatus(cusparseDnMatGetStridedBatch((const cusparseDnMatDescr_t)dnMatDescr, batchCount, batchStride));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDnMatGetValues(const UPTKsparseDnMatDescr_t dnMatDescr, void **values)
@@ -1226,14 +1226,14 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csr(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, double *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, double *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneCsr2csrByPercentage((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (double)percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const double *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const double *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneCsr2csrByPercentage_bufferSizeExt((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (double)percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBufferSizeInBytes);
@@ -1247,7 +1247,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrNnz(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const double *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneCsr2csrNnzByPercentage((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (double)percentage, (const cusparseMatDescr_t)descrC, csrSortedRowPtrC, nnzTotalDevHostPtr, (pruneInfo_t)info, pBuffer);
@@ -1268,14 +1268,14 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csr(UPTKsparseHandle_t ha
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, double *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, double *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneDense2csrByPercentage((cusparseHandle_t)handle, m, n, A, lda, (double)percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const double *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const double *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneDense2csrByPercentage_bufferSizeExt((cusparseHandle_t)handle, m, n, A, lda, (double)percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBufferSizeInBytes);
@@ -1289,7 +1289,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrNnz(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const double *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseDpruneDense2csrNnzByPercentage((cusparseHandle_t)handle, m, n, A, lda, (double)percentage, (const cusparseMatDescr_t)descrC, csrRowPtrC, nnzTotalDevHostPtr, (pruneInfo_t)info, pBuffer);
@@ -1467,7 +1467,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -1476,7 +1476,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -1485,7 +1485,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -1493,7 +1493,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_bufferSize(UPTKsparseHandle_
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -1502,7 +1502,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -1511,7 +1511,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -1519,7 +1519,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_bufferSize(UPTKsparseHandle
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKbsrilu02Info_t info, int enable_boost, double *tol, float *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_numericBoost(UPTKsparseHandle_t handle, bsrilu02Info_t info, int enable_boost, double *tol, float *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSbsrilu02_numericBoost((cusparseHandle_t)handle, (bsrilu02Info_t)info, enable_boost, tol, boost_val);
@@ -1545,7 +1545,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrmv(UPTKsparseHandle_t handle, UPT
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1556,7 +1556,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1566,7 +1566,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const float *alpha, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, const float *B, int ldb, float *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const float *alpha, const UPTKsparseMatDescr_t descrA, const float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, const float *B, int ldb, float *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1577,7 +1577,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_solve(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1587,7 +1587,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1596,7 +1596,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, UPTKbsrsv2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, bsrsv2Info_t info, size_t *pBufferSize)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1605,7 +1605,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_bufferSizeExt(UPTKsparseHandl
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const float *alpha, const UPTKsparseMatDescr_t descrA, const float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, const float *f, float *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const float *alpha, const UPTKsparseMatDescr_t descrA, const float *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, const float *f, float *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -1639,7 +1639,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsr2csr_compress(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, float *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, float *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsr2csru((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
@@ -1683,7 +1683,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrgeam2_bufferSizeExt(UPTKsparseHan
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -1691,7 +1691,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02(UPTKsparseHandle_t handle, i
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -1699,21 +1699,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsric02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csric02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csric02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsric02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csric02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -1721,7 +1721,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -1729,35 +1729,35 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsrilu02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csrilu02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, float *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csrilu02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsrilu02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csrilu02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKcsrilu02Info_t info, int enable_boost, double *tol, float *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsrilu02_numericBoost(UPTKsparseHandle_t handle, csrilu02Info_t info, int enable_boost, double *tol, float *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsrilu02_numericBoost((cusparseHandle_t)handle, (csrilu02Info_t)info, enable_boost, tol, boost_val);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, float *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, float *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsru2csr((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, float *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseScsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, float *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseScsru2csr_bufferSizeExt((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBufferSizeInBytes);
@@ -1953,70 +1953,70 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSnnz_compress(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMM(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, UPTKsparseOperation_t opB, const void *alpha, const UPTKsparseConstSpMatDescr_t matA, const UPTKsparseConstDnMatDescr_t matB, const void *beta, UPTKsparseDnMatDescr_t matC, UPTKDataType computeType, UPTKsparseSpMMAlg_t alg, void *externalBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMM(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, UPTKsparseOperation_t opB, const void *alpha, const UPTKsparseSpMatDescr_t matA, const UPTKsparseDnMatDescr_t matB, const void *beta, UPTKsparseDnMatDescr_t matC, UPTKDataType computeType, UPTKsparseSpMMAlg_t alg, void *externalBuffer)
 {
     cusparseOperation_t cuda_opA = UPTKsparseOperationTocusparseOperation(opA);
     cusparseOperation_t cuda_opB = UPTKsparseOperationTocusparseOperation(opB);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseSpMMAlg_t cuda_alg = UPTKsparseSpMMAlgTocusparseSpMMAlg(alg);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMM((cusparseHandle_t)handle, cuda_opA, cuda_opB, alpha, (const cusparseConstSpMatDescr_t)matA, (const cusparseDnMatDescr_t)matB, beta, (const cusparseDnMatDescr_t)matC, cuda_computeType, cuda_alg, externalBuffer);
+    cuda_res = cusparseSpMM((cusparseHandle_t)handle, cuda_opA, cuda_opB, alpha, (const cusparseSpMatDescr_t)matA, (const cusparseDnMatDescr_t)matB, beta, (const cusparseDnMatDescr_t)matC, cuda_computeType, cuda_alg, externalBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMM_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, UPTKsparseOperation_t opB, const void *alpha, const UPTKsparseConstSpMatDescr_t matA, const UPTKsparseConstDnMatDescr_t matB, const void *beta, UPTKsparseDnMatDescr_t matC, UPTKDataType computeType, UPTKsparseSpMMAlg_t alg, size_t *bufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMM_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, UPTKsparseOperation_t opB, const void *alpha, const UPTKsparseSpMatDescr_t matA, const UPTKsparseDnMatDescr_t matB, const void *beta, UPTKsparseDnMatDescr_t matC, UPTKDataType computeType, UPTKsparseSpMMAlg_t alg, size_t *bufferSize)
 {
     cusparseOperation_t cuda_opA = UPTKsparseOperationTocusparseOperation(opA);
     cusparseOperation_t cuda_opB = UPTKsparseOperationTocusparseOperation(opB);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseSpMMAlg_t cuda_alg = UPTKsparseSpMMAlgTocusparseSpMMAlg(alg);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMM_bufferSize((cusparseHandle_t)handle, cuda_opA, cuda_opB, alpha, (const cusparseConstSpMatDescr_t)matA, (const cusparseDnMatDescr_t)matB, beta, (const cusparseDnMatDescr_t)matC, cuda_computeType, cuda_alg, bufferSize);
+    cuda_res = cusparseSpMM_bufferSize((cusparseHandle_t)handle, cuda_opA, cuda_opB, alpha, (const cusparseSpMatDescr_t)matA, (const cusparseDnMatDescr_t)matB, beta, (const cusparseDnMatDescr_t)matC, cuda_computeType, cuda_alg, bufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMV(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, const void *alpha, const UPTKsparseConstSpMatDescr_t matA, const UPTKsparseConstDnVecDescr_t vecX, const void *beta, const UPTKsparseDnVecDescr_t vecY, UPTKDataType computeType, UPTKsparseSpMVAlg_t alg, void *externalBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMV(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, const void *alpha, const UPTKsparseSpMatDescr_t matA, const UPTKsparseDnVecDescr_t vecX, const void *beta, const UPTKsparseDnVecDescr_t vecY, UPTKDataType computeType, UPTKsparseSpMVAlg_t alg, void *externalBuffer)
 {
     cusparseOperation_t cuda_opA = UPTKsparseOperationTocusparseOperation(opA);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseSpMVAlg_t cuda_alg = UPTKsparseSpMVAlgTocusparseSpMVAlg(alg);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMV((cusparseHandle_t)handle, cuda_opA, alpha, (const cusparseConstSpMatDescr_t)matA, (const cusparseConstDnVecDescr_t)vecX, beta, (const cusparseDnVecDescr_t)vecY, cuda_computeType, cuda_alg, externalBuffer);
+    cuda_res = cusparseSpMV((cusparseHandle_t)handle, cuda_opA, alpha, (const cusparseSpMatDescr_t)matA, (const cusparseDnVecDescr_t)vecX, beta, (const cusparseDnVecDescr_t)vecY, cuda_computeType, cuda_alg, externalBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMV_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, const void *alpha, const UPTKsparseConstSpMatDescr_t matA, const UPTKsparseConstDnVecDescr_t vecX, const void *beta, const UPTKsparseDnVecDescr_t vecY, UPTKDataType computeType, UPTKsparseSpMVAlg_t alg, size_t *bufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMV_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opA, const void *alpha, const UPTKsparseSpMatDescr_t matA, const UPTKsparseDnVecDescr_t vecX, const void *beta, const UPTKsparseDnVecDescr_t vecY, UPTKDataType computeType, UPTKsparseSpMVAlg_t alg, size_t *bufferSize)
 {
     cusparseOperation_t cuda_opA = UPTKsparseOperationTocusparseOperation(opA);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseSpMVAlg_t cuda_alg = UPTKsparseSpMVAlgTocusparseSpMVAlg(alg);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMV_bufferSize((cusparseHandle_t)handle, cuda_opA, alpha, (const cusparseConstSpMatDescr_t)matA, (const cusparseConstDnVecDescr_t)vecX, beta, (const cusparseDnVecDescr_t)vecY, cuda_computeType, cuda_alg, bufferSize);
+    cuda_res = cusparseSpMV_bufferSize((cusparseHandle_t)handle, cuda_opA, alpha, (const cusparseSpMatDescr_t)matA, (const cusparseDnVecDescr_t)vecX, beta, (const cusparseDnVecDescr_t)vecY, cuda_computeType, cuda_alg, bufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetFormat(const UPTKsparseConstSpMatDescr_t spMatDescr, UPTKsparseFormat_t *format)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetFormat(const UPTKsparseSpMatDescr_t spMatDescr, UPTKsparseFormat_t *format)
 {
     cusparseFormat_t cuda_format;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMatGetFormat((const cusparseConstSpMatDescr_t)spMatDescr, &cuda_format);
+    cuda_res = cusparseSpMatGetFormat((const cusparseSpMatDescr_t)spMatDescr, &cuda_format);
     *format = cusparseFormatToUPTKsparseFormat(cuda_format);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetIndexBase(const UPTKsparseConstSpMatDescr_t spMatDescr, UPTKsparseIndexBase_t *idxBase)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetIndexBase(const UPTKsparseSpMatDescr_t spMatDescr, UPTKsparseIndexBase_t *idxBase)
 {
     cusparseIndexBase_t cuda_idxBase;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMatGetIndexBase((const cusparseConstSpMatDescr_t)spMatDescr, &cuda_idxBase);
+    cuda_res = cusparseSpMatGetIndexBase((const cusparseSpMatDescr_t)spMatDescr, &cuda_idxBase);
     *idxBase = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
 // UNSUPPORTED
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetStridedBatch(const UPTKsparseConstSpMatDescr_t spMatDescr, int *batchCount)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetStridedBatch(const UPTKsparseSpMatDescr_t spMatDescr, int *batchCount)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSpMatGetStridedBatch((cusparseConstSpMatDescr_t)spMatDescr, batchCount));
+    return cusparseStatusToUPTKsparseStatus(cusparseSpMatGetStridedBatch((cusparseSpMatDescr_t)spMatDescr, batchCount));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetValues(const UPTKsparseSpMatDescr_t spMatDescr, void **values)
@@ -2033,21 +2033,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatSetValues(UPTKsparseSpMatDescr_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVV(UPTKsparseHandle_t handle, UPTKsparseOperation_t opX, const UPTKsparseConstSpVecDescr_t vecX, const UPTKsparseConstDnVecDescr_t vecY, void *result, UPTKDataType computeType, void *externalBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVV(UPTKsparseHandle_t handle, UPTKsparseOperation_t opX, const UPTKsparseSpVecDescr_t vecX, const UPTKsparseDnVecDescr_t vecY, void *result, UPTKDataType computeType, void *externalBuffer)
 {
     cusparseOperation_t cuda_opX = UPTKsparseOperationTocusparseOperation(opX);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpVV((cusparseHandle_t)handle, cuda_opX, (cusparseSpVecDescr_t)vecX, (cusparseConstDnVecDescr_t)vecY, result, cuda_computeType, externalBuffer);
+    cuda_res = cusparseSpVV((cusparseHandle_t)handle, cuda_opX, (cusparseSpVecDescr_t)vecX, (cusparseDnVecDescr_t)vecY, result, cuda_computeType, externalBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVV_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opX, const UPTKsparseConstSpVecDescr_t vecX, const UPTKsparseConstDnVecDescr_t vecY, const void *result, UPTKDataType computeType, size_t *bufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVV_bufferSize(UPTKsparseHandle_t handle, UPTKsparseOperation_t opX, const UPTKsparseSpVecDescr_t vecX, const UPTKsparseDnVecDescr_t vecY, const void *result, UPTKDataType computeType, size_t *bufferSize)
 {
     cusparseOperation_t cuda_opX = UPTKsparseOperationTocusparseOperation(opX);
     cudaDataType cuda_computeType = UPTKDataTypeTocudaDataType(computeType);
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpVV_bufferSize((cusparseHandle_t)handle, cuda_opX, (cusparseSpVecDescr_t)vecX, (cusparseConstDnVecDescr_t)vecY, const_cast<void *>(result), cuda_computeType, bufferSize);
+    cuda_res = cusparseSpVV_bufferSize((cusparseHandle_t)handle, cuda_opX, (cusparseSpVecDescr_t)vecX, (cusparseDnVecDescr_t)vecY, const_cast<void *>(result), cuda_computeType, bufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -2064,7 +2064,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVecGet(const UPTKsparseSpVecDescr_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVecGetIndexBase(const UPTKsparseConstSpVecDescr_t spVecDescr, UPTKsparseIndexBase_t *idxBase)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVecGetIndexBase(const UPTKsparseSpVecDescr_t spVecDescr, UPTKsparseIndexBase_t *idxBase)
 {
     cusparseIndexBase_t cuda_idxBase;
     cusparseStatus_t cuda_res;
@@ -2094,14 +2094,14 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csr(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, float *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, float *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneCsr2csrByPercentage((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const float *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const float *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneCsr2csrByPercentage_bufferSizeExt((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBufferSizeInBytes);
@@ -2115,7 +2115,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrNnz(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const float *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneCsr2csrNnzByPercentage((cusparseHandle_t)handle, m, n, nnzA, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, percentage, (const cusparseMatDescr_t)descrC, csrSortedRowPtrC, nnzTotalDevHostPtr, (pruneInfo_t)info, pBuffer);
@@ -2136,14 +2136,14 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csr(UPTKsparseHandle_t ha
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, float *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, float *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneDense2csrByPercentage((cusparseHandle_t)handle, m, n, A, lda, percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const float *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const float *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneDense2csrByPercentage_bufferSizeExt((cusparseHandle_t)handle, m, n, A, lda, percentage, (const cusparseMatDescr_t)descrC, csrSortedValC, csrSortedRowPtrC, csrSortedColIndC, (pruneInfo_t)info, pBufferSizeInBytes);
@@ -2157,7 +2157,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrNnz(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const float *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseSpruneDense2csrNnzByPercentage((cusparseHandle_t)handle, m, n, A, lda, percentage, (const cusparseMatDescr_t)descrC, csrRowPtrC, nnzTotalDevHostPtr, (pruneInfo_t)info, pBuffer);
@@ -2171,28 +2171,28 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpruneDense2csr_bufferSizeExt(UPTKspa
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsric02_zeroPivot(UPTKsparseHandle_t handle, UPTKbsric02Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsric02_zeroPivot(UPTKsparseHandle_t handle, bsric02Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXbsric02_zeroPivot((cusparseHandle_t)handle, (bsric02Info_t)info, position);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrilu02_zeroPivot(UPTKsparseHandle_t handle, UPTKbsrilu02Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrilu02_zeroPivot(UPTKsparseHandle_t handle, bsrilu02Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXbsrilu02_zeroPivot((cusparseHandle_t)handle, (bsrilu02Info_t)info, position);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrsm2_zeroPivot(UPTKsparseHandle_t handle, UPTKbsrsm2Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrsm2_zeroPivot(UPTKsparseHandle_t handle, bsrsm2Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXbsrsm2_zeroPivot((cusparseHandle_t)handle, (bsrsm2Info_t)info, position);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrsv2_zeroPivot(UPTKsparseHandle_t handle, UPTKbsrsv2Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXbsrsv2_zeroPivot(UPTKsparseHandle_t handle, bsrsv2Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXbsrsv2_zeroPivot((cusparseHandle_t)handle, (bsrsv2Info_t)info, position);
@@ -2273,14 +2273,14 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXcsrgeam2Nnz(UPTKsparseHandle_t handl
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXcsric02_zeroPivot(UPTKsparseHandle_t handle, UPTKcsric02Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXcsric02_zeroPivot(UPTKsparseHandle_t handle, csric02Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXcsric02_zeroPivot((cusparseHandle_t)handle, (csric02Info_t)info, position);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXcsrilu02_zeroPivot(UPTKsparseHandle_t handle, UPTKcsrilu02Info_t info, int *position)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseXcsrilu02_zeroPivot(UPTKsparseHandle_t handle, csrilu02Info_t info, int *position)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseXcsrilu02_zeroPivot((cusparseHandle_t)handle, (csrilu02Info_t)info, position);
@@ -2317,7 +2317,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -2326,7 +2326,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pInputBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -2335,7 +2335,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -2343,7 +2343,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_bufferSize(UPTKsparseHandle_
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -2352,7 +2352,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -2361,7 +2361,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, bsrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseStatus_t cuda_res;
@@ -2369,7 +2369,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_bufferSize(UPTKsparseHandle
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKbsrilu02Info_t info, int enable_boost, double *tol, cuDoubleComplex *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_numericBoost(UPTKsparseHandle_t handle, bsrilu02Info_t info, int enable_boost, double *tol, cuDoubleComplex *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZbsrilu02_numericBoost((cusparseHandle_t)handle, (bsrilu02Info_t)info, enable_boost, tol, boost_val);
@@ -2395,7 +2395,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrmv(UPTKsparseHandle_t handle, UPT
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2406,7 +2406,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2416,7 +2416,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const cuDoubleComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, const cuDoubleComplex *B, int ldb, cuDoubleComplex *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transXY, int mb, int n, int nnzb, const cuDoubleComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, const cuDoubleComplex *B, int ldb, cuDoubleComplex *X, int ldx, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2427,7 +2427,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_solve(UPTKsparseHandle_t hand
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_analysis(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2437,7 +2437,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_analysis(UPTKsparseHandle_t h
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSize(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, int *pBufferSizeInBytes)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2446,7 +2446,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSize(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, UPTKbsrsv2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockSize, bsrsv2Info_t info, size_t *pBufferSize)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2455,7 +2455,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_bufferSizeExt(UPTKsparseHandl
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const cuDoubleComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, UPTKbsrsv2Info_t info, const cuDoubleComplex *f, cuDoubleComplex *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsv2_solve(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, int mb, int nnzb, const cuDoubleComplex *alpha, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *bsrSortedValA, const int *bsrSortedRowPtrA, const int *bsrSortedColIndA, int blockDim, bsrsv2Info_t info, const cuDoubleComplex *f, cuDoubleComplex *x, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseOperation_t cuda_transA = UPTKsparseOperationTocusparseOperation(transA);
@@ -2489,7 +2489,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsr2csr_compress(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsr2csru(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsr2csru((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
@@ -2533,7 +2533,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrgeam2_bufferSizeExt(UPTKsparseHan
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -2541,7 +2541,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02(UPTKsparseHandle_t handle, i
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -2549,21 +2549,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_analysis(UPTKsparseHandle_t 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsric02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csric02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsric02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csric02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsric02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csric02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsric02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csric02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA_valM, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -2571,7 +2571,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02(UPTKsparseHandle_t handle, 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_analysis(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, const cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
     cusparseStatus_t cuda_res;
@@ -2579,35 +2579,35 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_analysis(UPTKsparseHandle_t
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, UPTKcsrilu02Info_t info, int *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_bufferSize(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, csrilu02Info_t info, int *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsrilu02_bufferSize((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedValA, csrSortedRowPtrA, csrSortedColIndA, (csrilu02Info_t)info, pBufferSizeInBytes);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, UPTKcsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, int m, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrSortedVal, const int *csrSortedRowPtr, const int *csrSortedColInd, csrilu02Info_t info, size_t *pBufferSize)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsrilu02_bufferSizeExt((cusparseHandle_t)handle, m, nnz, (const cusparseMatDescr_t)descrA, csrSortedVal, csrSortedRowPtr, csrSortedColInd, (csrilu02Info_t)info, pBufferSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_numericBoost(UPTKsparseHandle_t handle, UPTKcsrilu02Info_t info, int enable_boost, double *tol, cuDoubleComplex *boost_val)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsrilu02_numericBoost(UPTKsparseHandle_t handle, csrilu02Info_t info, int enable_boost, double *tol, cuDoubleComplex *boost_val)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsrilu02_numericBoost((cusparseHandle_t)handle, (csrilu02Info_t)info, enable_boost, tol, boost_val);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsru2csr(UPTKsparseHandle_t handle, int m, int n, int nnz, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, void *pBuffer)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsru2csr((cusparseHandle_t)handle, m, n, nnz, (const cusparseMatDescr_t)descrA, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBuffer);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, UPTKcsru2csrInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnz, cuDoubleComplex *csrVal, const int *csrRowPtr, int *csrColInd, csru2csrInfo_t info, size_t *pBufferSizeInBytes)
 {
     cusparseStatus_t cuda_res;
     cuda_res = cusparseZcsru2csr_bufferSizeExt((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, (csru2csrInfo_t)info, pBufferSizeInBytes);
@@ -2779,13 +2779,13 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csr_bufferSizeExt(UPTKspars
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, __half *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, __half *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const __half *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, const __half *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
@@ -2797,7 +2797,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrNnz(UPTKsparseHandle_t h
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneCsr2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, int nnzA, const UPTKsparseMatDescr_t descrA, const __half *csrSortedValA, const int *csrSortedRowPtrA, const int *csrSortedColIndA, float percentage, const UPTKsparseMatDescr_t descrC, int *csrSortedRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
@@ -2815,13 +2815,13 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csr_bufferSizeExt(UPTKspa
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, __half *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrByPercentage(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, __half *csrSortedValC, const int *csrSortedRowPtrC, int *csrSortedColIndC, pruneInfo_t info, void *pBuffer)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const __half *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, UPTKpruneInfo_t info, size_t *pBufferSizeInBytes)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrByPercentage_bufferSizeExt(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, const __half *csrSortedValC, const int *csrSortedRowPtrC, const int *csrSortedColIndC, pruneInfo_t info, size_t *pBufferSizeInBytes)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
@@ -2833,79 +2833,79 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrNnz(UPTKsparseHandle_t
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, UPTKpruneInfo_t info, void *pBuffer)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseHpruneDense2csrNnzByPercentage(UPTKsparseHandle_t handle, int m, int n, const __half *A, int lda, float percentage, const UPTKsparseMatDescr_t descrC, int *csrRowPtrC, int *nnzTotalDevHostPtr, pruneInfo_t info, void *pBuffer)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrsm2Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrsm2_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, UPTKsparseOperation_t transA, UPTKsparseOperation_t transB, int mb, int n, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrsm2Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrilu02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrilu02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrilu02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsrilu02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsrilu02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsrilu02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, float *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsric02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, double *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsric02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsric02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, UPTKbsric02Info_t info, size_t *pBufferSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZbsric02_bufferSizeExt(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuDoubleComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockSize, bsric02Info_t info, size_t *pBufferSize)
 {
     Debug();
     return UPTKSPARSE_STATUS_NOT_SUPPORTED;
@@ -3031,10 +3031,10 @@ UPTKsparseLoggerForceDisable(void)
 }
 #endif
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetSize(UPTKsparseConstSpMatDescr_t spMatDescr, int64_t *rows, int64_t *cols, int64_t *nnz)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetSize(UPTKsparseSpMatDescr_t spMatDescr, int64_t *rows, int64_t *cols, int64_t *nnz)
 {
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMatGetSize((cusparseConstSpMatDescr_t)spMatDescr, rows, cols, nnz);
+    cuda_res = cusparseSpMatGetSize((cusparseSpMatDescr_t)spMatDescr, rows, cols, nnz);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -3052,10 +3052,10 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCsrSetStridedBatch(UPTKsparseSpMatDes
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetAttribute(UPTKsparseConstSpMatDescr_t spMatDescr, UPTKsparseSpMatAttribute_t attribute, void *data, size_t dataSize)
+UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMatGetAttribute(UPTKsparseSpMatDescr_t spMatDescr, UPTKsparseSpMatAttribute_t attribute, void *data, size_t dataSize)
 {
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpMatGetAttribute((cusparseConstSpMatDescr_t)spMatDescr, UPTKsparseSpMatAttributeTocusparseSpMatAttribute(attribute), data, dataSize);
+    cuda_res = cusparseSpMatGetAttribute((cusparseSpMatDescr_t)spMatDescr, UPTKsparseSpMatAttributeTocusparseSpMatAttribute(attribute), data, dataSize);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -3083,7 +3083,7 @@ UPTKsparseCreateCsc(UPTKsparseSpMatDescr_t *spMatDescr,
                                                               UPTKsparseIndexTypeTocusparseIndexType(cscRowIndType), UPTKsparseIndexBaseTocusparseIndexBase(idxBase), UPTKDataTypeTocudaDataType(valueType)));
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI
+/*UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                  int64_t *rows,
                  int64_t *cols,
@@ -3102,9 +3102,9 @@ UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
     cusparseIndexBase_t cudaIdxBase;
     cudaDataType cudaType;
 
-    cuda_res = cusparseConstCscGet((cusparseSpMatDescr_t)spMatDescr, rows,
-                                   cols, nnz, (const void **)cscColOffsets,
-                                   (const void **)cscRowInd, (const void **)cscValues,
+    cuda_res = cusparseCscGet((cusparseSpMatDescr_t)spMatDescr, rows,
+                                   cols, nnz, (void **)cscColOffsets,
+                                   (void **)cscRowInd, (void **)cscValues,
                                    &cudaIdxRowType, &cudaIdxColType, &cudaIdxBase, &cudaType);
     *cscColOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxRowType);
     *cscRowIndType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxColType);
@@ -3112,7 +3112,7 @@ UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
     *valueType = cudaDataTypeToUPTKDataType(cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
-}
+}*/
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCsrSetPointers(UPTKsparseSpMatDescr_t spMatDescr,
@@ -3185,7 +3185,7 @@ UPTKsparseBlockedEllGet(UPTKsparseSpMatDescr_t spMatDescr,
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseAxpby(UPTKsparseHandle_t handle,
                 const void *alpha,
-                UPTKsparseConstSpVecDescr_t vecX,
+                UPTKsparseSpVecDescr_t vecX,
                 const void *beta,
                 UPTKsparseDnVecDescr_t vecY)
 {
@@ -3194,15 +3194,15 @@ UPTKsparseAxpby(UPTKsparseHandle_t handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseGather(UPTKsparseHandle_t handle,
-                 UPTKsparseConstDnVecDescr_t vecY,
+                 UPTKsparseDnVecDescr_t vecY,
                  UPTKsparseSpVecDescr_t vecX)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseGather((cusparseHandle_t)handle, (cusparseConstDnVecDescr_t)vecY, (cusparseSpVecDescr_t)vecX));
+    return cusparseStatusToUPTKsparseStatus(cusparseGather((cusparseHandle_t)handle, (cusparseDnVecDescr_t)vecY, (cusparseSpVecDescr_t)vecX));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseScatter(UPTKsparseHandle_t handle,
-                  UPTKsparseConstSpVecDescr_t vecX,
+                  UPTKsparseSpVecDescr_t vecX,
                   UPTKsparseDnVecDescr_t vecY)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseScatter((cusparseHandle_t)handle, (cusparseSpVecDescr_t)vecX, (cusparseDnVecDescr_t)vecY));
@@ -3220,22 +3220,22 @@ UPTKsparseRot(UPTKsparseHandle_t handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSparseToDense_bufferSize(UPTKsparseHandle_t handle,
-                                   UPTKsparseConstSpMatDescr_t matA,
+                                   UPTKsparseSpMatDescr_t matA,
                                    UPTKsparseDnMatDescr_t matB,
                                    UPTKsparseSparseToDenseAlg_t alg,
                                    size_t *bufferSize)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSparseToDense_bufferSize((cusparseHandle_t)handle, (cusparseConstSpMatDescr_t)matA, (cusparseDnMatDescr_t)matB, UPTKsparseSparseToDenseAlgTocusparseSparseToDenseAlg(alg), bufferSize));
+    return cusparseStatusToUPTKsparseStatus(cusparseSparseToDense_bufferSize((cusparseHandle_t)handle, (cusparseSpMatDescr_t)matA, (cusparseDnMatDescr_t)matB, UPTKsparseSparseToDenseAlgTocusparseSparseToDenseAlg(alg), bufferSize));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSparseToDense(UPTKsparseHandle_t handle,
-                        UPTKsparseConstSpMatDescr_t matA,
+                        UPTKsparseSpMatDescr_t matA,
                         UPTKsparseDnMatDescr_t matB,
                         UPTKsparseSparseToDenseAlg_t alg,
                         void *externalBuffer)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSparseToDense((cusparseHandle_t)handle, (cusparseConstSpMatDescr_t)matA, (cusparseDnMatDescr_t)matB, UPTKsparseSparseToDenseAlgTocusparseSparseToDenseAlg(alg), externalBuffer));
+    return cusparseStatusToUPTKsparseStatus(cusparseSparseToDense((cusparseHandle_t)handle, (cusparseSpMatDescr_t)matA, (cusparseDnMatDescr_t)matB, UPTKsparseSparseToDenseAlgTocusparseSparseToDenseAlg(alg), externalBuffer));
 }
 
 // #############################################################################
@@ -3244,7 +3244,7 @@ UPTKsparseSparseToDense(UPTKsparseHandle_t handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_bufferSize(UPTKsparseHandle_t handle,
-                                   UPTKsparseConstDnMatDescr_t matA,
+                                   UPTKsparseDnMatDescr_t matA,
                                    UPTKsparseSpMatDescr_t matB,
                                    UPTKsparseDenseToSparseAlg_t alg,
                                    size_t *bufferSize)
@@ -3254,7 +3254,7 @@ UPTKsparseDenseToSparse_bufferSize(UPTKsparseHandle_t handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_analysis(UPTKsparseHandle_t handle,
-                                 UPTKsparseConstDnMatDescr_t matA,
+                                 UPTKsparseDnMatDescr_t matA,
                                  UPTKsparseSpMatDescr_t matB,
                                  UPTKsparseDenseToSparseAlg_t alg,
                                  void *externalBuffer)
@@ -3264,7 +3264,7 @@ UPTKsparseDenseToSparse_analysis(UPTKsparseHandle_t handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_convert(UPTKsparseHandle_t handle,
-                                UPTKsparseConstDnMatDescr_t matA,
+                                UPTKsparseDnMatDescr_t matA,
                                 UPTKsparseSpMatDescr_t matB,
                                 UPTKsparseDenseToSparseAlg_t alg,
                                 void *externalBuffer)
@@ -3292,15 +3292,15 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpSV_bufferSize(UPTKsparseHandle_t handle,
                           UPTKsparseOperation_t opA,
                           const void *alpha,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstDnVecDescr_t vecX,
+                          UPTKsparseSpMatDescr_t matA,
+                          UPTKsparseDnVecDescr_t vecX,
                           UPTKsparseDnVecDescr_t vecY,
                           UPTKDataType computeType,
                           UPTKsparseSpSVAlg_t alg,
                           UPTKsparseSpSVDescr_t spsvDescr,
                           size_t *bufferSize)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSpSV_bufferSize((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), alpha, (cusparseConstSpMatDescr_t)matA, (cusparseConstDnVecDescr_t)vecX,
+    return cusparseStatusToUPTKsparseStatus(cusparseSpSV_bufferSize((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), alpha, (cusparseSpMatDescr_t)matA, (cusparseDnVecDescr_t)vecX,
                                                                     (cusparseDnVecDescr_t)vecY, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpSVAlgTocusparseSpSVAlg(alg), (cusparseSpSVDescr_t)spsvDescr, bufferSize));
 }
 
@@ -3308,15 +3308,15 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpSV_analysis(UPTKsparseHandle_t handle,
                         UPTKsparseOperation_t opA,
                         const void *alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnVecDescr_t vecX,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnVecDescr_t vecX,
                         UPTKsparseDnVecDescr_t vecY,
                         UPTKDataType computeType,
                         UPTKsparseSpSVAlg_t alg,
                         UPTKsparseSpSVDescr_t spsvDescr,
                         void *externalBuffer)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSpSV_analysis((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), alpha, (cusparseSpMatDescr_t)matA, (cusparseConstDnVecDescr_t)vecX,
+    return cusparseStatusToUPTKsparseStatus(cusparseSpSV_analysis((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), alpha, (cusparseSpMatDescr_t)matA, (cusparseDnVecDescr_t)vecX,
                                                                   (cusparseDnVecDescr_t)vecY, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpSVAlgTocusparseSpSVAlg(alg), (cusparseSpSVDescr_t)spsvDescr, externalBuffer));
 }
 // 参数不一致
@@ -3324,8 +3324,8 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpSV_solve(UPTKsparseHandle_t handle,
                      UPTKsparseOperation_t opA,
                      const void *alpha,
-                     UPTKsparseConstSpMatDescr_t matA,
-                     UPTKsparseConstDnVecDescr_t vecX,
+                     UPTKsparseSpMatDescr_t matA,
+                     UPTKsparseDnVecDescr_t vecX,
                      UPTKsparseDnVecDescr_t vecY,
                      UPTKDataType computeType,
                      UPTKsparseSpSVAlg_t alg,
@@ -3356,8 +3356,8 @@ UPTKsparseSpSM_bufferSize(UPTKsparseHandle_t handle,
                           UPTKsparseOperation_t opA,
                           UPTKsparseOperation_t opB,
                           const void *alpha,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstDnMatDescr_t matB,
+                          UPTKsparseSpMatDescr_t matA,
+                          UPTKsparseDnMatDescr_t matB,
                           UPTKsparseDnMatDescr_t matC,
                           UPTKDataType computeType,
                           UPTKsparseSpSMAlg_t alg,
@@ -3373,8 +3373,8 @@ UPTKsparseSpSM_analysis(UPTKsparseHandle_t handle,
                         UPTKsparseOperation_t opA,
                         UPTKsparseOperation_t opB,
                         const void *alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnMatDescr_t matB,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnMatDescr_t matB,
                         UPTKsparseDnMatDescr_t matC,
                         UPTKDataType computeType,
                         UPTKsparseSpSMAlg_t alg,
@@ -3390,15 +3390,15 @@ UPTKsparseSpSM_solve(UPTKsparseHandle_t handle,
                      UPTKsparseOperation_t opA,
                      UPTKsparseOperation_t opB,
                      const void *alpha,
-                     UPTKsparseConstSpMatDescr_t matA,
-                     UPTKsparseConstDnMatDescr_t matB,
+                     UPTKsparseSpMatDescr_t matA,
+                     UPTKsparseDnMatDescr_t matB,
                      UPTKsparseDnMatDescr_t matC,
                      UPTKDataType computeType,
                      UPTKsparseSpSMAlg_t alg,
                      UPTKsparseSpSMDescr_t spsmDescr)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpSM_solve((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB), alpha, (cusparseSpMatDescr_t)matA,
-                                                               (cusparseConstDnMatDescr_t)matB, (const cusparseDnMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpSMAlgTocusparseSpSMAlg(alg), (cusparseSpSMDescr_t)spsmDescr));
+                                                               (cusparseDnMatDescr_t)matB, (const cusparseDnMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpSMAlgTocusparseSpSMAlg(alg), (cusparseSpSMDescr_t)spsmDescr));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3406,8 +3406,8 @@ UPTKsparseSpMM_preprocess(UPTKsparseHandle_t handle,
                           UPTKsparseOperation_t opA,
                           UPTKsparseOperation_t opB,
                           const void *alpha,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstDnMatDescr_t matB,
+                          UPTKsparseSpMatDescr_t matA,
+                          UPTKsparseDnMatDescr_t matB,
                           const void *beta,
                           UPTKsparseDnMatDescr_t matC,
                           UPTKDataType computeType,
@@ -3417,7 +3417,7 @@ UPTKsparseSpMM_preprocess(UPTKsparseHandle_t handle,
     return cusparseStatusToUPTKsparseStatus(cusparseSpMM_preprocess((cusparseHandle_t)handle,
                                                                     UPTKsparseOperationTocusparseOperation(opA),
                                                                     UPTKsparseOperationTocusparseOperation(opB), alpha,
-                                                                    (cusparseConstSpMatDescr_t)matA,
+                                                                    (cusparseSpMatDescr_t)matA,
                                                                     (cusparseDnMatDescr_t)matB, beta,
                                                                     (cusparseDnMatDescr_t)matC,
                                                                     UPTKDataTypeTocudaDataType(computeType),
@@ -3442,8 +3442,8 @@ UPTKsparseSpGEMM_workEstimation(UPTKsparseHandle_t handle,
                                 UPTKsparseOperation_t opA,
                                 UPTKsparseOperation_t opB,
                                 const void *alpha,
-                                UPTKsparseConstSpMatDescr_t matA,
-                                UPTKsparseConstSpMatDescr_t matB,
+                                UPTKsparseSpMatDescr_t matA,
+                                UPTKsparseSpMatDescr_t matB,
                                 const void *beta,
                                 UPTKsparseSpMatDescr_t matC,
                                 UPTKDataType computeType,
@@ -3453,7 +3453,7 @@ UPTKsparseSpGEMM_workEstimation(UPTKsparseHandle_t handle,
                                 void *externalBuffer1)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMM_workEstimation((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB), alpha,
-                                                                          (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize1, externalBuffer1));
+                                                                          (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize1, externalBuffer1));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3461,8 +3461,8 @@ UPTKsparseSpGEMM_compute(UPTKsparseHandle_t handle,
                          UPTKsparseOperation_t opA,
                          UPTKsparseOperation_t opB,
                          const void *alpha,
-                         UPTKsparseConstSpMatDescr_t matA,
-                         UPTKsparseConstSpMatDescr_t matB,
+                         UPTKsparseSpMatDescr_t matA,
+                         UPTKsparseSpMatDescr_t matB,
                          const void *beta,
                          UPTKsparseSpMatDescr_t matC,
                          UPTKDataType computeType,
@@ -3472,7 +3472,7 @@ UPTKsparseSpGEMM_compute(UPTKsparseHandle_t handle,
                          void *externalBuffer2)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMM_compute((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB), alpha,
-                                                                   (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize2, externalBuffer2));
+                                                                   (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize2, externalBuffer2));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3480,8 +3480,8 @@ UPTKsparseSpGEMM_copy(UPTKsparseHandle_t handle,
                       UPTKsparseOperation_t opA,
                       UPTKsparseOperation_t opB,
                       const void *alpha,
-                      UPTKsparseConstSpMatDescr_t matA,
-                      UPTKsparseConstSpMatDescr_t matB,
+                      UPTKsparseSpMatDescr_t matA,
+                      UPTKsparseSpMatDescr_t matB,
                       const void *beta,
                       UPTKsparseSpMatDescr_t matC,
                       UPTKDataType computeType,
@@ -3489,7 +3489,7 @@ UPTKsparseSpGEMM_copy(UPTKsparseHandle_t handle,
                       UPTKsparseSpGEMMDescr_t spgemmDescr)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMM_copy((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB), alpha,
-                                                                (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr));
+                                                                (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr));
 }
 
 // #############################################################################
@@ -3500,8 +3500,8 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpGEMMreuse_workEstimation(UPTKsparseHandle_t handle,
                                      UPTKsparseOperation_t opA,
                                      UPTKsparseOperation_t opB,
-                                     UPTKsparseConstSpMatDescr_t matA,
-                                     UPTKsparseConstSpMatDescr_t matB,
+                                     UPTKsparseSpMatDescr_t matA,
+                                     UPTKsparseSpMatDescr_t matB,
                                      UPTKsparseSpMatDescr_t matC,
                                      UPTKsparseSpGEMMAlg_t alg,
                                      UPTKsparseSpGEMMDescr_t spgemmDescr,
@@ -3509,15 +3509,15 @@ UPTKsparseSpGEMMreuse_workEstimation(UPTKsparseHandle_t handle,
                                      void *externalBuffer1)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMMreuse_workEstimation((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB),
-                                                                               (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize1, externalBuffer1));
+                                                                               (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize1, externalBuffer1));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpGEMMreuse_nnz(UPTKsparseHandle_t handle,
                           UPTKsparseOperation_t opA,
                           UPTKsparseOperation_t opB,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstSpMatDescr_t matB,
+                          UPTKsparseSpMatDescr_t matA,
+                          UPTKsparseSpMatDescr_t matB,
                           UPTKsparseSpMatDescr_t matC,
                           UPTKsparseSpGEMMAlg_t alg,
                           UPTKsparseSpGEMMDescr_t spgemmDescr,
@@ -3529,7 +3529,7 @@ UPTKsparseSpGEMMreuse_nnz(UPTKsparseHandle_t handle,
                           void *externalBuffer4)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMMreuse_nnz((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB),
-                                                                    (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr,
+                                                                    (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr,
                                                                     bufferSize2, externalBuffer2, bufferSize3, externalBuffer3, bufferSize4, externalBuffer4));
 }
 
@@ -3537,8 +3537,8 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpGEMMreuse_copy(UPTKsparseHandle_t handle,
                            UPTKsparseOperation_t opA,
                            UPTKsparseOperation_t opB,
-                           UPTKsparseConstSpMatDescr_t matA,
-                           UPTKsparseConstSpMatDescr_t matB,
+                           UPTKsparseSpMatDescr_t matA,
+                           UPTKsparseSpMatDescr_t matB,
                            UPTKsparseSpMatDescr_t matC,
                            UPTKsparseSpGEMMAlg_t alg,
                            UPTKsparseSpGEMMDescr_t spgemmDescr,
@@ -3546,7 +3546,7 @@ UPTKsparseSpGEMMreuse_copy(UPTKsparseHandle_t handle,
                            void *externalBuffer5)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMMreuse_copy((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB),
-                                                                     (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize5, externalBuffer5));
+                                                                     (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, (cusparseSpMatDescr_t)matC, UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr, bufferSize5, externalBuffer5));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3554,8 +3554,8 @@ UPTKsparseSpGEMMreuse_compute(UPTKsparseHandle_t handle,
                               UPTKsparseOperation_t opA,
                               UPTKsparseOperation_t opB,
                               const void *alpha,
-                              UPTKsparseConstSpMatDescr_t matA,
-                              UPTKsparseConstSpMatDescr_t matB,
+                              UPTKsparseSpMatDescr_t matA,
+                              UPTKsparseSpMatDescr_t matB,
                               const void *beta,
                               UPTKsparseSpMatDescr_t matC,
                               UPTKDataType computeType,
@@ -3563,7 +3563,7 @@ UPTKsparseSpGEMMreuse_compute(UPTKsparseHandle_t handle,
                               UPTKsparseSpGEMMDescr_t spgemmDescr)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpGEMMreuse_compute((cusparseHandle_t)handle, UPTKsparseOperationTocusparseOperation(opA), UPTKsparseOperationTocusparseOperation(opB), alpha,
-                                                                        (cusparseConstSpMatDescr_t)matA, (cusparseConstSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr));
+                                                                        (cusparseSpMatDescr_t)matA, (cusparseSpMatDescr_t)matB, beta, (cusparseSpMatDescr_t)matC, UPTKDataTypeTocudaDataType(computeType), UPTKsparseSpGEMMAlgTocusparseSpGEMMAlg(alg), (cusparseSpGEMMDescr_t)spgemmDescr));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3571,8 +3571,8 @@ UPTKsparseSDDMM_bufferSize(UPTKsparseHandle_t handle,
                            UPTKsparseOperation_t opA,
                            UPTKsparseOperation_t opB,
                            const void *alpha,
-                           UPTKsparseConstDnMatDescr_t matA,
-                           UPTKsparseConstDnMatDescr_t matB,
+                           UPTKsparseDnMatDescr_t matA,
+                           UPTKsparseDnMatDescr_t matB,
                            const void *beta,
                            UPTKsparseSpMatDescr_t matC,
                            UPTKDataType computeType,
@@ -3588,8 +3588,8 @@ UPTKsparseSDDMM_preprocess(UPTKsparseHandle_t handle,
                            UPTKsparseOperation_t opA,
                            UPTKsparseOperation_t opB,
                            const void *alpha,
-                           UPTKsparseConstDnMatDescr_t matA,
-                           UPTKsparseConstDnMatDescr_t matB,
+                           UPTKsparseDnMatDescr_t matA,
+                           UPTKsparseDnMatDescr_t matB,
                            const void *beta,
                            UPTKsparseSpMatDescr_t matC,
                            UPTKDataType computeType,
@@ -3605,8 +3605,8 @@ UPTKsparseSDDMM(UPTKsparseHandle_t handle,
                 UPTKsparseOperation_t opA,
                 UPTKsparseOperation_t opB,
                 const void *alpha,
-                UPTKsparseConstDnMatDescr_t matA,
-                UPTKsparseConstDnMatDescr_t matB,
+                UPTKsparseDnMatDescr_t matA,
+                UPTKsparseDnMatDescr_t matB,
                 const void *beta,
                 UPTKsparseSpMatDescr_t matC,
                 UPTKDataType computeType,
@@ -3622,8 +3622,8 @@ UPTKsparseSpMMOp_createPlan(UPTKsparseHandle_t handle,
                             UPTKsparseSpMMOpPlan_t *plan,
                             UPTKsparseOperation_t opA,
                             UPTKsparseOperation_t opB,
-                            UPTKsparseConstSpMatDescr_t matA,
-                            UPTKsparseConstDnMatDescr_t matB,
+                            UPTKsparseSpMatDescr_t matA,
+                            UPTKsparseDnMatDescr_t matB,
                             UPTKsparseDnMatDescr_t matC,
                             UPTKDataType computeType,
                             UPTKsparseSpMMOpAlg_t alg,
@@ -3642,7 +3642,7 @@ UPTKsparseSpMMOp_createPlan(UPTKsparseHandle_t handle,
     cusparseSpMMOpAlg_t cudaSpMMAlg = UPTKsparseSpMMOpAlgTocusparseSpMMOpAlg(alg);
 
     cuda_res = cusparseSpMMOp_createPlan((cusparseHandle_t)handle, (cusparseSpMMOpPlan_t *)plan, cudaOpA, cudaOpB,
-                                         (cusparseConstSpMatDescr_t)matA, (cusparseConstDnMatDescr_t)matB,
+                                         (cusparseSpMatDescr_t)matA, (cusparseDnMatDescr_t)matB,
                                          (cusparseDnMatDescr_t)matC, cudaType, cudaSpMMAlg, addOperationNvvmBuffer,
                                          addOperationBufferSize, mulOperationNvvmBuffer, mulOperationBufferSize,
                                          epilogueNvvmBuffer, epilogueBufferSize, SpMMWorkspaceSize);
@@ -3659,12 +3659,12 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpMMOp_destroyPlan(UPTKsparseSpMMOpPl
 {
     return cusparseStatusToUPTKsparseStatus(cusparseSpMMOp_destroyPlan((cusparseSpMMOpPlan_t)plan));
 }
-// ###########################
-UPTKsparseStatus_t UPTKSPARSEAPI
+
+/*UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpGEMM_getNumProducts(UPTKsparseSpGEMMDescr_t spgemmDescr,
                                 int64_t *num_prods)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseSpGEMM_getNumProducts((cusparseSpGEMMDescr_t)spgemmDescr, num_prods));
+    return cusparseStatusToUPTKsparseStatus(UPTKsparseSpGEMM_getNumProducts((cusparseSpGEMMDescr_t)spgemmDescr, num_prods));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3672,8 +3672,8 @@ UPTKsparseSpGEMM_estimateMemory(UPTKsparseHandle_t handle,
                                 UPTKsparseOperation_t opA,
                                 UPTKsparseOperation_t opB,
                                 const void *alpha,
-                                UPTKsparseConstSpMatDescr_t matA,
-                                UPTKsparseConstSpMatDescr_t matB,
+                                UPTKsparseSpMatDescr_t matA,
+                                UPTKsparseSpMatDescr_t matB,
                                 const void *beta,
                                 UPTKsparseSpMatDescr_t matC,
                                 UPTKDataType computeType,
@@ -3694,8 +3694,8 @@ UPTKsparseSpGEMM_estimateMemory(UPTKsparseHandle_t handle,
                                              cudaOpA,
                                              cudaOpB,
                                              alpha,
-                                             (cusparseConstSpMatDescr_t)matA,
-                                             (cusparseConstSpMatDescr_t)matB,
+                                             (cusparseSpMatDescr_t)matA,
+                                             (cusparseSpMatDescr_t)matB,
                                              beta,
                                              (cusparseSpMatDescr_t)matC,
                                              cudaType,
@@ -3719,7 +3719,7 @@ UPTKsparseBsrSetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
     return cusparseStatusToUPTKsparseStatus(cusparseBsrSetStridedBatch((cusparseSpMatDescr_t)spMatDescr, batchCount, offsetsBatchStride, columnsBatchStride, ValuesBatchStride));
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstBlockedEllGet(UPTKsparseConstSpMatDescr_t spMatDescr,
+UPTKsparseConstBlockedEllGet(UPTKsparseSpMatDescr_t spMatDescr,
                              int64_t *rows,
                              int64_t *cols,
                              int64_t *ellBlockSize,
@@ -3735,7 +3735,7 @@ UPTKsparseConstBlockedEllGet(UPTKsparseConstSpMatDescr_t spMatDescr,
     cusparseIndexBase_t cudaIdxBase;
     cudaDataType cudaType;
 
-    cuda_res = cusparseConstBlockedEllGet((cusparseConstSpMatDescr_t)spMatDescr, rows,
+    cuda_res = cusparseConstBlockedEllGet((cusparseSpMatDescr_t)spMatDescr, rows,
                                           cols, ellBlockSize, ellCols, ellColInd, ellValue,
                                           &cudaIdxType,
                                           &cudaIdxBase,
@@ -3747,7 +3747,7 @@ UPTKsparseConstBlockedEllGet(UPTKsparseConstSpMatDescr_t spMatDescr,
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCooGet(UPTKsparseConstSpMatDescr_t spMatDescr,
+UPTKsparseConstCooGet(UPTKsparseSpMatDescr_t spMatDescr,
                       int64_t *rows,
                       int64_t *cols,
                       int64_t *nnz,
@@ -3763,7 +3763,7 @@ UPTKsparseConstCooGet(UPTKsparseConstSpMatDescr_t spMatDescr,
     cusparseIndexBase_t cudaIdxBase;
     cudaDataType cudaType;
 
-    cuda_res = cusparseConstCooGet((cusparseConstSpMatDescr_t)spMatDescr, rows,
+    cuda_res = cusparseConstCooGet((cusparseSpMatDescr_t)spMatDescr, rows,
                                    cols, nnz, cooRowInd, cooColInd, cooValues,
                                    &cudaIdxType,
                                    &cudaIdxBase,
@@ -3775,7 +3775,7 @@ UPTKsparseConstCooGet(UPTKsparseConstSpMatDescr_t spMatDescr,
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCscGet(UPTKsparseConstSpMatDescr_t spMatDescr,
+UPTKsparseConstCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                       int64_t *rows,
                       int64_t *cols,
                       int64_t *nnz,
@@ -3793,7 +3793,7 @@ UPTKsparseConstCscGet(UPTKsparseConstSpMatDescr_t spMatDescr,
     cusparseIndexBase_t cudaIdxBase;
     cudaDataType cudaType;
 
-    cuda_res = cusparseConstCscGet((cusparseConstSpMatDescr_t)spMatDescr, rows,
+    cuda_res = cusparseCscGet((cusparseSpMatDescr_t)spMatDescr, rows,
                                    cols, nnz, cscColOffsets, cscRowInd, cscValues,
                                    &cudaIdxRowType, &cudaIdxColType, &cudaIdxBase, &cudaType);
     *cscColOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxRowType);
@@ -3804,7 +3804,7 @@ UPTKsparseConstCscGet(UPTKsparseConstSpMatDescr_t spMatDescr,
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCsrGet(UPTKsparseConstSpMatDescr_t spMatDescr,
+UPTKsparseConstCsrGet(UPTKsparseSpMatDescr_t spMatDescr,
                       int64_t *rows,
                       int64_t *cols,
                       int64_t *nnz,
@@ -3822,7 +3822,7 @@ UPTKsparseConstCsrGet(UPTKsparseConstSpMatDescr_t spMatDescr,
     cusparseIndexBase_t cudaIdxBase;
     cudaDataType cudaType;
 
-    cuda_res = cusparseConstCsrGet((cusparseConstSpMatDescr_t)spMatDescr, rows,
+    cuda_res = cusparseConstCsrGet((cusparseSpMatDescr_t)spMatDescr, rows,
                                    cols, nnz, csrRowOffsets, csrColInd, csrValues,
                                    &cudaIdxRowType, &cudaIdxColType, &cudaIdxBase, &cudaType);
     *csrRowOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxRowType);
@@ -3834,7 +3834,7 @@ UPTKsparseConstCsrGet(UPTKsparseConstSpMatDescr_t spMatDescr,
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnMatGet(UPTKsparseConstDnMatDescr_t dnMatDescr,
+UPTKsparseConstDnMatGet(UPTKsparseDnMatDescr_t dnMatDescr,
                         int64_t *rows,
                         int64_t *cols,
                         int64_t *ld,
@@ -3845,7 +3845,7 @@ UPTKsparseConstDnMatGet(UPTKsparseConstDnMatDescr_t dnMatDescr,
     cusparseStatus_t cuda_res;
     cudaDataType cudaType;
     cusparseOrder_t cudaOrder;
-    cuda_res = cusparseConstDnMatGet((cusparseConstDnMatDescr_t)dnMatDescr,
+    cuda_res = cusparseConstDnMatGet((cusparseDnMatDescr_t)dnMatDescr,
                                      rows, cols, ld, values, &cudaType, &cudaOrder);
     *type = cudaDataTypeToUPTKDataType(cudaType);
     *order = cusparseOrderToUPTKsparseOrder(cudaOrder);
@@ -3853,39 +3853,39 @@ UPTKsparseConstDnMatGet(UPTKsparseConstDnMatDescr_t dnMatDescr,
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnMatGetValues(UPTKsparseConstDnMatDescr_t dnMatDescr,
+UPTKsparseConstDnMatGetValues(UPTKsparseDnMatDescr_t dnMatDescr,
                               const void **values)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseConstDnMatGetValues((cusparseDnMatDescr_t)dnMatDescr, values));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnVecGet(UPTKsparseConstDnVecDescr_t dnVecDescr,
+UPTKsparseConstDnVecGet(UPTKsparseDnVecDescr_t dnVecDescr,
                         int64_t *size,
                         const void **values,
                         UPTKDataType *valueType)
 {
     cusparseStatus_t cuda_res;
     cudaDataType cudaType;
-    cuda_res = cusparseConstDnVecGet((cusparseConstDnVecDescr_t)dnVecDescr, size, values, &cudaType);
+    cuda_res = cusparseConstDnVecGet((cusparseDnVecDescr_t)dnVecDescr, size, values, &cudaType);
     *valueType = cudaDataTypeToUPTKDataType(cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnVecGetValues(UPTKsparseConstDnVecDescr_t dnVecDescr,
+UPTKsparseConstDnVecGetValues(UPTKsparseDnVecDescr_t dnVecDescr,
                               const void **values)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseConstDnVecGetValues((cusparseConstDnVecDescr_t)dnVecDescr, values));
+    return cusparseStatusToUPTKsparseStatus(cusparseConstDnVecGetValues((cusparseDnVecDescr_t)dnVecDescr, values));
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpMatGetValues(UPTKsparseConstSpMatDescr_t spMatDescr,
+UPTKsparseConstSpMatGetValues(UPTKsparseSpMatDescr_t spMatDescr,
                               const void **values)
 {
-    return cusparseStatusToUPTKsparseStatus(cusparseConstSpMatGetValues((cusparseConstSpMatDescr_t)spMatDescr, values));
+    return cusparseStatusToUPTKsparseStatus(cusparseConstSpMatGetValues((cusparseSpMatDescr_t)spMatDescr, values));
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpVecGet(UPTKsparseConstSpVecDescr_t spVecDescr,
+UPTKsparseConstSpVecGet(UPTKsparseSpVecDescr_t spVecDescr,
                         int64_t *size,
                         int64_t *nnz,
                         const void **indices,
@@ -3908,7 +3908,7 @@ UPTKsparseConstSpVecGet(UPTKsparseConstSpVecDescr_t spVecDescr,
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpVecGetValues(UPTKsparseConstSpVecDescr_t spVecDescr,
+UPTKsparseConstSpVecGetValues(UPTKsparseSpVecDescr_t spVecDescr,
                               const void **values)
 {
     return cusparseStatusToUPTKsparseStatus(cusparseConstSpVecGetValues((cusparseConstSpVecDescr_t)spVecDescr, values));
@@ -3943,7 +3943,7 @@ UPTKsparseCreateBsr(UPTKsparseSpMatDescr_t *spMatDescr,
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstBlockedEll(UPTKsparseConstSpMatDescr_t *spMatDescr,
+UPTKsparseCreateConstBlockedEll(UPTKsparseSpMatDescr_t *spMatDescr,
                                 int64_t rows,
                                 int64_t cols,
                                 int64_t ellBlockSize,
@@ -3958,14 +3958,14 @@ UPTKsparseCreateConstBlockedEll(UPTKsparseConstSpMatDescr_t *spMatDescr,
     cusparseIndexType_t cudaIdxType = UPTKsparseIndexTypeTocusparseIndexType(ellIdxType);
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
-    cuda_res = cusparseCreateConstBlockedEll((cusparseConstSpMatDescr_t *)spMatDescr,
+    cuda_res = cusparseCreateConstBlockedEll((cusparseSpMatDescr_t *)spMatDescr,
                                              rows, cols, ellBlockSize, ellCols, ellColInd,
                                              ellValue, cudaIdxType, cudaIdxBase, cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstBsr(UPTKsparseConstSpMatDescr_t *spMatDescr,
+UPTKsparseCreateConstBsr(UPTKsparseSpMatDescr_t *spMatDescr,
                          int64_t brows,
                          int64_t bcols,
                          int64_t bnnz,
@@ -3987,7 +3987,7 @@ UPTKsparseCreateConstBsr(UPTKsparseConstSpMatDescr_t *spMatDescr,
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
     cusparseOrder_t cudaOrder = UPTKsparseOrderTocusparseOrder(order);
-    cuda_res = cusparseCreateConstBsr((cusparseConstSpMatDescr_t *)spMatDescr,
+    cuda_res = cusparseCreateConstBsr((cusparseSpMatDescr_t *)spMatDescr,
                                       brows, bcols, bnnz, rowBlockDim, colBlockDim,
                                       bsrRowOffsets, bsrColInd, bsrValues, cudaIdxRowType,
                                       cudaIdxColType, cudaIdxBase, cudaType, cudaOrder);
@@ -3996,7 +3996,7 @@ UPTKsparseCreateConstBsr(UPTKsparseConstSpMatDescr_t *spMatDescr,
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCoo(UPTKsparseConstSpMatDescr_t *spMatDescr,
+UPTKsparseCreateConstCoo(UPTKsparseSpMatDescr_t *spMatDescr,
                          int64_t rows,
                          int64_t cols,
                          int64_t nnz,
@@ -4011,14 +4011,14 @@ UPTKsparseCreateConstCoo(UPTKsparseConstSpMatDescr_t *spMatDescr,
     cusparseIndexType_t cudaIdxType = UPTKsparseIndexTypeTocusparseIndexType(cooIdxType);
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
-    cuda_res = cusparseCreateConstCoo((cusparseConstSpMatDescr_t *)spMatDescr,
+    cuda_res = cusparseCreateConstCoo((cusparseSpMatDescr_t *)spMatDescr,
                                       rows, cols, nnz, cooRowInd, cooColInd,
                                       cooValues, cudaIdxType, cudaIdxBase, cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCsc(UPTKsparseConstSpMatDescr_t *spMatDescr,
+UPTKsparseCreateConstCsc(UPTKsparseSpMatDescr_t *spMatDescr,
                          int64_t rows,
                          int64_t cols,
                          int64_t nnz,
@@ -4036,15 +4036,15 @@ UPTKsparseCreateConstCsc(UPTKsparseConstSpMatDescr_t *spMatDescr,
     ;
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
-    cuda_res = cusparseCreateConstCsc((cusparseConstSpMatDescr_t *)spMatDescr, rows,
+    cuda_res = cusparseCreateConstCsc((cusparseSpMatDescr_t *)spMatDescr, rows,
                                       cols, nnz, cscColOffsets, cscRowInd, cscValues,
                                       cudaIdxRowType, cudaIdxColType, cudaIdxBase, cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
-}
+}*/
 
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCsr(UPTKsparseConstSpMatDescr_t *spMatDescr,
+/*UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCreateConstCsr(UPTKsparseSpMatDescr_t *spMatDescr,
                          int64_t rows,
                          int64_t cols,
                          int64_t nnz,
@@ -4062,14 +4062,14 @@ UPTKsparseCreateConstCsr(UPTKsparseConstSpMatDescr_t *spMatDescr,
     ;
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
-    cuda_res = cusparseCreateConstCsr((cusparseConstSpMatDescr_t *)spMatDescr, rows,
+    cuda_res = cusparseCreateConstCsr((cusparseSpMatDescr_t *)spMatDescr, rows,
                                       cols, nnz, csrRowOffsets, csrColInd, csrValues,
                                       cudaIdxRowType, cudaIdxColType, cudaIdxBase, cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstDnMat(UPTKsparseConstDnMatDescr_t *dnMatDescr,
+UPTKsparseCreateConstDnMat(UPTKsparseDnMatDescr_t *dnMatDescr,
                            int64_t rows,
                            int64_t cols,
                            int64_t ld,
@@ -4080,26 +4080,26 @@ UPTKsparseCreateConstDnMat(UPTKsparseConstDnMatDescr_t *dnMatDescr,
     cusparseStatus_t cuda_res;
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
     cusparseOrder_t cudaOrder = UPTKsparseOrderTocusparseOrder(order);
-    cuda_res = cusparseCreateConstDnMat((cusparseConstDnMatDescr_t *)dnMatDescr,
+    cuda_res = cusparseCreateConstDnMat((cusparseDnMatDescr_t *)dnMatDescr,
                                         rows, cols, ld, values, cudaType, cudaOrder);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstDnVec(UPTKsparseConstDnVecDescr_t *dnVecDescr,
+UPTKsparseCreateConstDnVec(UPTKsparseDnVecDescr_t *dnVecDescr,
                            int64_t size,
                            const void *values,
                            UPTKDataType valueType)
 {
     cusparseStatus_t cuda_res;
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
-    cuda_res = cusparseCreateConstDnVec((cusparseConstDnVecDescr_t *)dnVecDescr, size, values, cudaType);
+    cuda_res = cusparseCreateConstDnVec((cusparseDnVecDescr_t *)dnVecDescr, size, values, cudaType);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstSlicedEll(UPTKsparseConstSpMatDescr_t *spMatDescr,
+UPTKsparseCreateConstSlicedEll(UPTKsparseSpMatDescr_t *spMatDescr,
                                int64_t rows,
                                int64_t cols,
                                int64_t nnz,
@@ -4120,7 +4120,7 @@ UPTKsparseCreateConstSlicedEll(UPTKsparseConstSpMatDescr_t *spMatDescr,
     cusparseIndexBase_t cudaIdxBase = UPTKsparseIndexBaseTocusparseIndexBase(idxBase);
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(valueType);
 
-    cuda_res = cusparseCreateConstSlicedEll((cusparseConstSpMatDescr_t *)spMatDescr,
+    cuda_res = cusparseCreateConstSlicedEll((cusparseSpMatDescr_t *)spMatDescr,
                                             rows, cols, nnz, sellValuesSize, sliceSize,
                                             sellSliceOffsets, sellColInd, sellValues,
                                             cudaIdxRowType, cudaIdxColType, cudaIdxBase, cudaType);
@@ -4128,7 +4128,7 @@ UPTKsparseCreateConstSlicedEll(UPTKsparseConstSpMatDescr_t *spMatDescr,
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstSpVec(UPTKsparseConstSpVecDescr_t *spVecDescr,
+UPTKsparseCreateConstSpVec(UPTKsparseSpVecDescr_t *spVecDescr,
                            int64_t size,
                            int64_t nnz,
                            const void *indices,
@@ -4183,8 +4183,8 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpMV_preprocess(UPTKsparseHandle_t handle,
                           UPTKsparseOperation_t opA,
                           const void *alpha,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstDnVecDescr_t vecX,
+                          UPTKsparseSpMatDescr_t matA,
+                          UPTKsparseDnVecDescr_t vecX,
                           const void *beta,
                           UPTKsparseDnVecDescr_t vecY,
                           UPTKDataType computeType,
@@ -4196,7 +4196,7 @@ UPTKsparseSpMV_preprocess(UPTKsparseHandle_t handle,
     cudaDataType cudaType = UPTKDataTypeTocudaDataType(computeType);
     cusparseSpMVAlg_t cudaSpAlg = UPTKsparseSpMVAlgTocusparseSpMVAlg(alg);
     cuda_res = cusparseSpMV_preprocess((cusparseHandle_t)handle,
-                                       cudaOperation, alpha, (cusparseConstSpMatDescr_t)matA, (cusparseConstDnVecDescr_t)vecX, beta,
+                                       cudaOperation, alpha, (cusparseSpMatDescr_t)matA, (cusparseDnVecDescr_t)vecX, beta,
                                        (cusparseDnVecDescr_t)vecY, cudaType, cudaSpAlg, externalBuffer);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
