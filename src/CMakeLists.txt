@@ -2,7 +2,7 @@
 add_subdirectory(runtime)
 
 # driver
-#add_subdirectory(driver)
+add_subdirectory(driver)
 
 #fft
 add_subdirectory(fft)
