@@ -1,72 +1,136 @@
 #if !defined(UPTKSPARSE_H_)
 #define UPTKSPARSE_H_
 
-#include <cuComplex.h>        
-#include <UPTK_runtime_api.h>
+#include <cuComplex.h>
+#include <cuda_fp16.h>
+#include <driver_types.h>
+#include <library_types.h>
 #include <UPTK_library_types.h>
 #include <stdint.h>
 #include <stdio.h>
 
-#if defined(__cplusplus)
-#   include <cuda_fp16.h>     // __half
-#endif // defined(__cplusplus)
-
-
-#define UPTKSPARSE_VER_MAJOR 1
-#define UPTKSPARSE_VER_MINOR 0
-#define UPTKSPARSE_VER_PATCH 0
-#define UPTKSPARSE_VER_BUILD 0
+#define UPTKSPARSE_VER_MAJOR 11
+#define UPTKSPARSE_VER_MINOR 7
+#define UPTKSPARSE_VER_PATCH 5
+#define UPTKSPARSE_VER_BUILD 86
 #define UPTKSPARSE_VERSION (UPTKSPARSE_VER_MAJOR * 1000 + \
                           UPTKSPARSE_VER_MINOR *  100 + \
                           UPTKSPARSE_VER_PATCH)
 
-//------------------------------------------------------------------------------
-#define UPTKSPARSEAPI
+#if !defined(UPTKSPARSEAPI)
+#    if defined(_WIN32)
+#        define UPTKSPARSEAPI __stdcall
+#    else
+#        define UPTKSPARSEAPI
+#    endif
+#endif
+
+#if !defined(_MSC_VER)
+#   define UPTKSPARSE_CPP_VERSION __cplusplus
+#elif _MSC_FULL_VER >= 190024210
+#   define UPTKSPARSE_CPP_VERSION _MSVC_LANG
+#else
+#   define UPTKSPARSE_CPP_VERSION 0
+#endif
+
+#if !defined(DISABLE_UPTKSPARSE_DEPRECATED)
+
+#   if UPTKSPARSE_CPP_VERSION >= 201402L
+
+#       define UPTKSPARSE_DEPRECATED(new_func)                                   \
+            [[deprecated("please use " #new_func " instead")]]
+
+#   elif defined(_MSC_VER)
+
+#       define UPTKSPARSE_DEPRECATED(new_func)                                   \
+            __declspec(deprecated("please use " #new_func " instead"))
+
+#   elif defined(__INTEL_COMPILER) || defined(__clang__) ||                    \
+         (defined(__GNUC__) &&                                                 \
+          (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)))
+
+#       define UPTKSPARSE_DEPRECATED(new_func)                                   \
+            __attribute__((deprecated("please use " #new_func " instead")))
+
+#   elif defined(__GNUC__) || defined(__xlc__)
+
+#       define UPTKSPARSE_DEPRECATED(new_func)                                   \
+            __attribute__((deprecated))
+
+#   else
+
+#       define UPTKSPARSE_DEPRECATED(new_func)
+
+#   endif
+#   if UPTKSPARSE_CPP_VERSION >= 201703L
+
+#       define UPTKSPARSE_DEPRECATED_ENUM(new_enum)                              \
+            [[deprecated("please use " #new_enum " instead")]]
+
+#   elif defined(__clang__) ||                                                 \
+         (defined(__GNUC__) && __GNUC__ >= 6 && !defined(__PGI))
+
+#       define UPTKSPARSE_DEPRECATED_ENUM(new_enum)                              \
+            __attribute__((deprecated("please use " #new_enum " instead")))
+
+#   else
+
+#       define UPTKSPARSE_DEPRECATED_ENUM(new_enum)
+
+#   endif
+
+#else
+
+#   define UPTKSPARSE_DEPRECATED(new_func)
+#   define UPTKSPARSE_DEPRECATED_ENUM(new_enum)
+
+#endif
+
+#undef UPTKSPARSE_CPP_VERSION
 #if defined(__cplusplus)
 extern "C" {
-#endif // defined(__cplusplus)
-
-//##############################################################################
-//# OPAQUE DATA STRUCTURES
-//##############################################################################
-
+#endif
 struct UPTKsparseContext;
 typedef struct UPTKsparseContext* UPTKsparseHandle_t;
 
 struct UPTKsparseMatDescr;
 typedef struct UPTKsparseMatDescr* UPTKsparseMatDescr_t;
 
-struct UPTKbsrsv2Info;
-typedef struct UPTKbsrsv2Info* UPTKbsrsv2Info_t;
+struct csrsv2Info;
+typedef struct csrsv2Info* csrsv2Info_t;
 
-struct UPTKbsrsm2Info;
-typedef struct UPTKbsrsm2Info* UPTKbsrsm2Info_t;
+struct csrsm2Info;
+typedef struct csrsm2Info* csrsm2Info_t;
 
-struct UPTKcsric02Info;
-typedef struct UPTKcsric02Info* UPTKcsric02Info_t;
+struct bsrsv2Info;
+typedef struct bsrsv2Info* bsrsv2Info_t;
 
-struct UPTKbsric02Info;
-typedef struct UPTKbsric02Info* UPTKbsric02Info_t;
+struct bsrsm2Info;
+typedef struct bsrsm2Info* bsrsm2Info_t;
 
-struct UPTKcsrilu02Info;
-typedef struct UPTKcsrilu02Info* UPTKcsrilu02Info_t;
+struct csric02Info;
+typedef struct csric02Info* csric02Info_t;
 
-struct UPTKbsrilu02Info;
-typedef struct UPTKbsrilu02Info* UPTKbsrilu02Info_t;
+struct bsric02Info;
+typedef struct bsric02Info* bsric02Info_t;
+
+struct csrilu02Info;
+typedef struct csrilu02Info* csrilu02Info_t;
+
+struct bsrilu02Info;
+typedef struct bsrilu02Info* bsrilu02Info_t;
+
+struct csrgemm2Info;
+typedef struct csrgemm2Info* csrgemm2Info_t;
 
 struct csru2csrInfo;
-typedef struct UPTKcsru2csrInfo* UPTKcsru2csrInfo_t;
+typedef struct csru2csrInfo* csru2csrInfo_t;
 
 struct UPTKsparseColorInfo;
 typedef struct UPTKsparseColorInfo* UPTKsparseColorInfo_t;
 
-struct UPTKpruneInfo;
-typedef struct UPTKpruneInfo* UPTKpruneInfo_t;
-
-//##############################################################################
-//# ENUMERATORS
-//##############################################################################
-
+struct pruneInfo;
+typedef struct pruneInfo* pruneInfo_t;
 typedef enum {
     UPTKSPARSE_STATUS_SUCCESS                   = 0,
     UPTKSPARSE_STATUS_NOT_INITIALIZED           = 1,
@@ -131,14 +195,13 @@ typedef enum {
 } UPTKsparseSolvePolicy_t;
 
 typedef enum {
-    UPTKSPARSE_COLOR_ALG0 = 0, // default
+    UPTKSPARSE_COLOR_ALG0 = 0,
     UPTKSPARSE_COLOR_ALG1 = 1
 } UPTKsparseColorAlg_t;
 
-//##############################################################################
-//# INITIALIZATION AND MANAGEMENT ROUTINES
-//##############################################################################
-
+typedef enum {
+    UPTKSPARSE_ALG_MERGE_PATH
+} UPTKsparseAlgMode_t;
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCreate(UPTKsparseHandle_t* handle);
 
@@ -175,11 +238,37 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSetPointerMode(UPTKsparseHandle_t      handle,
                        UPTKsparsePointerMode_t mode);
 
+typedef void (*UPTKsparseLoggerCallback_t)(int         logLevel,
+                                         const char* functionName,
+                                         const char* message);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerSetCallback(UPTKsparseLoggerCallback_t callback);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerSetFile(FILE* file);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerOpenFile(const char* logFile);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerSetLevel(int level);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerSetMask(int mask);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseLoggerForceDisable(void);
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCreateMatDescr(UPTKsparseMatDescr_t* descrA);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDestroyMatDescr(UPTKsparseMatDescr_t descrA);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCopyMatDescr(UPTKsparseMatDescr_t       dest,
+                     const UPTKsparseMatDescr_t src);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSetMatType(UPTKsparseMatDescr_t   descrA,
@@ -209,47 +298,55 @@ UPTKsparseSetMatIndexBase(UPTKsparseMatDescr_t  descrA,
 UPTKsparseIndexBase_t UPTKSPARSEAPI
 UPTKsparseGetMatIndexBase(const UPTKsparseMatDescr_t descrA);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateCsric02Info(UPTKcsric02Info_t* info);
+UPTKsparseCreateCsrsv2Info(csrsv2Info_t* info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDestroyCsrsv2Info(csrsv2Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyCsric02Info(UPTKcsric02Info_t info);
+UPTKsparseCreateCsric02Info(csric02Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateBsric02Info(UPTKbsric02Info_t* info);
+UPTKsparseDestroyCsric02Info(csric02Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyBsric02Info(UPTKbsric02Info_t info);
+UPTKsparseCreateBsric02Info(bsric02Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateCsrilu02Info(UPTKcsrilu02Info_t* info);
+UPTKsparseDestroyBsric02Info(bsric02Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyCsrilu02Info(UPTKcsrilu02Info_t info);
+UPTKsparseCreateCsrilu02Info(csrilu02Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateBsrilu02Info(UPTKbsrilu02Info_t* info);
+UPTKsparseDestroyCsrilu02Info(csrilu02Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyBsrilu02Info(UPTKbsrilu02Info_t info);
+UPTKsparseCreateBsrilu02Info(bsrilu02Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateBsrsv2Info(UPTKbsrsv2Info_t* info);
+UPTKsparseDestroyBsrilu02Info(bsrilu02Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyBsrsv2Info(UPTKbsrsv2Info_t info);
+UPTKsparseCreateBsrsv2Info(bsrsv2Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateBsrsm2Info(UPTKbsrsm2Info_t* info);
+UPTKsparseDestroyBsrsv2Info(bsrsv2Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyBsrsm2Info(UPTKbsrsm2Info_t info);
+UPTKsparseCreateBsrsm2Info(bsrsm2Info_t* info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateCsru2csrInfo(UPTKcsru2csrInfo_t* info);
+UPTKsparseDestroyBsrsm2Info(bsrsm2Info_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyCsru2csrInfo(UPTKcsru2csrInfo_t info);
+UPTKsparseCreateCsru2csrInfo(csru2csrInfo_t* info);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDestroyCsru2csrInfo(csru2csrInfo_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCreateColorInfo(UPTKsparseColorInfo_t* info);
@@ -258,10 +355,188 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDestroyColorInfo(UPTKsparseColorInfo_t info);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreatePruneInfo(UPTKpruneInfo_t* info);
+UPTKsparseSetColorAlgs(UPTKsparseColorInfo_t info,
+                     UPTKsparseColorAlg_t  alg);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyPruneInfo(UPTKpruneInfo_t info);
+UPTKsparseGetColorAlgs(UPTKsparseColorInfo_t info,
+                     UPTKsparseColorAlg_t* alg);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCreatePruneInfo(pruneInfo_t* info);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDestroyPruneInfo(pruneInfo_t info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseAxpby)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSaxpyi(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               const float*        alpha,
+               const float*        xVal,
+               const int*          xInd,
+               float*              y,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseAxpby)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDaxpyi(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               const double*       alpha,
+               const double*       xVal,
+               const int*          xInd,
+               double*             y,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseAxpby)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCaxpyi(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               const cuComplex*    alpha,
+               const cuComplex*    xVal,
+               const int*          xInd,
+               cuComplex*          y,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseAxpby)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZaxpyi(UPTKsparseHandle_t       handle,
+               int                    nnz,
+               const cuDoubleComplex* alpha,
+               const cuDoubleComplex* xVal,
+               const int*             xInd,
+               cuDoubleComplex*       y,
+               UPTKsparseIndexBase_t    idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSgthr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const float*        y,
+              float*              xVal,
+              const int*          xInd,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDgthr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const double*       y,
+              double*             xVal,
+              const int*          xInd,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCgthr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const cuComplex*    y,
+              cuComplex*          xVal,
+              const int*          xInd,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZgthr(UPTKsparseHandle_t       handle,
+              int                    nnz,
+              const cuDoubleComplex* y,
+              cuDoubleComplex*       xVal,
+              const int*             xInd,
+              UPTKsparseIndexBase_t    idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSgthrz(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               float*              y,
+               float*              xVal,
+               const int*          xInd,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDgthrz(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               double*             y,
+               double*             xVal,
+               const int*          xInd,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCgthrz(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               cuComplex*          y,
+               cuComplex*          xVal,
+               const int*          xInd,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseGather)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZgthrz(UPTKsparseHandle_t    handle,
+               int                 nnz,
+               cuDoubleComplex*    y,
+               cuDoubleComplex*    xVal,
+               const int*          xInd,
+               UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseScatter)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSsctr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const float*        xVal,
+              const int*          xInd,
+              float*              y,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseScatter)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDsctr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const double*       xVal,
+              const int*          xInd,
+              double*             y,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseScatter)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCsctr(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              const cuComplex*    xVal,
+              const int*          xInd,
+              cuComplex*          y,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseScatter)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZsctr(UPTKsparseHandle_t       handle,
+              int                    nnz,
+              const cuDoubleComplex* xVal,
+              const int*             xInd,
+              cuDoubleComplex*       y,
+              UPTKsparseIndexBase_t    idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseRot)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSroti(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              float*              xVal,
+              const int*          xInd,
+              float*              y,
+              const float*        c,
+              const float*        s,
+              UPTKsparseIndexBase_t idxBase);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseRot)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDroti(UPTKsparseHandle_t    handle,
+              int                 nnz,
+              double*             xVal,
+              const int*          xInd,
+              double*             y,
+              const double*       c,
+              const double*       s,
+              UPTKsparseIndexBase_t idxBase);
 
 //##############################################################################
 //# SPARSE LEVEL 2 ROUTINES
@@ -362,6 +637,54 @@ UPTKsparseZgemvi_bufferSize(UPTKsparseHandle_t    handle,
                           int                 n,
                           int                 nnz,
                           int*                pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCsrmvEx_bufferSize(UPTKsparseHandle_t         handle,
+                           UPTKsparseAlgMode_t        alg,
+                           UPTKsparseOperation_t      transA,
+                           int                      m,
+                           int                      n,
+                           int                      nnz,
+                           const void*              alpha,
+                           UPTKDataType             alphatype,
+                           const UPTKsparseMatDescr_t descrA,
+                           const void*              csrValA,
+                           UPTKDataType             csrValAtype,
+                           const int*               csrRowPtrA,
+                           const int*               csrColIndA,
+                           const void*              x,
+                           UPTKDataType             xtype,
+                           const void*              beta,
+                           UPTKDataType             betatype,
+                           void*                    y,
+                           UPTKDataType             ytype,
+                           UPTKDataType             executiontype,
+                           size_t*                  bufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCsrmvEx(UPTKsparseHandle_t         handle,
+                UPTKsparseAlgMode_t        alg,
+                UPTKsparseOperation_t      transA,
+                int                      m,
+                int                      n,
+                int                      nnz,
+                const void*              alpha,
+                UPTKDataType             alphatype,
+                const UPTKsparseMatDescr_t descrA,
+                const void*              csrValA,
+                UPTKDataType             csrValAtype,
+                const int*               csrRowPtrA,
+                const int*               csrColIndA,
+                const void*              x,
+                UPTKDataType             xtype,
+                const void*              beta,
+                UPTKDataType             betatype,
+                void*                    y,
+                UPTKDataType             ytype,
+                UPTKDataType             executiontype,
+                void*                    buffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSbsrmv(UPTKsparseHandle_t         handle,
@@ -511,9 +834,243 @@ UPTKsparseZbsrxmv(UPTKsparseHandle_t         handle,
                 const cuDoubleComplex*   beta,
                 cuDoubleComplex*         y);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseXcsrsv2_zeroPivot(UPTKsparseHandle_t handle,
+                          csrsv2Info_t     info,
+                          int*             position);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsv2_bufferSize(UPTKsparseHandle_t         handle,
+                           UPTKsparseOperation_t      transA,
+                           int                      m,
+                           int                      nnz,
+                           const UPTKsparseMatDescr_t descrA,
+                           float*                   csrSortedValA,
+                           const int*               csrSortedRowPtrA,
+                           const int*               csrSortedColIndA,
+                           csrsv2Info_t             info,
+                           int*                     pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsv2_bufferSize(UPTKsparseHandle_t         handle,
+                           UPTKsparseOperation_t      transA,
+                           int                      m,
+                           int                      nnz,
+                           const UPTKsparseMatDescr_t descrA,
+                           double*                  csrSortedValA,
+                           const int*               csrSortedRowPtrA,
+                           const int*               csrSortedColIndA,
+                           csrsv2Info_t             info,
+                           int*                     pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsv2_bufferSize(UPTKsparseHandle_t         handle,
+                           UPTKsparseOperation_t      transA,
+                           int                      m,
+                           int                      nnz,
+                           const UPTKsparseMatDescr_t descrA,
+                           cuComplex*               csrSortedValA,
+                           const int*               csrSortedRowPtrA,
+                           const int*               csrSortedColIndA,
+                           csrsv2Info_t             info,
+                           int*                     pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsv2_bufferSize(UPTKsparseHandle_t         handle,
+                           UPTKsparseOperation_t      transA,
+                           int                      m,
+                           int                      nnz,
+                           const UPTKsparseMatDescr_t descrA,
+                           cuDoubleComplex*         csrSortedValA,
+                           const int*               csrSortedRowPtrA,
+                           const int*               csrSortedColIndA,
+                           csrsv2Info_t             info,
+                           int*                     pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseOperation_t      transA,
+                              int                      m,
+                              int                      nnz,
+                              const UPTKsparseMatDescr_t descrA,
+                              float*                   csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              csrsv2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseOperation_t      transA,
+                              int                      m,
+                              int                      nnz,
+                              const UPTKsparseMatDescr_t descrA,
+                              double*                  csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              csrsv2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseOperation_t      transA,
+                              int                      m,
+                              int                      nnz,
+                              const UPTKsparseMatDescr_t descrA,
+                              cuComplex*               csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              csrsv2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseOperation_t      transA,
+                              int                      m,
+                              int                      nnz,
+                              const UPTKsparseMatDescr_t descrA,
+                              cuDoubleComplex*         csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              csrsv2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsv2_analysis(UPTKsparseHandle_t         handle,
+                         UPTKsparseOperation_t      transA,
+                         int                      m,
+                         int                      nnz,
+                         const UPTKsparseMatDescr_t descrA,
+                         const float*             csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         csrsv2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsv2_analysis(UPTKsparseHandle_t         handle,
+                         UPTKsparseOperation_t      transA,
+                         int                      m,
+                         int                      nnz,
+                         const UPTKsparseMatDescr_t descrA,
+                         const double*            csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         csrsv2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsv2_analysis(UPTKsparseHandle_t         handle,
+                         UPTKsparseOperation_t      transA,
+                         int                      m,
+                         int                      nnz,
+                         const UPTKsparseMatDescr_t descrA,
+                         const cuComplex*         csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         csrsv2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsv2_analysis(UPTKsparseHandle_t         handle,
+                         UPTKsparseOperation_t      transA,
+                         int                      m,
+                         int                      nnz,
+                         const UPTKsparseMatDescr_t descrA,
+                         const cuDoubleComplex*   csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         csrsv2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsv2_solve(UPTKsparseHandle_t         handle,
+                      UPTKsparseOperation_t      transA,
+                      int                      m,
+                      int                      nnz,
+                      const float*             alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const float*             csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      csrsv2Info_t             info,
+                      const float*             f,
+                      float*                   x,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsv2_solve(UPTKsparseHandle_t         handle,
+                      UPTKsparseOperation_t      transA,
+                      int                      m,
+                      int                      nnz,
+                      const double*            alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const double*            csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      csrsv2Info_t             info,
+                      const double*            f,
+                      double*                  x,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsv2_solve(UPTKsparseHandle_t         handle,
+                      UPTKsparseOperation_t      transA,
+                      int                      m,
+                      int                      nnz,
+                      const cuComplex*         alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const cuComplex*         csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      csrsv2Info_t             info,
+                      const cuComplex*         f,
+                      cuComplex*               x,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSV)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsv2_solve(UPTKsparseHandle_t         handle,
+                      UPTKsparseOperation_t      transA,
+                      int                      m,
+                      int                      nnz,
+                      const cuDoubleComplex*   alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const cuDoubleComplex*   csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      csrsv2Info_t             info,
+                      const cuDoubleComplex*   f,
+                      cuDoubleComplex*         x,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXbsrsv2_zeroPivot(UPTKsparseHandle_t handle,
-                          UPTKbsrsv2Info_t     info,
+                          bsrsv2Info_t     info,
                           int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -527,7 +1084,7 @@ UPTKsparseSbsrsv2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtrA,
                            const int*               bsrSortedColIndA,
                            int                      blockDim,
-                           UPTKbsrsv2Info_t             info,
+                           bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -541,7 +1098,7 @@ UPTKsparseDbsrsv2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtrA,
                            const int*               bsrSortedColIndA,
                            int                      blockDim,
-                           UPTKbsrsv2Info_t             info,
+                           bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -555,7 +1112,7 @@ UPTKsparseCbsrsv2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtrA,
                            const int*               bsrSortedColIndA,
                            int                      blockDim,
-                           UPTKbsrsv2Info_t             info,
+                           bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -569,7 +1126,7 @@ UPTKsparseZbsrsv2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtrA,
                            const int*               bsrSortedColIndA,
                            int                      blockDim,
-                           UPTKbsrsv2Info_t             info,
+                           bsrsv2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -583,7 +1140,7 @@ UPTKsparseSbsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
                               const int*               bsrSortedRowPtrA,
                               const int*               bsrSortedColIndA,
                               int                      blockSize,
-                              UPTKbsrsv2Info_t             info,
+                              bsrsv2Info_t             info,
                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -597,7 +1154,7 @@ UPTKsparseDbsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
                               const int*               bsrSortedRowPtrA,
                               const int*               bsrSortedColIndA,
                               int                      blockSize,
-                              UPTKbsrsv2Info_t             info,
+                              bsrsv2Info_t             info,
                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -611,7 +1168,7 @@ UPTKsparseCbsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
                               const int*               bsrSortedRowPtrA,
                               const int*               bsrSortedColIndA,
                               int                      blockSize,
-                              UPTKbsrsv2Info_t             info,
+                              bsrsv2Info_t             info,
                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -625,7 +1182,7 @@ UPTKsparseZbsrsv2_bufferSizeExt(UPTKsparseHandle_t         handle,
                               const int*               bsrSortedRowPtrA,
                               const int*               bsrSortedColIndA,
                               int                      blockSize,
-                              UPTKbsrsv2Info_t             info,
+                              bsrsv2Info_t             info,
                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -639,7 +1196,7 @@ UPTKsparseSbsrsv2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtrA,
                          const int*               bsrSortedColIndA,
                          int                      blockDim,
-                         UPTKbsrsv2Info_t             info,
+                         bsrsv2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -654,7 +1211,7 @@ UPTKsparseDbsrsv2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtrA,
                          const int*               bsrSortedColIndA,
                          int                      blockDim,
-                         UPTKbsrsv2Info_t             info,
+                         bsrsv2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -669,7 +1226,7 @@ UPTKsparseCbsrsv2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtrA,
                          const int*               bsrSortedColIndA,
                          int                      blockDim,
-                         UPTKbsrsv2Info_t             info,
+                         bsrsv2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -684,7 +1241,7 @@ UPTKsparseZbsrsv2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtrA,
                          const int*               bsrSortedColIndA,
                          int                      blockDim,
-                         UPTKbsrsv2Info_t             info,
+                         bsrsv2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -700,7 +1257,7 @@ UPTKsparseSbsrsv2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtrA,
                       const int*               bsrSortedColIndA,
                       int                      blockDim,
-                      UPTKbsrsv2Info_t             info,
+                      bsrsv2Info_t             info,
                       const float*             f,
                       float*                   x,
                       UPTKsparseSolvePolicy_t    policy,
@@ -718,7 +1275,7 @@ UPTKsparseDbsrsv2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtrA,
                       const int*               bsrSortedColIndA,
                       int                      blockDim,
-                      UPTKbsrsv2Info_t             info,
+                      bsrsv2Info_t             info,
                       const double*            f,
                       double*                  x,
                       UPTKsparseSolvePolicy_t    policy,
@@ -736,7 +1293,7 @@ UPTKsparseCbsrsv2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtrA,
                       const int*               bsrSortedColIndA,
                       int                      blockDim,
-                      UPTKbsrsv2Info_t             info,
+                      bsrsv2Info_t             info,
                       const cuComplex*         f,
                       cuComplex*               x,
                       UPTKsparseSolvePolicy_t    policy,
@@ -754,7 +1311,7 @@ UPTKsparseZbsrsv2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtrA,
                       const int*               bsrSortedColIndA,
                       int                      blockDim,
-                      UPTKbsrsv2Info_t             info,
+                      bsrsv2Info_t             info,
                       const cuDoubleComplex*   f,
                       cuDoubleComplex*         x,
                       UPTKsparseSolvePolicy_t    policy,
@@ -828,7 +1385,7 @@ UPTKsparseCbsrmm(UPTKsparseHandle_t         handle,
                int              ldc);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseZbsrmm(UPTKsparseHandle_t         handle,
+ UPTKsparseZbsrmm(UPTKsparseHandle_t         handle,
                 UPTKsparseDirection_t      dirA,
                 UPTKsparseOperation_t      transA,
                 UPTKsparseOperation_t      transB,
@@ -848,9 +1405,331 @@ UPTKsparseZbsrmm(UPTKsparseHandle_t         handle,
                 cuDoubleComplex*         C,
                 int                      ldc);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSgemmi(UPTKsparseHandle_t handle,
+               int              m,
+               int              n,
+               int              k,
+               int              nnz,
+               const float*     alpha,
+               const float*     A,
+               int              lda,
+               const float*     cscValB,
+               const int*       cscColPtrB,
+               const int*       cscRowIndB,
+               const float*     beta,
+               float*           C,
+               int              ldc);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDgemmi(UPTKsparseHandle_t handle,
+               int              m,
+               int              n,
+               int              k,
+               int              nnz,
+               const double*    alpha,
+               const double*    A,
+               int              lda,
+               const double*    cscValB,
+               const int*       cscColPtrB,
+               const int*       cscRowIndB,
+               const double*    beta,
+               double*          C,
+               int              ldc);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCgemmi(UPTKsparseHandle_t handle,
+               int              m,
+               int              n,
+               int              k,
+               int              nnz,
+               const cuComplex* alpha,
+               const cuComplex* A,
+               int              lda,
+               const cuComplex* cscValB,
+               const int*       cscColPtrB,
+               const int*       cscRowIndB,
+               const cuComplex* beta,
+               cuComplex*       C,
+               int              ldc);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZgemmi(UPTKsparseHandle_t       handle,
+               int                    m,
+               int                    n,
+               int                    k,
+               int                    nnz,
+               const cuDoubleComplex* alpha,
+               const cuDoubleComplex* A,
+               int                    lda,
+               const cuDoubleComplex* cscValB,
+               const int*             cscColPtrB,
+               const int*             cscRowIndB,
+               const cuDoubleComplex* beta,
+               cuDoubleComplex*       C,
+               int                    ldc);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCreateCsrsm2Info(csrsm2Info_t* info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDestroyCsrsm2Info(csrsm2Info_t info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseXcsrsm2_zeroPivot(UPTKsparseHandle_t handle,
+                          csrsm2Info_t     info,
+                          int* position);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              int                      algo,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      m,
+                              int                      nrhs,
+                              int                      nnz,
+                              const float*             alpha,
+                              const UPTKsparseMatDescr_t descrA,
+                              const float*             csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              const float*             B,
+                              int                      ldb,
+                              csrsm2Info_t             info,
+                              UPTKsparseSolvePolicy_t    policy,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              int                      algo,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      m,
+                              int                      nrhs,
+                              int                      nnz,
+                              const double*            alpha,
+                              const UPTKsparseMatDescr_t descrA,
+                              const double*            csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              const double*            B,
+                              int                      ldb,
+                              csrsm2Info_t             info,
+                              UPTKsparseSolvePolicy_t    policy,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              int                      algo,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      m,
+                              int                      nrhs,
+                              int                      nnz,
+                              const cuComplex*         alpha,
+                              const UPTKsparseMatDescr_t descrA,
+                              const cuComplex*         csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              const cuComplex*         B,
+                              int                      ldb,
+                              csrsm2Info_t             info,
+                              UPTKsparseSolvePolicy_t    policy,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              int                      algo,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      m,
+                              int                      nrhs,
+                              int                      nnz,
+                              const cuDoubleComplex*   alpha,
+                              const UPTKsparseMatDescr_t descrA,
+                              const cuDoubleComplex*   csrSortedValA,
+                              const int*               csrSortedRowPtrA,
+                              const int*               csrSortedColIndA,
+                              const cuDoubleComplex*   B,
+                              int                      ldb,
+                              csrsm2Info_t             info,
+                              UPTKsparseSolvePolicy_t    policy,
+                              size_t*                  pBufferSize);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsm2_analysis(UPTKsparseHandle_t         handle,
+                         int                      algo,
+                         UPTKsparseOperation_t      transA,
+                         UPTKsparseOperation_t      transB,
+                         int                      m,
+                         int                      nrhs,
+                         int                      nnz,
+                         const float*             alpha,
+                         const UPTKsparseMatDescr_t descrA,
+                         const float*             csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         const float*             B,
+                         int                      ldb,
+                         csrsm2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsm2_analysis(UPTKsparseHandle_t         handle,
+                         int                      algo,
+                         UPTKsparseOperation_t      transA,
+                         UPTKsparseOperation_t      transB,
+                         int                      m,
+                         int                      nrhs,
+                         int                      nnz,
+                         const double*            alpha,
+                         const UPTKsparseMatDescr_t descrA,
+                         const double*            csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         const double*            B,
+                         int                      ldb,
+                         csrsm2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsm2_analysis(UPTKsparseHandle_t         handle,
+                         int                      algo,
+                         UPTKsparseOperation_t      transA,
+                         UPTKsparseOperation_t      transB,
+                         int                      m,
+                         int                      nrhs,
+                         int                      nnz,
+                         const cuComplex*         alpha,
+                         const UPTKsparseMatDescr_t descrA,
+                         const cuComplex*         csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         const cuComplex*         B,
+                         int                      ldb,
+                         csrsm2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsm2_analysis(UPTKsparseHandle_t         handle,
+                         int                      algo,
+                         UPTKsparseOperation_t      transA,
+                         UPTKsparseOperation_t      transB,
+                         int                      m,
+                         int                      nrhs,
+                         int                      nnz,
+                         const cuDoubleComplex*   alpha,
+                         const UPTKsparseMatDescr_t descrA,
+                         const cuDoubleComplex*   csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         const cuDoubleComplex*   B,
+                         int                      ldb,
+                         csrsm2Info_t             info,
+                         UPTKsparseSolvePolicy_t    policy,
+                         void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrsm2_solve(UPTKsparseHandle_t         handle,
+                      int                      algo,
+                      UPTKsparseOperation_t      transA,
+                      UPTKsparseOperation_t      transB,
+                      int                      m,
+                      int                      nrhs,
+                      int                      nnz,
+                      const float*             alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const float*             csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      float*                   B,
+                      int                      ldb,
+                      csrsm2Info_t             info,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrsm2_solve(UPTKsparseHandle_t         handle,
+                      int                      algo,
+                      UPTKsparseOperation_t      transA,
+                      UPTKsparseOperation_t      transB,
+                      int                      m,
+                      int                      nrhs,
+                      int                      nnz,
+                      const double*            alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const double*            csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      double*                  B,
+                      int                      ldb,
+                      csrsm2Info_t             info,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrsm2_solve(UPTKsparseHandle_t         handle,
+                      int                      algo,
+                      UPTKsparseOperation_t      transA,
+                      UPTKsparseOperation_t      transB,
+                      int                      m,
+                      int                      nrhs,
+                      int                      nnz,
+                      const cuComplex*         alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const cuComplex*         csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      cuComplex*               B,
+                      int                      ldb,
+                      csrsm2Info_t             info,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpSM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrsm2_solve(UPTKsparseHandle_t         handle,
+                      int                      algo,
+                      UPTKsparseOperation_t      transA,
+                      UPTKsparseOperation_t      transB,
+                      int                      m,
+                      int                      nrhs,
+                      int                      nnz,
+                      const cuDoubleComplex*   alpha,
+                      const UPTKsparseMatDescr_t descrA,
+                      const cuDoubleComplex*   csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      cuDoubleComplex*         B,
+                      int                      ldb,
+                      csrsm2Info_t             info,
+                      UPTKsparseSolvePolicy_t    policy,
+                      void*                    pBuffer);
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXbsrsm2_zeroPivot(UPTKsparseHandle_t handle,
-                          UPTKbsrsm2Info_t     info,
+                          bsrsm2Info_t     info,
                           int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -866,7 +1745,7 @@ UPTKsparseSbsrsm2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockSize,
-                           UPTKbsrsm2Info_t             info,
+                           bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -882,7 +1761,7 @@ UPTKsparseDbsrsm2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockSize,
-                           UPTKbsrsm2Info_t             info,
+                           bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -898,7 +1777,7 @@ UPTKsparseCbsrsm2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockSize,
-                           UPTKbsrsm2Info_t             info,
+                           bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -914,8 +1793,72 @@ UPTKsparseZbsrsm2_bufferSize(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockSize,
-                           UPTKbsrsm2Info_t             info,
+                           bsrsm2Info_t             info,
                            int*                     pBufferSizeInBytes);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSbsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseDirection_t      dirA,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      mb,
+                              int                      n,
+                              int                      nnzb,
+                              const UPTKsparseMatDescr_t descrA,
+                              float*                   bsrSortedVal,
+                              const int*               bsrSortedRowPtr,
+                              const int*               bsrSortedColInd,
+                              int                      blockSize,
+                              bsrsm2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDbsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseDirection_t      dirA,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      mb,
+                              int                      n,
+                              int                      nnzb,
+                              const UPTKsparseMatDescr_t descrA,
+                              double*                  bsrSortedVal,
+                              const int*               bsrSortedRowPtr,
+                              const int*               bsrSortedColInd,
+                              int                      blockSize,
+                              bsrsm2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCbsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseDirection_t      dirA,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      mb,
+                              int                      n,
+                              int                      nnzb,
+                              const UPTKsparseMatDescr_t descrA,
+                              cuComplex*               bsrSortedVal,
+                              const int*               bsrSortedRowPtr,
+                              const int*               bsrSortedColInd,
+                              int                      blockSize,
+                              bsrsm2Info_t             info,
+                              size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZbsrsm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                              UPTKsparseDirection_t      dirA,
+                              UPTKsparseOperation_t      transA,
+                              UPTKsparseOperation_t      transB,
+                              int                      mb,
+                              int                      n,
+                              int                      nnzb,
+                              const UPTKsparseMatDescr_t descrA,
+                              cuDoubleComplex*         bsrSortedVal,
+                              const int*               bsrSortedRowPtr,
+                              const int*               bsrSortedColInd,
+                              int                      blockSize,
+                              bsrsm2Info_t             info,
+                              size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSbsrsm2_analysis(UPTKsparseHandle_t         handle,
@@ -930,7 +1873,7 @@ UPTKsparseSbsrsm2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtr,
                          const int*               bsrSortedColInd,
                          int                      blockSize,
-                         UPTKbsrsm2Info_t             info,
+                         bsrsm2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -947,7 +1890,7 @@ UPTKsparseDbsrsm2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtr,
                          const int*               bsrSortedColInd,
                          int                      blockSize,
-                         UPTKbsrsm2Info_t             info,
+                         bsrsm2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -964,7 +1907,7 @@ UPTKsparseCbsrsm2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtr,
                          const int*               bsrSortedColInd,
                          int                      blockSize,
-                         UPTKbsrsm2Info_t             info,
+                         bsrsm2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -981,7 +1924,7 @@ UPTKsparseZbsrsm2_analysis(UPTKsparseHandle_t         handle,
                          const int*               bsrSortedRowPtr,
                          const int*               bsrSortedColInd,
                          int                      blockSize,
-                         UPTKbsrsm2Info_t             info,
+                         bsrsm2Info_t             info,
                          UPTKsparseSolvePolicy_t    policy,
                          void*                    pBuffer);
 
@@ -999,7 +1942,7 @@ UPTKsparseSbsrsm2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtr,
                       const int*               bsrSortedColInd,
                       int                      blockSize,
-                      UPTKbsrsm2Info_t             info,
+                      bsrsm2Info_t             info,
                       const float*             B,
                       int                      ldb,
                       float*                   X,
@@ -1021,7 +1964,7 @@ UPTKsparseDbsrsm2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtr,
                       const int*               bsrSortedColInd,
                       int                      blockSize,
-                      UPTKbsrsm2Info_t             info,
+                      bsrsm2Info_t             info,
                       const double*            B,
                       int                      ldb,
                       double*                  X,
@@ -1043,7 +1986,7 @@ UPTKsparseCbsrsm2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtr,
                       const int*               bsrSortedColInd,
                       int                      blockSize,
-                      UPTKbsrsm2Info_t             info,
+                      bsrsm2Info_t             info,
                       const cuComplex*         B,
                       int                      ldb,
                       cuComplex*               X,
@@ -1065,7 +2008,7 @@ UPTKsparseZbsrsm2_solve(UPTKsparseHandle_t         handle,
                       const int*               bsrSortedRowPtr,
                       const int*               bsrSortedColInd,
                       int                      blockSize,
-                      UPTKbsrsm2Info_t             info,
+                      bsrsm2Info_t             info,
                       const cuDoubleComplex*   B,
                       int                      ldb,
                       cuDoubleComplex*         X,
@@ -1079,35 +2022,35 @@ UPTKsparseZbsrsm2_solve(UPTKsparseHandle_t         handle,
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseScsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKcsrilu02Info_t   info,
+                               csrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                float*           boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDcsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKcsrilu02Info_t   info,
+                               csrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                double*          boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCcsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKcsrilu02Info_t   info,
+                               csrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                cuComplex*       boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseZcsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKcsrilu02Info_t   info,
+                               csrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                cuDoubleComplex* boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXcsrilu02_zeroPivot(UPTKsparseHandle_t handle,
-                            UPTKcsrilu02Info_t   info,
+                            csrilu02Info_t   info,
                             int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1118,7 +2061,7 @@ UPTKsparseScsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              float*                   csrSortedValA,
                              const int*               csrSortedRowPtrA,
                              const int*               csrSortedColIndA,
-                             UPTKcsrilu02Info_t           info,
+                             csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1129,7 +2072,7 @@ UPTKsparseDcsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              double*                  csrSortedValA,
                              const int*               csrSortedRowPtrA,
                              const int*               csrSortedColIndA,
-                             UPTKcsrilu02Info_t           info,
+                             csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1140,7 +2083,7 @@ UPTKsparseCcsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              cuComplex*               csrSortedValA,
                              const int*               csrSortedRowPtrA,
                              const int*               csrSortedColIndA,
-                             UPTKcsrilu02Info_t           info,
+                             csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1151,7 +2094,7 @@ UPTKsparseZcsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              cuDoubleComplex*         csrSortedValA,
                              const int*               csrSortedRowPtrA,
                              const int*               csrSortedColIndA,
-                             UPTKcsrilu02Info_t           info,
+                             csrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1162,7 +2105,7 @@ UPTKsparseScsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                 float*                   csrSortedVal,
                                 const int*               csrSortedRowPtr,
                                 const int*               csrSortedColInd,
-                                UPTKcsrilu02Info_t           info,
+                                csrilu02Info_t           info,
                                 size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1173,7 +2116,7 @@ UPTKsparseDcsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                 double*                  csrSortedVal,
                                 const int*               csrSortedRowPtr,
                                 const int*               csrSortedColInd,
-                                UPTKcsrilu02Info_t           info,
+                                csrilu02Info_t           info,
                                 size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1184,7 +2127,7 @@ UPTKsparseCcsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                 cuComplex*               csrSortedVal,
                                 const int*               csrSortedRowPtr,
                                 const int*               csrSortedColInd,
-                                UPTKcsrilu02Info_t           info,
+                                csrilu02Info_t           info,
                                 size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1195,7 +2138,7 @@ UPTKsparseZcsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                 cuDoubleComplex*         csrSortedVal,
                                 const int*               csrSortedRowPtr,
                                 const int*               csrSortedColInd,
-                                UPTKcsrilu02Info_t           info,
+                                csrilu02Info_t           info,
                                 size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1206,7 +2149,7 @@ UPTKsparseScsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const float*             csrSortedValA,
                            const int*               csrSortedRowPtrA,
                            const int*               csrSortedColIndA,
-                           UPTKcsrilu02Info_t           info,
+                           csrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1218,7 +2161,7 @@ UPTKsparseDcsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const double*            csrSortedValA,
                            const int*               csrSortedRowPtrA,
                            const int*               csrSortedColIndA,
-                           UPTKcsrilu02Info_t           info,
+                           csrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1230,7 +2173,7 @@ UPTKsparseCcsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const cuComplex*         csrSortedValA,
                            const int*               csrSortedRowPtrA,
                            const int*               csrSortedColIndA,
-                           UPTKcsrilu02Info_t           info,
+                           csrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1242,7 +2185,7 @@ UPTKsparseZcsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const cuDoubleComplex*   csrSortedValA,
                            const int*               csrSortedRowPtrA,
                            const int*               csrSortedColIndA,
-                           UPTKcsrilu02Info_t           info,
+                           csrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1254,7 +2197,7 @@ UPTKsparseScsrilu02(UPTKsparseHandle_t         handle,
                   float*                   csrSortedValA_valM,
                   const int*            csrSortedRowPtrA,
                   const int*            csrSortedColIndA,
-                  UPTKcsrilu02Info_t        info,
+                  csrilu02Info_t        info,
                   UPTKsparseSolvePolicy_t policy,
                   void*                 pBuffer);
 
@@ -1266,7 +2209,7 @@ UPTKsparseDcsrilu02(UPTKsparseHandle_t         handle,
                   double*                  csrSortedValA_valM,
                   const int*            csrSortedRowPtrA,
                   const int*            csrSortedColIndA,
-                  UPTKcsrilu02Info_t        info,
+                  csrilu02Info_t        info,
                   UPTKsparseSolvePolicy_t policy,
                   void*                 pBuffer);
 
@@ -1278,7 +2221,7 @@ UPTKsparseCcsrilu02(UPTKsparseHandle_t         handle,
                   cuComplex*               csrSortedValA_valM,
                   const int*            csrSortedRowPtrA,
                   const int*            csrSortedColIndA,
-                  UPTKcsrilu02Info_t        info,
+                  csrilu02Info_t        info,
                   UPTKsparseSolvePolicy_t policy,
                   void*                 pBuffer);
 
@@ -1290,41 +2233,41 @@ UPTKsparseZcsrilu02(UPTKsparseHandle_t         handle,
                   cuDoubleComplex*         csrSortedValA_valM,
                   const int*            csrSortedRowPtrA,
                   const int*            csrSortedColIndA,
-                  UPTKcsrilu02Info_t        info,
+                  csrilu02Info_t        info,
                   UPTKsparseSolvePolicy_t policy,
                   void*                 pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSbsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKbsrilu02Info_t   info,
+                               bsrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                float*           boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDbsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKbsrilu02Info_t   info,
+                               bsrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                double*          boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCbsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKbsrilu02Info_t   info,
+                               bsrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                cuComplex*       boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseZbsrilu02_numericBoost(UPTKsparseHandle_t handle,
-                               UPTKbsrilu02Info_t   info,
+                               bsrilu02Info_t   info,
                                int              enable_boost,
                                double*          tol,
                                cuDoubleComplex* boost_val);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXbsrilu02_zeroPivot(UPTKsparseHandle_t handle,
-                            UPTKbsrilu02Info_t   info,
+                            bsrilu02Info_t   info,
                             int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1337,7 +2280,7 @@ UPTKsparseSbsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              const int*               bsrSortedRowPtr,
                              const int*               bsrSortedColInd,
                              int                      blockDim,
-                             UPTKbsrilu02Info_t           info,
+                             bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1350,7 +2293,7 @@ UPTKsparseDbsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              const int*               bsrSortedRowPtr,
                              const int*               bsrSortedColInd,
                              int                      blockDim,
-                             UPTKbsrilu02Info_t           info,
+                             bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1363,7 +2306,7 @@ UPTKsparseCbsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              const int*               bsrSortedRowPtr,
                              const int*               bsrSortedColInd,
                              int                      blockDim,
-                             UPTKbsrilu02Info_t           info,
+                             bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1376,8 +2319,60 @@ UPTKsparseZbsrilu02_bufferSize(UPTKsparseHandle_t         handle,
                              const int*               bsrSortedRowPtr,
                              const int*               bsrSortedColInd,
                              int                      blockDim,
-                             UPTKbsrilu02Info_t           info,
+                             bsrilu02Info_t           info,
                              int*                     pBufferSizeInBytes);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSbsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                UPTKsparseDirection_t      dirA,
+                                int                      mb,
+                                int                      nnzb,
+                                const UPTKsparseMatDescr_t descrA,
+                                float*                   bsrSortedVal,
+                                const int*               bsrSortedRowPtr,
+                                const int*               bsrSortedColInd,
+                                int                      blockSize,
+                                bsrilu02Info_t           info,
+                                size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDbsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                UPTKsparseDirection_t      dirA,
+                                int                      mb,
+                                int                      nnzb,
+                                const UPTKsparseMatDescr_t descrA,
+                                double*                  bsrSortedVal,
+                                const int*               bsrSortedRowPtr,
+                                const int*               bsrSortedColInd,
+                                int                      blockSize,
+                                bsrilu02Info_t           info,
+                                size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCbsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                UPTKsparseDirection_t      dirA,
+                                int                      mb,
+                                int                      nnzb,
+                                const UPTKsparseMatDescr_t descrA,
+                                cuComplex*               bsrSortedVal,
+                                const int*               bsrSortedRowPtr,
+                                const int*               bsrSortedColInd,
+                                int                      blockSize,
+                                bsrilu02Info_t           info,
+                                size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZbsrilu02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                               UPTKsparseDirection_t      dirA,
+                               int                      mb,
+                               int                      nnzb,
+                               const UPTKsparseMatDescr_t descrA,
+                               cuDoubleComplex*         bsrSortedVal,
+                               const int*               bsrSortedRowPtr,
+                               const int*               bsrSortedColInd,
+                               int                      blockSize,
+                               bsrilu02Info_t           info,
+                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSbsrilu02_analysis(UPTKsparseHandle_t         handle,
@@ -1389,7 +2384,7 @@ UPTKsparseSbsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockDim,
-                           UPTKbsrilu02Info_t           info,
+                           bsrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1403,7 +2398,7 @@ UPTKsparseDbsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockDim,
-                           UPTKbsrilu02Info_t           info,
+                           bsrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1417,7 +2412,7 @@ UPTKsparseCbsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockDim,
-                           UPTKbsrilu02Info_t           info,
+                           bsrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1431,7 +2426,7 @@ UPTKsparseZbsrilu02_analysis(UPTKsparseHandle_t         handle,
                            const int*               bsrSortedRowPtr,
                            const int*               bsrSortedColInd,
                            int                      blockDim,
-                           UPTKbsrilu02Info_t           info,
+                           bsrilu02Info_t           info,
                            UPTKsparseSolvePolicy_t    policy,
                            void*                    pBuffer);
 
@@ -1445,7 +2440,7 @@ UPTKsparseSbsrilu02(UPTKsparseHandle_t         handle,
                   const int*               bsrSortedRowPtr,
                   const int*               bsrSortedColInd,
                   int                      blockDim,
-                  UPTKbsrilu02Info_t           info,
+                  bsrilu02Info_t           info,
                   UPTKsparseSolvePolicy_t    policy,
                   void*                    pBuffer);
 
@@ -1459,7 +2454,7 @@ UPTKsparseDbsrilu02(UPTKsparseHandle_t         handle,
                   const int*               bsrSortedRowPtr,
                   const int*               bsrSortedColInd,
                   int                      blockDim,
-                  UPTKbsrilu02Info_t           info,
+                  bsrilu02Info_t           info,
                   UPTKsparseSolvePolicy_t    policy,
                   void*                    pBuffer);
 
@@ -1473,7 +2468,7 @@ UPTKsparseCbsrilu02(UPTKsparseHandle_t         handle,
                   const int*               bsrSortedRowPtr,
                   const int*               bsrSortedColInd,
                   int                      blockDim,
-                  UPTKbsrilu02Info_t           info,
+                  bsrilu02Info_t           info,
                   UPTKsparseSolvePolicy_t    policy,
                   void*                    pBuffer);
 
@@ -1487,13 +2482,13 @@ UPTKsparseZbsrilu02(UPTKsparseHandle_t         handle,
                   const int*               bsrSortedRowPtr,
                   const int*               bsrSortedColInd,
                   int                      blockDim,
-                  UPTKbsrilu02Info_t           info,
+                  bsrilu02Info_t           info,
                   UPTKsparseSolvePolicy_t    policy,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXcsric02_zeroPivot(UPTKsparseHandle_t handle,
-                           UPTKcsric02Info_t    info,
+                           csric02Info_t    info,
                            int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1504,7 +2499,7 @@ UPTKsparseScsric02_bufferSize(UPTKsparseHandle_t         handle,
                             float*                   csrSortedValA,
                             const int*               csrSortedRowPtrA,
                             const int*               csrSortedColIndA,
-                            UPTKcsric02Info_t            info,
+                            csric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1515,7 +2510,7 @@ UPTKsparseDcsric02_bufferSize(UPTKsparseHandle_t         handle,
                             double*                  csrSortedValA,
                             const int*               csrSortedRowPtrA,
                             const int*               csrSortedColIndA,
-                            UPTKcsric02Info_t            info,
+                            csric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1526,7 +2521,7 @@ UPTKsparseCcsric02_bufferSize(UPTKsparseHandle_t         handle,
                             cuComplex*               csrSortedValA,
                             const int*               csrSortedRowPtrA,
                             const int*               csrSortedColIndA,
-                            UPTKcsric02Info_t            info,
+                            csric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1537,7 +2532,7 @@ UPTKsparseZcsric02_bufferSize(UPTKsparseHandle_t         handle,
                             cuDoubleComplex*         csrSortedValA,
                             const int*               csrSortedRowPtrA,
                             const int*               csrSortedColIndA,
-                            UPTKcsric02Info_t            info,
+                            csric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1548,7 +2543,7 @@ UPTKsparseScsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                float*                   csrSortedVal,
                                const int*               csrSortedRowPtr,
                                const int*               csrSortedColInd,
-                               UPTKcsric02Info_t            info,
+                               csric02Info_t            info,
                                size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1559,7 +2554,7 @@ UPTKsparseDcsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                double*                  csrSortedVal,
                                const int*               csrSortedRowPtr,
                                const int*               csrSortedColInd,
-                               UPTKcsric02Info_t            info,
+                               csric02Info_t            info,
                                size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1570,7 +2565,7 @@ UPTKsparseCcsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                cuComplex*               csrSortedVal,
                                const int*               csrSortedRowPtr,
                                const int*               csrSortedColInd,
-                               UPTKcsric02Info_t            info,
+                               csric02Info_t            info,
                                size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1581,7 +2576,7 @@ UPTKsparseZcsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
                                cuDoubleComplex*         csrSortedVal,
                                const int*               csrSortedRowPtr,
                                const int*               csrSortedColInd,
-                               UPTKcsric02Info_t            info,
+                               csric02Info_t            info,
                                size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1592,7 +2587,7 @@ UPTKsparseScsric02_analysis(UPTKsparseHandle_t         handle,
                           const float*             csrSortedValA,
                           const int*               csrSortedRowPtrA,
                           const int*               csrSortedColIndA,
-                          UPTKcsric02Info_t            info,
+                          csric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pBuffer);
 
@@ -1604,7 +2599,7 @@ UPTKsparseDcsric02_analysis(UPTKsparseHandle_t         handle,
                           const double*            csrSortedValA,
                           const int*               csrSortedRowPtrA,
                           const int*               csrSortedColIndA,
-                          UPTKcsric02Info_t            info,
+                          csric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pBuffer);
 
@@ -1616,7 +2611,7 @@ UPTKsparseCcsric02_analysis(UPTKsparseHandle_t         handle,
                           const cuComplex*         csrSortedValA,
                           const int*               csrSortedRowPtrA,
                           const int*               csrSortedColIndA,
-                          UPTKcsric02Info_t            info,
+                          csric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pBuffer);
 
@@ -1628,7 +2623,7 @@ UPTKsparseZcsric02_analysis(UPTKsparseHandle_t         handle,
                           const cuDoubleComplex*   csrSortedValA,
                           const int*               csrSortedRowPtrA,
                           const int*               csrSortedColIndA,
-                          UPTKcsric02Info_t            info,
+                          csric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pBuffer);
 
@@ -1640,7 +2635,7 @@ UPTKsparseScsric02(UPTKsparseHandle_t         handle,
                  float*                   csrSortedValA_valM,
                  const int*               csrSortedRowPtrA,
                  const int*               csrSortedColIndA,
-                 UPTKcsric02Info_t            info,
+                 csric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1652,7 +2647,7 @@ UPTKsparseDcsric02(UPTKsparseHandle_t         handle,
                  double*                  csrSortedValA_valM,
                  const int*               csrSortedRowPtrA,
                  const int*               csrSortedColIndA,
-                 UPTKcsric02Info_t            info,
+                 csric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1664,7 +2659,7 @@ UPTKsparseCcsric02(UPTKsparseHandle_t         handle,
                  cuComplex*               csrSortedValA_valM,
                  const int*               csrSortedRowPtrA,
                  const int*               csrSortedColIndA,
-                 UPTKcsric02Info_t            info,
+                 csric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1676,13 +2671,13 @@ UPTKsparseZcsric02(UPTKsparseHandle_t         handle,
                  cuDoubleComplex*         csrSortedValA_valM,
                  const int*               csrSortedRowPtrA,
                  const int*               csrSortedColIndA,
-                 UPTKcsric02Info_t            info,
+                 csric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXbsric02_zeroPivot(UPTKsparseHandle_t handle,
-                           UPTKbsric02Info_t    info,
+                           bsric02Info_t    info,
                            int*             position);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1695,7 +2690,7 @@ UPTKsparseSbsric02_bufferSize(UPTKsparseHandle_t         handle,
                             const int*               bsrSortedRowPtr,
                             const int*               bsrSortedColInd,
                             int                      blockDim,
-                            UPTKbsric02Info_t            info,
+                            bsric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1708,7 +2703,7 @@ UPTKsparseDbsric02_bufferSize(UPTKsparseHandle_t         handle,
                             const int*               bsrSortedRowPtr,
                             const int*               bsrSortedColInd,
                             int                      blockDim,
-                            UPTKbsric02Info_t            info,
+                            bsric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1721,7 +2716,7 @@ UPTKsparseCbsric02_bufferSize(UPTKsparseHandle_t         handle,
                             const int*               bsrSortedRowPtr,
                             const int*               bsrSortedColInd,
                             int                      blockDim,
-                            UPTKbsric02Info_t            info,
+                            bsric02Info_t            info,
                             int*                     pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -1734,8 +2729,60 @@ UPTKsparseZbsric02_bufferSize(UPTKsparseHandle_t         handle,
                             const int*               bsrSortedRowPtr,
                             const int*               bsrSortedColInd,
                             int                      blockDim,
-                            UPTKbsric02Info_t            info,
+                            bsric02Info_t            info,
                             int*                     pBufferSizeInBytes);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSbsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                               UPTKsparseDirection_t      dirA,
+                               int                      mb,
+                               int                      nnzb,
+                               const UPTKsparseMatDescr_t descrA,
+                               float*                   bsrSortedVal,
+                               const int*               bsrSortedRowPtr,
+                               const int*               bsrSortedColInd,
+                               int                      blockSize,
+                               bsric02Info_t            info,
+                               size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDbsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                               UPTKsparseDirection_t      dirA,
+                               int                      mb,
+                               int                      nnzb,
+                               const UPTKsparseMatDescr_t descrA,
+                               double*                  bsrSortedVal,
+                               const int*               bsrSortedRowPtr,
+                               const int*               bsrSortedColInd,
+                               int                      blockSize,
+                               bsric02Info_t            info,
+                               size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCbsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                               UPTKsparseDirection_t      dirA,
+                               int                      mb,
+                               int                      nnzb,
+                               const UPTKsparseMatDescr_t descrA,
+                               cuComplex*               bsrSortedVal,
+                               const int*               bsrSortedRowPtr,
+                               const int*               bsrSortedColInd,
+                               int                      blockSize,
+                               bsric02Info_t            info,
+                               size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZbsric02_bufferSizeExt(UPTKsparseHandle_t         handle,
+                               UPTKsparseDirection_t      dirA,
+                               int                      mb,
+                               int                      nnzb,
+                               const UPTKsparseMatDescr_t descrA,
+                               cuDoubleComplex*         bsrSortedVal,
+                               const int*               bsrSortedRowPtr,
+                               const int*               bsrSortedColInd,
+                               int                      blockSize,
+                               bsric02Info_t            info,
+                               size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSbsric02_analysis(UPTKsparseHandle_t         handle,
@@ -1747,7 +2794,7 @@ UPTKsparseSbsric02_analysis(UPTKsparseHandle_t         handle,
                           const int*               bsrSortedRowPtr,
                           const int*               bsrSortedColInd,
                           int                      blockDim,
-                          UPTKbsric02Info_t            info,
+                          bsric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pInputBuffer);
 
@@ -1761,7 +2808,7 @@ UPTKsparseDbsric02_analysis(UPTKsparseHandle_t         handle,
                           const int*               bsrSortedRowPtr,
                           const int*               bsrSortedColInd,
                           int                      blockDim,
-                          UPTKbsric02Info_t            info,
+                          bsric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pInputBuffer);
 
@@ -1775,7 +2822,7 @@ UPTKsparseCbsric02_analysis(UPTKsparseHandle_t         handle,
                           const int*               bsrSortedRowPtr,
                           const int*               bsrSortedColInd,
                           int                      blockDim,
-                          UPTKbsric02Info_t            info,
+                          bsric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pInputBuffer);
 
@@ -1789,7 +2836,7 @@ UPTKsparseZbsric02_analysis(UPTKsparseHandle_t         handle,
                           const int*               bsrSortedRowPtr,
                           const int*               bsrSortedColInd,
                           int                      blockDim,
-                          UPTKbsric02Info_t            info,
+                          bsric02Info_t            info,
                           UPTKsparseSolvePolicy_t    policy,
                           void*                    pInputBuffer);
 
@@ -1803,7 +2850,7 @@ UPTKsparseSbsric02(UPTKsparseHandle_t         handle,
                  const int*               bsrSortedRowPtr,
                  const int*               bsrSortedColInd,
                  int                      blockDim,
-                 UPTKbsric02Info_t            info,
+                 bsric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1817,7 +2864,7 @@ UPTKsparseDbsric02(UPTKsparseHandle_t         handle,
                  const int*               bsrSortedRowPtr,
                  const int*               bsrSortedColInd,
                  int                      blockDim,
-                 UPTKbsric02Info_t            info,
+                 bsric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1832,7 +2879,7 @@ UPTKsparseCbsric02(UPTKsparseHandle_t         handle,
                  const int*
                       bsrSortedColInd,
                  int                      blockDim,
-                 UPTKbsric02Info_t            info,
+                 bsric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -1846,7 +2893,7 @@ UPTKsparseZbsric02(UPTKsparseHandle_t         handle,
                  const int*               bsrSortedRowPtr,
                  const int*               bsrSortedColInd,
                  int                      blockDim,
-                 UPTKbsric02Info_t            info,
+                 bsric02Info_t            info,
                  UPTKsparseSolvePolicy_t    policy,
                  void*                    pBuffer);
 
@@ -2310,6 +3357,250 @@ UPTKsparseZgpsvInterleavedBatch(UPTKsparseHandle_t handle,
 //# EXTRA ROUTINES
 //##############################################################################
 
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCreateCsrgemm2Info(csrgemm2Info_t* info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDestroyCsrgemm2Info(csrgemm2Info_t info);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrgemm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                int                      m,
+                                int                      n,
+                                int                      k,
+                                const float*             alpha,
+                                const UPTKsparseMatDescr_t descrA,
+                                int                      nnzA,
+                                const int*               csrSortedRowPtrA,
+                                const int*               csrSortedColIndA,
+                                const UPTKsparseMatDescr_t descrB,
+                                int                      nnzB,
+                                const int*               csrSortedRowPtrB,
+                                const int*               csrSortedColIndB,
+                                const float*             beta,
+                                const UPTKsparseMatDescr_t descrD,
+                                int                      nnzD,
+                                const int*               csrSortedRowPtrD,
+                                const int*               csrSortedColIndD,
+                                csrgemm2Info_t           info,
+                                size_t*                  pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrgemm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                int                      m,
+                                int                      n,
+                                int                      k,
+                                const double*            alpha,
+                                const UPTKsparseMatDescr_t descrA,
+                                int                      nnzA,
+                                const int*               csrSortedRowPtrA,
+                                const int*               csrSortedColIndA,
+                                const UPTKsparseMatDescr_t descrB,
+                                int                      nnzB,
+                                const int*               csrSortedRowPtrB,
+                                const int*               csrSortedColIndB,
+                                const double*            beta,
+                                const UPTKsparseMatDescr_t descrD,
+                                int                      nnzD,
+                                const int*               csrSortedRowPtrD,
+                                const int*               csrSortedColIndD,
+                                csrgemm2Info_t           info,
+                                size_t*                  pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrgemm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                int                      m,
+                                int                      n,
+                                int                      k,
+                                const cuComplex*         alpha,
+                                const UPTKsparseMatDescr_t descrA,
+                                int                      nnzA,
+                                const int*               csrSortedRowPtrA,
+                                const int*               csrSortedColIndA,
+                                const UPTKsparseMatDescr_t descrB,
+                                int                      nnzB,
+                                const int*               csrSortedRowPtrB,
+                                const int*               csrSortedColIndB,
+                                const cuComplex*         beta,
+                                const UPTKsparseMatDescr_t descrD,
+                                int                      nnzD,
+                                const int*               csrSortedRowPtrD,
+                                const int*               csrSortedColIndD,
+                                csrgemm2Info_t           info,
+                                size_t*                  pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrgemm2_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                int                      m,
+                                int                      n,
+                                int                      k,
+                                const cuDoubleComplex*   alpha,
+                                const UPTKsparseMatDescr_t descrA,
+                                int                      nnzA,
+                                const int*               csrSortedRowPtrA,
+                                const int*               csrSortedColIndA,
+                                const UPTKsparseMatDescr_t descrB,
+                                int                      nnzB,
+                                const int*               csrSortedRowPtrB,
+                                const int*               csrSortedColIndB,
+                                const cuDoubleComplex*   beta,
+                                const UPTKsparseMatDescr_t descrD,
+                                int                      nnzD,
+                                const int*               csrSortedRowPtrD,
+                                const int*               csrSortedColIndD,
+                                csrgemm2Info_t           info,
+                                size_t*                  pBufferSizeInBytes);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseXcsrgemm2Nnz(UPTKsparseHandle_t         handle,
+                     int                      m,
+                     int                      n,
+                     int                      k,
+                     const UPTKsparseMatDescr_t descrA,
+                     int                      nnzA,
+                     const int*               csrSortedRowPtrA,
+                     const int*               csrSortedColIndA,
+                     const UPTKsparseMatDescr_t descrB,
+                     int                      nnzB,
+                     const int*               csrSortedRowPtrB,
+                     const int*               csrSortedColIndB,
+                     const UPTKsparseMatDescr_t descrD,
+                     int                      nnzD,
+                     const int*               csrSortedRowPtrD,
+                     const int*               csrSortedColIndD,
+                     const UPTKsparseMatDescr_t descrC,
+                     int*                     csrSortedRowPtrC,
+                     int*                     nnzTotalDevHostPtr,
+                     const csrgemm2Info_t     info,
+                     void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsrgemm2(UPTKsparseHandle_t         handle,
+                  int                      m,
+                  int                      n,
+                  int                      k,
+                  const float*             alpha,
+                  const UPTKsparseMatDescr_t descrA,
+                  int                      nnzA,
+                  const float*             csrSortedValA,
+                  const int*               csrSortedRowPtrA,
+                  const int*               csrSortedColIndA,
+                  const UPTKsparseMatDescr_t descrB,
+                  int                      nnzB,
+                  const float*             csrSortedValB,
+                  const int*               csrSortedRowPtrB,
+                  const int*               csrSortedColIndB,
+                  const float*             beta,
+                  const UPTKsparseMatDescr_t descrD,
+                  int                      nnzD,
+                  const float*             csrSortedValD,
+                  const int*               csrSortedRowPtrD,
+                  const int*               csrSortedColIndD,
+                  const UPTKsparseMatDescr_t descrC,
+                  float*                   csrSortedValC,
+                  const int*               csrSortedRowPtrC,
+                  int*                     csrSortedColIndC,
+                  const csrgemm2Info_t     info,
+                  void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsrgemm2(UPTKsparseHandle_t         handle,
+                  int                      m,
+                  int                      n,
+                  int                      k,
+                  const double*            alpha,
+                  const UPTKsparseMatDescr_t descrA,
+                  int                      nnzA,
+                  const double*            csrSortedValA,
+                  const int*               csrSortedRowPtrA,
+                  const int*               csrSortedColIndA,
+                  const UPTKsparseMatDescr_t descrB,
+                  int                      nnzB,
+                  const double*            csrSortedValB,
+                  const int*               csrSortedRowPtrB,
+                  const int*               csrSortedColIndB,
+                  const double*            beta,
+                  const UPTKsparseMatDescr_t descrD,
+                  int                      nnzD,
+                  const double*            csrSortedValD,
+                  const int*               csrSortedRowPtrD,
+                  const int*               csrSortedColIndD,
+                  const UPTKsparseMatDescr_t descrC,
+                  double*                  csrSortedValC,
+                  const int*               csrSortedRowPtrC,
+                  int*                     csrSortedColIndC,
+                  const csrgemm2Info_t     info,
+                  void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsrgemm2(UPTKsparseHandle_t         handle,
+                 int                      m,
+                 int                      n,
+                 int                      k,
+                 const cuComplex*         alpha,
+                 const UPTKsparseMatDescr_t descrA,
+                 int                      nnzA,
+                 const cuComplex*         csrSortedValA,
+                 const int*               csrSortedRowPtrA,
+                 const int*               csrSortedColIndA,
+                 const UPTKsparseMatDescr_t descrB,
+                 int                      nnzB,
+                 const cuComplex*         csrSortedValB,
+                 const int*               csrSortedRowPtrB,
+                 const int*               csrSortedColIndB,
+                 const cuComplex*         beta,
+                 const UPTKsparseMatDescr_t descrD,
+                 int                      nnzD,
+                 const cuComplex*         csrSortedValD,
+                 const int*               csrSortedRowPtrD,
+                 const int*               csrSortedColIndD,
+                 const UPTKsparseMatDescr_t descrC,
+                 cuComplex*               csrSortedValC,
+                 const int*               csrSortedRowPtrC,
+                 int*                     csrSortedColIndC,
+                 const csrgemm2Info_t     info,
+                 void*                    pBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSpGEMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsrgemm2(UPTKsparseHandle_t         handle,
+                  int                      m,
+                  int                      n,
+                  int                      k,
+                  const cuDoubleComplex*   alpha,
+                  const UPTKsparseMatDescr_t descrA,
+                  int                      nnzA,
+                  const cuDoubleComplex*   csrSortedValA,
+                  const int*               csrSortedRowPtrA,
+                  const int*               csrSortedColIndA,
+                  const UPTKsparseMatDescr_t descrB,
+                  int                      nnzB,
+                  const cuDoubleComplex*   csrSortedValB,
+                  const int*               csrSortedRowPtrB,
+                  const int*               csrSortedColIndB,
+                  const cuDoubleComplex*   beta,
+                  const UPTKsparseMatDescr_t descrD,
+                  int                      nnzD,
+                  const cuDoubleComplex*   csrSortedValD,
+                  const int*               csrSortedRowPtrD,
+                  const int*               csrSortedColIndD,
+                  const UPTKsparseMatDescr_t descrC,
+                  cuDoubleComplex*         csrSortedValC,
+                  const int*               csrSortedRowPtrC,
+                  int*                     csrSortedColIndC,
+                  const csrgemm2Info_t     info,
+                  void*                    pBuffer);
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseScsrgeam2_bufferSizeExt(UPTKsparseHandle_t         handle,
                                 int                      m,
@@ -2715,6 +4006,206 @@ UPTKsparseZcsr2csr_compress(UPTKsparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           cuDoubleComplex          tol);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSdense2csr(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const float*             A,
+                   int                      lda,
+                   const int*               nnzPerRow,
+                   float*                   csrSortedValA,
+                   int*                     csrSortedRowPtrA,
+                   int*                     csrSortedColIndA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDdense2csr(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const double*            A,
+                   int                      lda,
+                   const int*               nnzPerRow,
+                   double*                  csrSortedValA,
+                   int*                     csrSortedRowPtrA,
+                   int*                     csrSortedColIndA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCdense2csr(UPTKsparseHandle_t           handle,
+                     int                      m,
+                     int                      n,
+                     const UPTKsparseMatDescr_t descrA,
+                     const cuComplex*         A,
+                     int                      lda,
+                     const int*               nnzPerRow,
+                     cuComplex*               csrSortedValA,
+                     int*                     csrSortedRowPtrA,
+                     int*                     csrSortedColIndA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZdense2csr(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuDoubleComplex*   A,
+                   int                      lda,
+                   const int*               nnzPerRow,
+                   cuDoubleComplex*         csrSortedValA,
+                   int*                     csrSortedRowPtrA,
+                   int*                     csrSortedColIndA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsr2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const float*             csrSortedValA,
+                   const int*               csrSortedRowPtrA,
+                   const int*               csrSortedColIndA,
+                   float*                   A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsr2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const double*            csrSortedValA,
+                   const int*               csrSortedRowPtrA,
+                   const int*               csrSortedColIndA,
+                   double*                  A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsr2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuComplex*         csrSortedValA,
+                   const int*               csrSortedRowPtrA,
+                   const int*               csrSortedColIndA,
+                   cuComplex*               A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsr2dense(UPTKsparseHandle_t         handle,
+                int                      m,
+                int                      n,
+                const UPTKsparseMatDescr_t descrA,
+                const cuDoubleComplex*   csrSortedValA,
+                const int*               csrSortedRowPtrA,
+                const int*               csrSortedColIndA,
+                cuDoubleComplex*         A,
+                int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSdense2csc(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const float*             A,
+                   int                      lda,
+                   const int*               nnzPerCol,
+                   float*                   cscSortedValA,
+                   int*                     cscSortedRowIndA,
+                   int*                     cscSortedColPtrA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDdense2csc(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const double*            A,
+                   int                      lda,
+                   const int*               nnzPerCol,
+                   double*                  cscSortedValA,
+                   int*                     cscSortedRowIndA,
+                   int*                     cscSortedColPtrA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCdense2csc(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuComplex*         A,
+                   int                      lda,
+                   const int*               nnzPerCol,
+                   cuComplex*               cscSortedValA,
+                   int*                     cscSortedRowIndA,
+                   int*                     cscSortedColPtrA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseDenseToSparse)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZdense2csc(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuDoubleComplex*   A,
+                   int                      lda,
+                   const int*               nnzPerCol,
+                   cuDoubleComplex*         cscSortedValA,
+                   int*                     cscSortedRowIndA,
+                   int*                     cscSortedColPtrA);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsc2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const float*             cscSortedValA,
+                   const int*               cscSortedRowIndA,
+                   const int*               cscSortedColPtrA,
+                   float*                   A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsc2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const double*            cscSortedValA,
+                   const int*               cscSortedRowIndA,
+                   const int*               cscSortedColPtrA,
+                   double*                  A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsc2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuComplex*         cscSortedValA,
+                   const int*               cscSortedRowIndA,
+                   const int*               cscSortedColPtrA,
+                   cuComplex*               A,
+                   int                      lda);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSparseToDense)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsc2dense(UPTKsparseHandle_t         handle,
+                   int                      m,
+                   int                      n,
+                   const UPTKsparseMatDescr_t descrA,
+                   const cuDoubleComplex*   cscSortedValA,
+                   const int*               cscSortedRowIndA,
+                   const int*               cscSortedColPtrA,
+                   cuDoubleComplex*         A,
+                   int                      lda);
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXcoo2csr(UPTKsparseHandle_t    handle,
                  const int*          cooRowInd,
@@ -2913,6 +4404,54 @@ UPTKsparseZgebsr2gebsc_bufferSize(UPTKsparseHandle_t       handle,
                                 int*                   pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSgebsr2gebsc_bufferSizeExt(UPTKsparseHandle_t handle,
+                                   int              mb,
+                                   int              nb,
+                                   int              nnzb,
+                                   const float*     bsrSortedVal,
+                                   const int*       bsrSortedRowPtr,
+                                   const int*       bsrSortedColInd,
+                                   int              rowBlockDim,
+                                   int              colBlockDim,
+                                   size_t*          pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDgebsr2gebsc_bufferSizeExt(UPTKsparseHandle_t handle,
+                                   int              mb,
+                                   int              nb,
+                                   int              nnzb,
+                                   const double*    bsrSortedVal,
+                                   const int*       bsrSortedRowPtr,
+                                   const int*       bsrSortedColInd,
+                                   int              rowBlockDim,
+                                   int              colBlockDim,
+                                   size_t*          pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCgebsr2gebsc_bufferSizeExt(UPTKsparseHandle_t handle,
+                                   int              mb,
+                                   int              nb,
+                                   int              nnzb,
+                                   const cuComplex* bsrSortedVal,
+                                   const int*       bsrSortedRowPtr,
+                                   const int*       bsrSortedColInd,
+                                   int              rowBlockDim,
+                                   int              colBlockDim,
+                                   size_t*          pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZgebsr2gebsc_bufferSizeExt(UPTKsparseHandle_t       handle,
+                                   int                    mb,
+                                   int                    nb,
+                                   int                    nnzb,
+                                   const cuDoubleComplex* bsrSortedVal,
+                                   const int*             bsrSortedRowPtr,
+                                   const int*             bsrSortedColInd,
+                                   int                    rowBlockDim,
+                                   int                    colBlockDim,
+                                   size_t*                pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSgebsr2gebsc(UPTKsparseHandle_t handle,
                      int              mb,
                      int              nb,
@@ -2979,6 +4518,20 @@ UPTKsparseZgebsr2gebsc(UPTKsparseHandle_t       handle,
                      UPTKsparseAction_t       copyValues,
                      UPTKsparseIndexBase_t    idxBase,
                      void*                  pBuffer);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseXgebsr2csr(UPTKsparseHandle_t         handle,
+                   UPTKsparseDirection_t      dirA,
+                   int                      mb,
+                   int                      nb,
+                   const UPTKsparseMatDescr_t descrA,
+                   const int*               bsrSortedRowPtrA,
+                   const int*               bsrSortedColIndA,
+                   int                      rowBlockDim,
+                   int                      colBlockDim,
+                   const UPTKsparseMatDescr_t descrC,
+                   int*                     csrSortedRowPtrC,
+                   int*                     csrSortedColIndC);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSgebsr2csr(UPTKsparseHandle_t         handle,
@@ -3095,6 +4648,58 @@ UPTKsparseZcsr2gebsr_bufferSize(UPTKsparseHandle_t         handle,
                               int                      rowBlockDim,
                               int                      colBlockDim,
                               int*                     pBufferSizeInBytes);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseScsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                 UPTKsparseDirection_t      dirA,
+                                 int                      m,
+                                 int                      n,
+                                 const UPTKsparseMatDescr_t descrA,
+                                 const float*             csrSortedValA,
+                                 const int*               csrSortedRowPtrA,
+                                 const int*               csrSortedColIndA,
+                                 int                      rowBlockDim,
+                                 int                      colBlockDim,
+                                 size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDcsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                 UPTKsparseDirection_t      dirA,
+                                 int                      m,
+                                 int                      n,
+                                 const UPTKsparseMatDescr_t descrA,
+                                 const double*            csrSortedValA,
+                                 const int*               csrSortedRowPtrA,
+                                 const int*               csrSortedColIndA,
+                                 int                      rowBlockDim,
+                                 int                      colBlockDim,
+                                 size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCcsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                 UPTKsparseDirection_t      dirA,
+                                 int                      m,
+                                 int                      n,
+                                 const UPTKsparseMatDescr_t descrA,
+                                 const cuComplex*         csrSortedValA,
+                                 const int*               csrSortedRowPtrA,
+                                 const int*               csrSortedColIndA,
+                                 int                      rowBlockDim,
+                                 int                      colBlockDim,
+                                 size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZcsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                 UPTKsparseDirection_t      dirA,
+                                 int                      m,
+                                 int                      n,
+                                 const UPTKsparseMatDescr_t descrA,
+                                 const cuDoubleComplex*   csrSortedValA,
+                                 const int*               csrSortedRowPtrA,
+                                 const int*               csrSortedColIndA,
+                                 int                      rowBlockDim,
+                                 int                      colBlockDim,
+                                 size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXcsr2gebsrNnz(UPTKsparseHandle_t         handle,
@@ -3242,6 +4847,70 @@ UPTKsparseZgebsr2gebsr_bufferSize(UPTKsparseHandle_t         handle,
                                 int                      rowBlockDimC,
                                 int                      colBlockDimC,
                                 int*                     pBufferSizeInBytes);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSgebsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                   UPTKsparseDirection_t      dirA,
+                                   int                      mb,
+                                   int                      nb,
+                                   int                      nnzb,
+                                   const UPTKsparseMatDescr_t descrA,
+                                   const float*             bsrSortedValA,
+                                   const int*               bsrSortedRowPtrA,
+                                   const int*               bsrSortedColIndA,
+                                   int                      rowBlockDimA,
+                                   int                      colBlockDimA,
+                                   int                      rowBlockDimC,
+                                   int                      colBlockDimC,
+                                   size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseDgebsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                   UPTKsparseDirection_t      dirA,
+                                   int                      mb,
+                                   int                      nb,
+                                   int                      nnzb,
+                                   const UPTKsparseMatDescr_t descrA,
+                                   const double*            bsrSortedValA,
+                                   const int*               bsrSortedRowPtrA,
+                                   const int*               bsrSortedColIndA,
+                                   int                      rowBlockDimA,
+                                   int                      colBlockDimA,
+                                   int                      rowBlockDimC,
+                                   int                      colBlockDimC,
+                                   size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseCgebsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                   UPTKsparseDirection_t      dirA,
+                                   int                      mb,
+                                   int                      nb,
+                                   int                      nnzb,
+                                   const UPTKsparseMatDescr_t descrA,
+                                   const cuComplex*         bsrSortedValA,
+                                   const int*               bsrSortedRowPtrA,
+                                   const int*               bsrSortedColIndA,
+                                   int                      rowBlockDimA,
+                                   int                      colBlockDimA,
+                                   int                      rowBlockDimC,
+                                   int                      colBlockDimC,
+                                   size_t*                  pBufferSize);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseZgebsr2gebsr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                   UPTKsparseDirection_t      dirA,
+                                   int                      mb,
+                                   int                      nb,
+                                   int                      nnzb,
+                                   const UPTKsparseMatDescr_t descrA,
+                                   const cuDoubleComplex*   bsrSortedValA,
+                                   const int*               bsrSortedRowPtrA,
+                                   const int*               bsrSortedColIndA,
+                                   int                      rowBlockDimA,
+                                   int                      colBlockDimA,
+                                   int                      rowBlockDimC,
+                                   int                      colBlockDimC,
+                                   size_t*                  pBufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseXgebsr2gebsrNnz(UPTKsparseHandle_t         handle,
@@ -3427,7 +5096,7 @@ UPTKsparseScsru2csr_bufferSizeExt(UPTKsparseHandle_t handle,
                                 float*           csrVal,
                                 const int*       csrRowPtr,
                                 int*             csrColInd,
-                                UPTKcsru2csrInfo_t   info,
+                                csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3438,7 +5107,7 @@ UPTKsparseDcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle,
                                 double*          csrVal,
                                 const int*       csrRowPtr,
                                 int*             csrColInd,
-                                UPTKcsru2csrInfo_t   info,
+                                csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3449,7 +5118,7 @@ UPTKsparseCcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle,
                                 cuComplex*       csrVal,
                                 const int*       csrRowPtr,
                                 int*             csrColInd,
-                                UPTKcsru2csrInfo_t   info,
+                                csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3460,7 +5129,7 @@ UPTKsparseZcsru2csr_bufferSizeExt(UPTKsparseHandle_t handle,
                                 cuDoubleComplex* csrVal,
                                 const int*       csrRowPtr,
                                 int*             csrColInd,
-                                UPTKcsru2csrInfo_t   info,
+                                csru2csrInfo_t   info,
                                 size_t*          pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3472,7 +5141,7 @@ UPTKsparseScsru2csr(UPTKsparseHandle_t         handle,
                   float*                   csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3484,7 +5153,7 @@ UPTKsparseDcsru2csr(UPTKsparseHandle_t         handle,
                   double*                  csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3496,7 +5165,7 @@ UPTKsparseCcsru2csr(UPTKsparseHandle_t         handle,
                   cuComplex*               csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3508,7 +5177,7 @@ UPTKsparseZcsru2csr(UPTKsparseHandle_t         handle,
                   cuDoubleComplex*         csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3520,7 +5189,7 @@ UPTKsparseScsr2csru(UPTKsparseHandle_t         handle,
                   float*                   csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3532,7 +5201,7 @@ UPTKsparseDcsr2csru(UPTKsparseHandle_t         handle,
                   double*                  csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3544,7 +5213,7 @@ UPTKsparseCcsr2csru(UPTKsparseHandle_t         handle,
                   cuComplex*               csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3556,9 +5225,23 @@ UPTKsparseZcsr2csru(UPTKsparseHandle_t         handle,
                   cuDoubleComplex*         csrVal,
                   const int*               csrRowPtr,
                   int*                     csrColInd,
-                  UPTKcsru2csrInfo_t           info,
+                  csru2csrInfo_t           info,
                   void*                    pBuffer);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                      int                      m,
+                                      int                      n,
+                                      const __half*            A,
+                                      int                      lda,
+                                      const __half*            threshold,
+                                      const UPTKsparseMatDescr_t descrC,
+                                      const __half*            csrSortedValC,
+                                      const int*               csrSortedRowPtrC,
+                                      const int*               csrSortedColIndC,
+                                      size_t* pBufferSizeInBytes);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
@@ -3586,6 +5269,20 @@ UPTKsparseDpruneDense2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
                                       const int*               csrSortedColIndC,
                                       size_t*               pBufferSizeInBytes);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csrNnz(UPTKsparseHandle_t         handle,
+                           int                      m,
+                           int                      n,
+                           const __half*            A,
+                           int                      lda,
+                           const __half*            threshold,
+                           const UPTKsparseMatDescr_t descrC,
+                           int*                     csrRowPtrC,
+                           int*                     nnzTotalDevHostPtr,
+                           void*                    pBuffer);
+#endif // defined(__cplusplus)
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csrNnz(UPTKsparseHandle_t         handle,
                            int                      m,
@@ -3609,6 +5306,21 @@ UPTKsparseDpruneDense2csrNnz(UPTKsparseHandle_t         handle,
                            int*                     csrSortedRowPtrC,
                            int*                     nnzTotalDevHostPtr,
                            void*                    pBuffer);
+
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csr(UPTKsparseHandle_t         handle,
+                        int                      m,
+                        int                      n,
+                        const __half*            A,
+                        int                      lda,
+                        const __half*            threshold,
+                        const UPTKsparseMatDescr_t descrC,
+                        __half*                  csrSortedValC,
+                        const int*               csrSortedRowPtrC,
+                        int*                     csrSortedColIndC,
+                        void*                    pBuffer);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csr(UPTKsparseHandle_t         handle,
@@ -3636,6 +5348,23 @@ UPTKsparseDpruneDense2csr(UPTKsparseHandle_t         handle,
                         int*                     csrSortedColIndC,
                         void*                    pBuffer);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
+                                    int                      m,
+                                    int                      n,
+                                    int                      nnzA,
+                                    const UPTKsparseMatDescr_t descrA,
+                                    const __half*            csrSortedValA,
+                                    const int*               csrSortedRowPtrA,
+                                    const int*               csrSortedColIndA,
+                                    const __half*            threshold,
+                                    const UPTKsparseMatDescr_t descrC,
+                                    const __half*            csrSortedValC,
+                                    const int*               csrSortedRowPtrC,
+                                    const int*               csrSortedColIndC,
+                                    size_t* pBufferSizeInBytes);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
@@ -3669,6 +5398,22 @@ UPTKsparseDpruneCsr2csr_bufferSizeExt(UPTKsparseHandle_t         handle,
                                     const int*               csrSortedColIndC,
                                     size_t*                 pBufferSizeInBytes);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
+                         int                      m,
+                         int                      n,
+                         int                      nnzA,
+                         const UPTKsparseMatDescr_t descrA,
+                         const __half*            csrSortedValA,
+                         const int*               csrSortedRowPtrA,
+                         const int*               csrSortedColIndA,
+                         const __half*            threshold,
+                         const UPTKsparseMatDescr_t descrC,
+                         int*                     csrSortedRowPtrC,
+                         int*                     nnzTotalDevHostPtr,
+                         void*                    pBuffer);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
@@ -3686,7 +5431,7 @@ UPTKsparseSpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
                          void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
+ UPTKsparseDpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
                           int                      m,
                           int                      n,
                           int                      nnzA,
@@ -3699,6 +5444,24 @@ UPTKsparseDpruneCsr2csrNnz(UPTKsparseHandle_t         handle,
                           int*                     csrSortedRowPtrC,
                           int*                     nnzTotalDevHostPtr,
                           void*                    pBuffer);
+
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csr(UPTKsparseHandle_t         handle,
+                      int                      m,
+                      int                      n,
+                      int                      nnzA,
+                      const UPTKsparseMatDescr_t descrA,
+                      const __half*            csrSortedValA,
+                      const int*               csrSortedRowPtrA,
+                      const int*               csrSortedColIndA,
+                      const __half*            threshold,
+                      const UPTKsparseMatDescr_t descrC,
+                      __half*                  csrSortedValC,
+                      const int*               csrSortedRowPtrC,
+                      int*                     csrSortedColIndC,
+                      void*                    pBuffer);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csr(UPTKsparseHandle_t         handle,
@@ -3732,6 +5495,23 @@ UPTKsparseDpruneCsr2csr(UPTKsparseHandle_t         handle,
                       int*                     csrSortedColIndC,
                       void*                    pBuffer);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csrByPercentage_bufferSizeExt(
+                                   UPTKsparseHandle_t         handle,
+                                   int                      m,
+                                   int                      n,
+                                   const __half*            A,
+                                   int                      lda,
+                                   float                    percentage,
+                                   const UPTKsparseMatDescr_t descrC,
+                                   const __half*            csrSortedValC,
+                                   const int*               csrSortedRowPtrC,
+                                   const int*               csrSortedColIndC,
+                                   pruneInfo_t              info,
+                                   size_t*                  pBufferSizeInBytes);
+#endif // defined(__cplusplus)
+
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csrByPercentage_bufferSizeExt(
                                    UPTKsparseHandle_t         handle,
@@ -3744,7 +5524,7 @@ UPTKsparseSpruneDense2csrByPercentage_bufferSizeExt(
                                    const float*             csrSortedValC,
                                    const int*               csrSortedRowPtrC,
                                    const int*               csrSortedColIndC,
-                                   UPTKpruneInfo_t              info,
+                                   pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3759,8 +5539,24 @@ UPTKsparseDpruneDense2csrByPercentage_bufferSizeExt(
                                    const double*            csrSortedValC,
                                    const int*               csrSortedRowPtrC,
                                    const int*               csrSortedColIndC,
-                                   UPTKpruneInfo_t              info,
+                                   pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes);
+
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csrNnzByPercentage(
+                                    UPTKsparseHandle_t         handle,
+                                    int                      m,
+                                    int                      n,
+                                    const __half*            A,
+                                    int                      lda,
+                                    float                    percentage,
+                                    const UPTKsparseMatDescr_t descrC,
+                                    int*                     csrRowPtrC,
+                                    int*                     nnzTotalDevHostPtr,
+                                    pruneInfo_t              info,
+                                    void*                    pBuffer);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csrNnzByPercentage(
@@ -3773,7 +5569,7 @@ UPTKsparseSpruneDense2csrNnzByPercentage(
                                     const UPTKsparseMatDescr_t descrC,
                                     int*                     csrRowPtrC,
                                     int*                     nnzTotalDevHostPtr,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3787,8 +5583,24 @@ UPTKsparseDpruneDense2csrNnzByPercentage(
                                     const UPTKsparseMatDescr_t descrC,
                                     int*                     csrRowPtrC,
                                     int*                     nnzTotalDevHostPtr,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
+
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneDense2csrByPercentage(UPTKsparseHandle_t         handle,
+                                    int                      m,
+                                    int                      n,
+                                    const __half*            A,
+                                    int                      lda,
+                                    float                    percentage,
+                                    const UPTKsparseMatDescr_t descrC,
+                                    __half*                  csrSortedValC,
+                                    const int*               csrSortedRowPtrC,
+                                    int*                     csrSortedColIndC,
+                                    pruneInfo_t              info,
+                                    void*                    pBuffer);
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneDense2csrByPercentage(UPTKsparseHandle_t         handle,
@@ -3801,7 +5613,7 @@ UPTKsparseSpruneDense2csrByPercentage(UPTKsparseHandle_t         handle,
                                     float*                   csrSortedValC,
                                     const int*               csrSortedRowPtrC,
                                     int*                     csrSortedColIndC,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3815,8 +5627,30 @@ UPTKsparseDpruneDense2csrByPercentage(UPTKsparseHandle_t         handle,
                                     double*                  csrSortedValC,
                                     const int*               csrSortedRowPtrC,
                                     int*                     csrSortedColIndC,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
+
+#if defined(__cplusplus)
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csrByPercentage_bufferSizeExt(
+                                   UPTKsparseHandle_t         handle,
+                                   int                      m,
+                                   int                      n,
+                                   int                      nnzA,
+                                   const UPTKsparseMatDescr_t descrA,
+                                   const __half*            csrSortedValA,
+                                   const int*               csrSortedRowPtrA,
+                                   const int*               csrSortedColIndA,
+                                   float                    percentage,
+                                   const UPTKsparseMatDescr_t descrC,
+                                   const __half*            csrSortedValC,
+                                   const int*               csrSortedRowPtrC,
+                                   const int*               csrSortedColIndC,
+                                   pruneInfo_t              info,
+                                   size_t*                  pBufferSizeInBytes);
+
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csrByPercentage_bufferSizeExt(
@@ -3833,7 +5667,7 @@ UPTKsparseSpruneCsr2csrByPercentage_bufferSizeExt(
                                    const float*             csrSortedValC,
                                    const int*               csrSortedRowPtrC,
                                    const int*               csrSortedColIndC,
-                                   UPTKpruneInfo_t              info,
+                                   pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3851,8 +5685,29 @@ UPTKsparseDpruneCsr2csrByPercentage_bufferSizeExt(
                                    const double*            csrSortedValC,
                                    const int*               csrSortedRowPtrC,
                                    const int*               csrSortedColIndC,
-                                   UPTKpruneInfo_t              info,
+                                   pruneInfo_t              info,
                                    size_t*                  pBufferSizeInBytes);
+
+#if defined(__cplusplus)
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csrNnzByPercentage(
+                                    UPTKsparseHandle_t         handle,
+                                    int                      m,
+                                    int                      n,
+                                    int                      nnzA,
+                                    const UPTKsparseMatDescr_t descrA,
+                                    const __half*            csrSortedValA,
+                                    const int*               csrSortedRowPtrA,
+                                    const int*               csrSortedColIndA,
+                                    float                    percentage,
+                                    const UPTKsparseMatDescr_t descrC,
+                                    int*                     csrSortedRowPtrC,
+                                    int*                     nnzTotalDevHostPtr,
+                                    pruneInfo_t              info,
+                                    void*                    pBuffer);
+
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csrNnzByPercentage(
@@ -3868,7 +5723,7 @@ UPTKsparseSpruneCsr2csrNnzByPercentage(
                                     const UPTKsparseMatDescr_t descrC,
                                     int*                     csrSortedRowPtrC,
                                     int*                     nnzTotalDevHostPtr,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3885,9 +5740,28 @@ UPTKsparseDpruneCsr2csrNnzByPercentage(
                                     const UPTKsparseMatDescr_t descrC,
                                     int*                     csrSortedRowPtrC,
                                     int*                     nnzTotalDevHostPtr,
-                                    UPTKpruneInfo_t              info,
+                                    pruneInfo_t              info,
                                     void*                    pBuffer);
 
+#if defined(__cplusplus)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseHpruneCsr2csrByPercentage(UPTKsparseHandle_t         handle,
+                                  int                      m,
+                                  int                      n,
+                                  int                      nnzA,
+                                  const UPTKsparseMatDescr_t descrA,
+                                  const __half*            csrSortedValA,
+                                  const int*               csrSortedRowPtrA,
+                                  const int*               csrSortedColIndA,
+                                  float percentage, /* between 0 to 100 */
+                                  const UPTKsparseMatDescr_t descrC,
+                                  __half*                  csrSortedValC,
+                                  const int*               csrSortedRowPtrC,
+                                  int*                     csrSortedColIndC,
+                                  pruneInfo_t              info,
+                                  void*                    pBuffer);
+
+#endif // defined(__cplusplus)
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpruneCsr2csrByPercentage(UPTKsparseHandle_t         handle,
@@ -3903,7 +5777,7 @@ UPTKsparseSpruneCsr2csrByPercentage(UPTKsparseHandle_t         handle,
                                   float*                   csrSortedValC,
                                   const int*               csrSortedRowPtrC,
                                   int*                     csrSortedColIndC,
-                                  UPTKpruneInfo_t              info,
+                                  pruneInfo_t              info,
                                   void*                    pBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3920,7 +5794,7 @@ UPTKsparseDpruneCsr2csrByPercentage(UPTKsparseHandle_t         handle,
                                   double*                  csrSortedValC,
                                   const int*               csrSortedRowPtrC,
                                   int*                     csrSortedColIndC,
-                                  UPTKpruneInfo_t              info,
+                                  pruneInfo_t              info,
                                   void*                    pBuffer);
 
 //##############################################################################
@@ -3928,8 +5802,8 @@ UPTKsparseDpruneCsr2csrByPercentage(UPTKsparseHandle_t         handle,
 //##############################################################################
 
 typedef enum {
-    UPTKSPARSE_CSR2CSC_ALG_DEFAULT = 1,
-    UPTKSPARSE_CSR2CSC_ALG1 = 1
+    UPTKSPARSE_CSR2CSC_ALG1 = 1, // faster than V2 (in general), deterministc
+    UPTKSPARSE_CSR2CSC_ALG2 = 2  // low memory requirement, non-deterministc
 } UPTKsparseCsr2CscAlg_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
@@ -3971,12 +5845,11 @@ UPTKsparseCsr2cscEx2_bufferSize(UPTKsparseHandle_t     handle,
 // #############################################################################
 
 typedef enum {
-    UPTKSPARSE_FORMAT_CSR            = 1, ///< Compressed Sparse Row (CSR)
-    UPTKSPARSE_FORMAT_CSC            = 2, ///< Compressed Sparse Column (CSC)
-    UPTKSPARSE_FORMAT_COO            = 3, ///< Coordinate (COO) - Structure of Arrays
-    UPTKSPARSE_FORMAT_BLOCKED_ELL    = 5, ///< Blocked ELL
-    UPTKSPARSE_FORMAT_BSR            = 6, ///< Blocked Compressed Sparse Row (BSR)
-    UPTKSPARSE_FORMAT_SLICED_ELLPACK = 7 ///< Sliced ELL
+    UPTKSPARSE_FORMAT_CSR         = 1, ///< Compressed Sparse Row (CSR)
+    UPTKSPARSE_FORMAT_CSC         = 2, ///< Compressed Sparse Column (CSC)
+    UPTKSPARSE_FORMAT_COO         = 3, ///< Coordinate (COO) - Structure of Arrays
+    UPTKSPARSE_FORMAT_COO_AOS     = 4, ///< Coordinate (COO) - Array of Structures
+    UPTKSPARSE_FORMAT_BLOCKED_ELL = 5, ///< Blocked ELL
 } UPTKsparseFormat_t;
 
 typedef enum {
@@ -3997,16 +5870,10 @@ struct UPTKsparseSpVecDescr;
 struct UPTKsparseDnVecDescr;
 struct UPTKsparseSpMatDescr;
 struct UPTKsparseDnMatDescr;
-
 typedef struct UPTKsparseSpVecDescr* UPTKsparseSpVecDescr_t;
 typedef struct UPTKsparseDnVecDescr* UPTKsparseDnVecDescr_t;
 typedef struct UPTKsparseSpMatDescr* UPTKsparseSpMatDescr_t;
 typedef struct UPTKsparseDnMatDescr* UPTKsparseDnMatDescr_t;
-
-typedef struct UPTKsparseSpVecDescr const* UPTKsparseConstSpVecDescr_t;
-typedef struct UPTKsparseDnVecDescr const* UPTKsparseConstDnVecDescr_t;
-typedef struct UPTKsparseSpMatDescr const* UPTKsparseConstSpMatDescr_t;
-typedef struct UPTKsparseDnMatDescr const* UPTKsparseConstDnMatDescr_t;
 
 // #############################################################################
 // # SPARSE VECTOR DESCRIPTOR
@@ -4023,17 +5890,7 @@ UPTKsparseCreateSpVec(UPTKsparseSpVecDescr_t* spVecDescr,
                     UPTKDataType          valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstSpVec(UPTKsparseConstSpVecDescr_t* spVecDescr,
-                         int64_t                    size,
-                         int64_t                    nnz,
-                         const void*                indices,
-                         const void*                values,
-                         UPTKsparseIndexType_t        idxType,
-                         UPTKsparseIndexBase_t        idxBase,
-                         UPTKDataType               valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroySpVec(UPTKsparseConstSpVecDescr_t spVecDescr);
+UPTKsparseDestroySpVec(UPTKsparseSpVecDescr_t spVecDescr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpVecGet(UPTKsparseSpVecDescr_t spVecDescr,
@@ -4046,26 +5903,12 @@ UPTKsparseSpVecGet(UPTKsparseSpVecDescr_t spVecDescr,
                  UPTKDataType*        valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpVecGet(UPTKsparseConstSpVecDescr_t spVecDescr,
-                      int64_t*             size,
-                      int64_t*             nnz,
-                      const void**         indices,
-                      const void**         values,
-                      UPTKsparseIndexType_t* idxType,
-                      UPTKsparseIndexBase_t* idxBase,
-                      UPTKDataType*        valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpVecGetIndexBase(UPTKsparseConstSpVecDescr_t spVecDescr,
-                          UPTKsparseIndexBase_t*      idxBase);
+UPTKsparseSpVecGetIndexBase(UPTKsparseSpVecDescr_t spVecDescr,
+                          UPTKsparseIndexBase_t* idxBase);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpVecGetValues(UPTKsparseSpVecDescr_t spVecDescr,
                        void**               values);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpVecGetValues(UPTKsparseConstSpVecDescr_t spVecDescr,
-                            const void**              values);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpVecSetValues(UPTKsparseSpVecDescr_t spVecDescr,
@@ -4082,13 +5925,7 @@ UPTKsparseCreateDnVec(UPTKsparseDnVecDescr_t* dnVecDescr,
                     UPTKDataType          valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstDnVec(UPTKsparseConstDnVecDescr_t* dnVecDescr,
-                         int64_t                    size,
-                         const void*                values,
-                         UPTKDataType               valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyDnVec(UPTKsparseConstDnVecDescr_t dnVecDescr);
+UPTKsparseDestroyDnVec(UPTKsparseDnVecDescr_t dnVecDescr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnVecGet(UPTKsparseDnVecDescr_t dnVecDescr,
@@ -4097,18 +5934,8 @@ UPTKsparseDnVecGet(UPTKsparseDnVecDescr_t dnVecDescr,
                  UPTKDataType*        valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnVecGet(UPTKsparseConstDnVecDescr_t dnVecDescr,
-                      int64_t*                  size,
-                      const void**              values,
-                      UPTKDataType*             valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnVecGetValues(UPTKsparseDnVecDescr_t dnVecDescr,
                        void**               values);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnVecGetValues(UPTKsparseConstDnVecDescr_t dnVecDescr,
-                            const void**              values);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnVecSetValues(UPTKsparseDnVecDescr_t dnVecDescr,
@@ -4119,55 +5946,48 @@ UPTKsparseDnVecSetValues(UPTKsparseDnVecDescr_t dnVecDescr,
 // #############################################################################
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroySpMat(UPTKsparseConstSpMatDescr_t spMatDescr);
+UPTKsparseDestroySpMat(UPTKsparseSpMatDescr_t spMatDescr);
 
  UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMatGetFormat(UPTKsparseConstSpMatDescr_t spMatDescr,
-                       UPTKsparseFormat_t*         format);
+UPTKsparseSpMatGetFormat(UPTKsparseSpMatDescr_t spMatDescr,
+                       UPTKsparseFormat_t*    format);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMatGetIndexBase(UPTKsparseConstSpMatDescr_t spMatDescr,
-                          UPTKsparseIndexBase_t*      idxBase);
+UPTKsparseSpMatGetIndexBase(UPTKsparseSpMatDescr_t spMatDescr,
+                          UPTKsparseIndexBase_t* idxBase);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpMatGetValues(UPTKsparseSpMatDescr_t spMatDescr,
                        void**               values);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstSpMatGetValues(UPTKsparseConstSpMatDescr_t spMatDescr,
-                            const void**               values);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpMatSetValues(UPTKsparseSpMatDescr_t spMatDescr,
                        void*                values);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMatGetSize(UPTKsparseConstSpMatDescr_t spMatDescr,
-                     int64_t*                  rows,
-                     int64_t*                  cols,
-                     int64_t*                  nnz);
+UPTKsparseSpMatGetSize(UPTKsparseSpMatDescr_t spMatDescr,
+                     int64_t*             rows,
+                     int64_t*             cols,
+                     int64_t*             nnz);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMatGetStridedBatch(UPTKsparseConstSpMatDescr_t spMatDescr,
-                             int*                      batchCount);
+UPTKsparseSpMatSetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
+                             int                  batchCount);
+
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseSpMatGetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
+                             int*                 batchCount);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCooSetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
-                           int                  batchCount,
-                           int64_t              batchStride);
+                            int                 batchCount,
+                            int64_t             batchStride);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCsrSetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
-                           int                  batchCount,
-                           int64_t              offsetsBatchStride,
-                           int64_t              columnsValuesBatchStride);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseBsrSetStridedBatch(UPTKsparseSpMatDescr_t spMatDescr,
-                           int                  batchCount,
-                           int64_t              offsetsBatchStride,
-                           int64_t              columnsBatchStride,
-                           int64_t              ValuesBatchStride);
+                            int                 batchCount,
+                            int64_t             offsetsBatchStride,
+                            int64_t             columnsValuesBatchStride);
 
 typedef enum {
     UPTKSPARSE_SPMAT_FILL_MODE,
@@ -4175,10 +5995,10 @@ typedef enum {
 } UPTKsparseSpMatAttribute_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMatGetAttribute(UPTKsparseConstSpMatDescr_t spMatDescr,
-                          UPTKsparseSpMatAttribute_t  attribute,
-                          void*                     data,
-                          size_t                    dataSize);
+UPTKsparseSpMatGetAttribute(UPTKsparseSpMatDescr_t     spMatDescr,
+                          UPTKsparseSpMatAttribute_t attribute,
+                          void*                    data,
+                          size_t                   dataSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpMatSetAttribute(UPTKsparseSpMatDescr_t     spMatDescr,
@@ -4203,19 +6023,6 @@ UPTKsparseCreateCsr(UPTKsparseSpMatDescr_t* spMatDescr,
                   UPTKDataType          valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCsr(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                       int64_t                    rows,
-                       int64_t                    cols,
-                       int64_t                    nnz,
-                       const void*                csrRowOffsets,
-                       const void*                csrColInd,
-                       const void*                csrValues,
-                       UPTKsparseIndexType_t        csrRowOffsetsType,
-                       UPTKsparseIndexType_t        csrColIndType,
-                       UPTKsparseIndexBase_t        idxBase,
-                       UPTKDataType               valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCreateCsc(UPTKsparseSpMatDescr_t* spMatDescr,
                   int64_t               rows,
                   int64_t               cols,
@@ -4227,19 +6034,6 @@ UPTKsparseCreateCsc(UPTKsparseSpMatDescr_t* spMatDescr,
                   UPTKsparseIndexType_t   cscRowIndType,
                   UPTKsparseIndexBase_t   idxBase,
                   UPTKDataType          valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCsc(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                       int64_t                    rows,
-                       int64_t                    cols,
-                       int64_t                    nnz,
-                       const void*                cscColOffsets,
-                       const void*                cscRowInd,
-                       const void*                cscValues,
-                       UPTKsparseIndexType_t        cscColOffsetsType,
-                       UPTKsparseIndexType_t        cscRowIndType,
-                       UPTKsparseIndexBase_t        idxBase,
-                       UPTKDataType               valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCsrGet(UPTKsparseSpMatDescr_t spMatDescr,
@@ -4255,19 +6049,6 @@ UPTKsparseCsrGet(UPTKsparseSpMatDescr_t spMatDescr,
                UPTKDataType*        valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCsrGet(UPTKsparseConstSpMatDescr_t spMatDescr,
-                    int64_t*                  rows,
-                    int64_t*                  cols,
-                    int64_t*                  nnz,
-                    const void**              csrRowOffsets,
-                    const void**              csrColInd,
-                    const void**              csrValues,
-                    UPTKsparseIndexType_t*      csrRowOffsetsType,
-                    UPTKsparseIndexType_t*      csrColIndType,
-                    UPTKsparseIndexBase_t*      idxBase,
-                    UPTKDataType*             valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                int64_t*             rows,
                int64_t*             cols,
@@ -4281,19 +6062,6 @@ UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                UPTKDataType*        valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCscGet(UPTKsparseConstSpMatDescr_t spMatDescr,
-                    int64_t*                  rows,
-                    int64_t*                  cols,
-                    int64_t*                  nnz,
-                    const void**              cscColOffsets,
-                    const void**              cscRowInd,
-                    const void**              cscValues,
-                    UPTKsparseIndexType_t*      cscColOffsetsType,
-                    UPTKsparseIndexType_t*      cscRowIndType,
-                    UPTKsparseIndexBase_t*      idxBase,
-                    UPTKDataType*             valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCsrSetPointers(UPTKsparseSpMatDescr_t spMatDescr,
                        void*                csrRowOffsets,
                        void*                csrColInd,
@@ -4304,41 +6072,6 @@ UPTKsparseCscSetPointers(UPTKsparseSpMatDescr_t spMatDescr,
                        void*                cscColOffsets,
                        void*                cscRowInd,
                        void*                cscValues);
-
-//------------------------------------------------------------------------------
-// ### BSR ###
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateBsr(UPTKsparseSpMatDescr_t* spMatDescr,
-                  int64_t               brows,
-                  int64_t               bcols,
-                  int64_t               bnnz,
-                  int64_t               rowBlockSize,
-                  int64_t               colBlockSize,
-                  void*                 bsrRowOffsets,
-                  void*                 bsrColInd,
-                  void*                 bsrValues,
-                  UPTKsparseIndexType_t   bsrRowOffsetsType,
-                  UPTKsparseIndexType_t   bsrColIndType,
-                  UPTKsparseIndexBase_t   idxBase,
-                  UPTKDataType          valueType,
-                  UPTKsparseOrder_t       order);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstBsr(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                       int64_t                    brows,
-                       int64_t                    bcols,
-                       int64_t                    bnnz,
-                       int64_t                    rowBlockDim,
-                       int64_t                    colBlockDim,
-                       const void*                bsrRowOffsets,
-                       const void*                bsrColInd,
-                       const void*                bsrValues,
-                       UPTKsparseIndexType_t        bsrRowOffsetsType,
-                       UPTKsparseIndexType_t        bsrColIndType,
-                       UPTKsparseIndexBase_t        idxBase,
-                       UPTKDataType               valueType,
-                       UPTKsparseOrder_t            order);
 
 //------------------------------------------------------------------------------
 // ### COO ###
@@ -4355,17 +6088,17 @@ UPTKsparseCreateCoo(UPTKsparseSpMatDescr_t* spMatDescr,
                   UPTKsparseIndexBase_t   idxBase,
                   UPTKDataType          valueType);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseCreateCoo)
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstCoo(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                       int64_t                    rows,
-                       int64_t                    cols,
-                       int64_t                    nnz,
-                       const void*                cooRowInd,
-                       const void*                cooColInd,
-                       const void*                cooValues,
-                       UPTKsparseIndexType_t        cooIdxType,
-                       UPTKsparseIndexBase_t        idxBase,
-                       UPTKDataType               valueType);
+UPTKsparseCreateCooAoS(UPTKsparseSpMatDescr_t* spMatDescr,
+                     int64_t               rows,
+                     int64_t               cols,
+                     int64_t               nnz,
+                     void*                 cooInd,
+                     void*                 cooValues,
+                     UPTKsparseIndexType_t   cooIdxType,
+                     UPTKsparseIndexBase_t   idxBase,
+                     UPTKDataType          valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCooGet(UPTKsparseSpMatDescr_t spMatDescr,
@@ -4379,17 +6112,17 @@ UPTKsparseCooGet(UPTKsparseSpMatDescr_t spMatDescr,
                UPTKsparseIndexBase_t* idxBase,
                UPTKDataType*        valueType);
 
+UPTKSPARSE_DEPRECATED(UPTKsparseCooGet)
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstCooGet(UPTKsparseConstSpMatDescr_t spMatDescr,
-                    int64_t*                  rows,
-                    int64_t*                  cols,
-                    int64_t*                  nnz,
-                    const void**              cooRowInd,  // COO row indices
-                    const void**              cooColInd,  // COO column indices
-                    const void**              cooValues,  // COO values
-                    UPTKsparseIndexType_t*      idxType,
-                    UPTKsparseIndexBase_t*      idxBase,
-                    UPTKDataType*             valueType);
+UPTKsparseCooAoSGet(UPTKsparseSpMatDescr_t spMatDescr,
+                  int64_t*             rows,
+                  int64_t*             cols,
+                  int64_t*             nnz,
+                  void**               cooInd,     // COO indices
+                  void**               cooValues,  // COO values
+                  UPTKsparseIndexType_t* idxType,
+                  UPTKsparseIndexBase_t* idxBase,
+                  UPTKDataType*        valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCooSetPointers(UPTKsparseSpMatDescr_t spMatDescr,
@@ -4413,18 +6146,6 @@ UPTKsparseCreateBlockedEll(UPTKsparseSpMatDescr_t* spMatDescr,
                          UPTKDataType          valueType);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstBlockedEll(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                              int64_t                    rows,
-                              int64_t                    cols,
-                              int64_t                    ellBlockSize,
-                              int64_t                    ellCols,
-                              const void*                ellColInd,
-                              const void*                ellValue,
-                              UPTKsparseIndexType_t        ellIdxType,
-                              UPTKsparseIndexBase_t        idxBase,
-                              UPTKDataType               valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseBlockedEllGet(UPTKsparseSpMatDescr_t spMatDescr,
                       int64_t*             rows,
                       int64_t*             cols,
@@ -4435,51 +6156,6 @@ UPTKsparseBlockedEllGet(UPTKsparseSpMatDescr_t spMatDescr,
                       UPTKsparseIndexType_t* ellIdxType,
                       UPTKsparseIndexBase_t* idxBase,
                       UPTKDataType*        valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstBlockedEllGet(UPTKsparseConstSpMatDescr_t spMatDescr,
-                           int64_t*                  rows,
-                           int64_t*                  cols,
-                           int64_t*                  ellBlockSize,
-                           int64_t*                  ellCols,
-                           const void**              ellColInd,
-                           const void**              ellValue,
-                           UPTKsparseIndexType_t*      ellIdxType,
-                           UPTKsparseIndexBase_t*      idxBase,
-                           UPTKDataType*             valueType);
-
-//------------------------------------------------------------------------------
-// ### Sliced ELLPACK ###
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateSlicedEll(UPTKsparseSpMatDescr_t*   spMatDescr,
-                        int64_t                 rows,
-                        int64_t                 cols,
-                        int64_t                 nnz,
-                        int64_t                 sellValuesSize,
-                        int64_t                 sliceSize,
-	                void*                   sellSliceOffsets,
-                        void*                   sellColInd,
-                        void*                   sellValues,
-			UPTKsparseIndexType_t     sellSliceOffsetsType,
-                        UPTKsparseIndexType_t     sellColIndType,
-                        UPTKsparseIndexBase_t     idxBase,
-                        UPTKDataType            valueType);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstSlicedEll(UPTKsparseConstSpMatDescr_t* spMatDescr,
-                             int64_t                    rows,
-                             int64_t                    cols,
-                             int64_t                    nnz,
-                             int64_t                    sellValuesSize,
-                             int64_t                    sliceSize,
-                             const void*                sellSliceOffsets,
-                             const void*                sellColInd,
-                             const void*                sellValues,
-                             UPTKsparseIndexType_t        sellSliceOffsetsType,
-                             UPTKsparseIndexType_t        sellColIndType,
-                             UPTKsparseIndexBase_t        idxBase,
-                             UPTKDataType               valueType);
 
 // #############################################################################
 // # DENSE MATRIX DESCRIPTOR
@@ -4495,16 +6171,7 @@ UPTKsparseCreateDnMat(UPTKsparseDnMatDescr_t* dnMatDescr,
                     UPTKsparseOrder_t       order);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseCreateConstDnMat(UPTKsparseConstDnMatDescr_t* dnMatDescr,
-                         int64_t                    rows,
-                         int64_t                    cols,
-                         int64_t                    ld,
-                         const void*                values,
-                         UPTKDataType               valueType,
-                         UPTKsparseOrder_t            order);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDestroyDnMat(UPTKsparseConstDnMatDescr_t dnMatDescr);
+UPTKsparseDestroyDnMat(UPTKsparseDnMatDescr_t dnMatDescr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnMatGet(UPTKsparseDnMatDescr_t dnMatDescr,
@@ -4516,21 +6183,8 @@ UPTKsparseDnMatGet(UPTKsparseDnMatDescr_t dnMatDescr,
                  UPTKsparseOrder_t*     order);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnMatGet(UPTKsparseConstDnMatDescr_t dnMatDescr,
-                      int64_t*                  rows,
-                      int64_t*                  cols,
-                      int64_t*                  ld,
-                      const void**              values,
-                      UPTKDataType*             type,
-                      UPTKsparseOrder_t*          order);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnMatGetValues(UPTKsparseDnMatDescr_t dnMatDescr,
                        void**               values);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseConstDnMatGetValues(UPTKsparseConstDnMatDescr_t dnMatDescr,
-                            const void**              values);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDnMatSetValues(UPTKsparseDnMatDescr_t dnMatDescr,
@@ -4542,30 +6196,30 @@ UPTKsparseDnMatSetStridedBatch(UPTKsparseDnMatDescr_t dnMatDescr,
                              int64_t              batchStride);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseDnMatGetStridedBatch(UPTKsparseConstDnMatDescr_t dnMatDescr,
-                             int*                      batchCount,
-                             int64_t*                  batchStride);
+UPTKsparseDnMatGetStridedBatch(UPTKsparseDnMatDescr_t dnMatDescr,
+                             int*                 batchCount,
+                             int64_t*             batchStride);
 
 // #############################################################################
 // # VECTOR-VECTOR OPERATIONS
 // #############################################################################
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseAxpby(UPTKsparseHandle_t          handle,
-              const void*               alpha,
-              UPTKsparseConstSpVecDescr_t vecX,
-              const void*               beta,
-              UPTKsparseDnVecDescr_t      vecY);
+UPTKsparseAxpby(UPTKsparseHandle_t     handle,
+              const void*          alpha,
+              UPTKsparseSpVecDescr_t vecX,
+              const void*          beta,
+              UPTKsparseDnVecDescr_t vecY);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseGather(UPTKsparseHandle_t          handle,
-               UPTKsparseConstDnVecDescr_t vecY,
-               UPTKsparseSpVecDescr_t      vecX);
+UPTKsparseGather(UPTKsparseHandle_t     handle,
+               UPTKsparseDnVecDescr_t vecY,
+               UPTKsparseSpVecDescr_t vecX);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseScatter(UPTKsparseHandle_t          handle,
-                UPTKsparseConstSpVecDescr_t vecX,
-                UPTKsparseDnVecDescr_t      vecY);
+UPTKsparseScatter(UPTKsparseHandle_t     handle,
+                UPTKsparseSpVecDescr_t vecX,
+                UPTKsparseDnVecDescr_t vecY);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseRot(UPTKsparseHandle_t     handle,
@@ -4575,22 +6229,22 @@ UPTKsparseRot(UPTKsparseHandle_t     handle,
             UPTKsparseDnVecDescr_t vecY);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpVV_bufferSize(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opX,
-                        UPTKsparseConstSpVecDescr_t vecX,
-                        UPTKsparseConstDnVecDescr_t vecY,
-                        const void*               result,
-                        UPTKDataType              computeType,
-                        size_t*                   bufferSize);
+UPTKsparseSpVV_bufferSize(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opX,
+                        UPTKsparseSpVecDescr_t vecX,
+                        UPTKsparseDnVecDescr_t vecY,
+                        const void*          result,
+                        UPTKDataType         computeType,
+                        size_t*              bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpVV(UPTKsparseHandle_t          handle,
-             UPTKsparseOperation_t       opX,
-             UPTKsparseConstSpVecDescr_t vecX,
-             UPTKsparseConstDnVecDescr_t vecY,
-             void*                     result,
-             UPTKDataType              computeType,
-             void*                     externalBuffer);
+UPTKsparseSpVV(UPTKsparseHandle_t     handle,
+             UPTKsparseOperation_t  opX,
+             UPTKsparseSpVecDescr_t vecX,
+             UPTKsparseDnVecDescr_t vecY,
+             void*                result,
+             UPTKDataType         computeType,
+             void*                externalBuffer);
 
 // #############################################################################
 // # SPARSE TO DENSE
@@ -4602,17 +6256,18 @@ typedef enum {
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSparseToDense_bufferSize(UPTKsparseHandle_t           handle,
-                                 UPTKsparseConstSpMatDescr_t  matA,
+                                 UPTKsparseSpMatDescr_t       matA,
                                  UPTKsparseDnMatDescr_t       matB,
                                  UPTKsparseSparseToDenseAlg_t alg,
                                  size_t*                    bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSparseToDense(UPTKsparseHandle_t           handle,
-                      UPTKsparseConstSpMatDescr_t  matA,
+                      UPTKsparseSpMatDescr_t       matA,
                       UPTKsparseDnMatDescr_t       matB,
                       UPTKsparseSparseToDenseAlg_t alg,
                       void*                      externalBuffer);
+
 
 // #############################################################################
 // # DENSE TO SPARSE
@@ -4624,21 +6279,21 @@ typedef enum {
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_bufferSize(UPTKsparseHandle_t           handle,
-                                 UPTKsparseConstDnMatDescr_t  matA,
+                                 UPTKsparseDnMatDescr_t       matA,
                                  UPTKsparseSpMatDescr_t       matB,
                                  UPTKsparseDenseToSparseAlg_t alg,
                                  size_t*                    bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_analysis(UPTKsparseHandle_t           handle,
-                               UPTKsparseConstDnMatDescr_t  matA,
+                               UPTKsparseDnMatDescr_t       matA,
                                UPTKsparseSpMatDescr_t       matB,
                                UPTKsparseDenseToSparseAlg_t alg,
                                void*                      externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseDenseToSparse_convert(UPTKsparseHandle_t           handle,
-                              UPTKsparseConstDnMatDescr_t  matA,
+                              UPTKsparseDnMatDescr_t       matA,
                               UPTKsparseSpMatDescr_t       matB,
                               UPTKsparseDenseToSparseAlg_t alg,
                               void*                      externalBuffer);
@@ -4648,49 +6303,42 @@ UPTKsparseDenseToSparse_convert(UPTKsparseHandle_t           handle,
 // #############################################################################
 
 typedef enum {
+    UPTKSPARSE_MV_ALG_DEFAULT
+                        /*UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMV_ALG_DEFAULT)*/ = 0,
+    UPTKSPARSE_COOMV_ALG  UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMV_COO_ALG1)    = 1,
+    UPTKSPARSE_CSRMV_ALG1 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMV_CSR_ALG1)    = 2,
+    UPTKSPARSE_CSRMV_ALG2 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMV_CSR_ALG2)    = 3,
     UPTKSPARSE_SPMV_ALG_DEFAULT = 0,
     UPTKSPARSE_SPMV_CSR_ALG1    = 2,
     UPTKSPARSE_SPMV_CSR_ALG2    = 3,
     UPTKSPARSE_SPMV_COO_ALG1    = 1,
-    UPTKSPARSE_SPMV_COO_ALG2    = 4,
-    UPTKSPARSE_SPMV_SELL_ALG1   = 5
+    UPTKSPARSE_SPMV_COO_ALG2    = 4
 } UPTKsparseSpMVAlg_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMV(UPTKsparseHandle_t          handle,
-             UPTKsparseOperation_t       opA,
-             const void*               alpha,
-             UPTKsparseConstSpMatDescr_t matA,
-             UPTKsparseConstDnVecDescr_t vecX,
-             const void*               beta,
-             UPTKsparseDnVecDescr_t      vecY,
-             UPTKDataType              computeType,
-             UPTKsparseSpMVAlg_t         alg,
-             void*                     externalBuffer);
+UPTKsparseSpMV(UPTKsparseHandle_t     handle,
+             UPTKsparseOperation_t  opA,
+             const void*          alpha,
+             UPTKsparseSpMatDescr_t matA,
+             UPTKsparseDnVecDescr_t vecX,
+             const void*          beta,
+             UPTKsparseDnVecDescr_t vecY,
+             UPTKDataType         computeType,
+             UPTKsparseSpMVAlg_t    alg,
+             void*                externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMV_bufferSize(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnVecDescr_t vecX,
-                        const void*               beta,
-                        UPTKsparseDnVecDescr_t      vecY,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpMVAlg_t         alg,
-                        size_t*                   bufferSize);
+UPTKsparseSpMV_bufferSize(UPTKsparseHandle_t    handle,
+                        UPTKsparseOperation_t opA,
+                        const void*         alpha,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnVecDescr_t vecX,
+                        const void*          beta,
+                        UPTKsparseDnVecDescr_t vecY,
+                        UPTKDataType         computeType,
+                        UPTKsparseSpMVAlg_t    alg,
+                        size_t*              bufferSize);
 
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMV_preprocess(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnVecDescr_t vecX,
-                        const void*               beta,
-                        UPTKsparseDnVecDescr_t      vecY,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpMVAlg_t         alg,
-                        void*                     externalBuffer);
 // #############################################################################
 // # SPARSE TRIANGULAR VECTOR SOLVE
 // #############################################################################
@@ -4698,11 +6346,6 @@ UPTKsparseSpMV_preprocess(UPTKsparseHandle_t          handle,
 typedef enum {
     UPTKSPARSE_SPSV_ALG_DEFAULT = 0,
 } UPTKsparseSpSVAlg_t;
-
-typedef enum {
-    UPTKSPARSE_SPSV_UPDATE_GENERAL  = 0,
-    UPTKSPARSE_SPSV_UPDATE_DIAGONAL = 1
-} UPTKsparseSpSVUpdate_t;
 
 struct UPTKsparseSpSVDescr;
 typedef struct UPTKsparseSpSVDescr* UPTKsparseSpSVDescr_t;
@@ -4714,47 +6357,39 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpSV_destroyDescr(UPTKsparseSpSVDescr_t descr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSV_bufferSize(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnVecDescr_t vecX,
-                        UPTKsparseDnVecDescr_t      vecY,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpSVAlg_t         alg,
-                        UPTKsparseSpSVDescr_t       spsvDescr,
-                        size_t*                   bufferSize);
+UPTKsparseSpSV_bufferSize(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opA,
+                        const void*          alpha,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnVecDescr_t vecX,
+                        UPTKsparseDnVecDescr_t vecY,
+                        UPTKDataType         computeType,
+                        UPTKsparseSpSVAlg_t    alg,
+                        UPTKsparseSpSVDescr_t  spsvDescr,
+                        size_t*              bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSV_analysis(UPTKsparseHandle_t          handle,
-                      UPTKsparseOperation_t       opA,
-                      const void*               alpha,
-                      UPTKsparseConstSpMatDescr_t matA,
-                      UPTKsparseConstDnVecDescr_t vecX,
-                      UPTKsparseDnVecDescr_t      vecY,
-                      UPTKDataType              computeType,
-                      UPTKsparseSpSVAlg_t         alg,
-                      UPTKsparseSpSVDescr_t       spsvDescr,
-                      void*                     externalBuffer);
+UPTKsparseSpSV_analysis(UPTKsparseHandle_t     handle,
+                      UPTKsparseOperation_t  opA,
+                      const void*          alpha,
+                      UPTKsparseSpMatDescr_t matA,
+                      UPTKsparseDnVecDescr_t vecX,
+                      UPTKsparseDnVecDescr_t vecY,
+                      UPTKDataType         computeType,
+                      UPTKsparseSpSVAlg_t    alg,
+                      UPTKsparseSpSVDescr_t  spsvDescr,
+                      void*                externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSV_solve(UPTKsparseHandle_t          handle,
-                   UPTKsparseOperation_t       opA,
-                   const void*               alpha,
-                   UPTKsparseConstSpMatDescr_t matA,
-                   UPTKsparseConstDnVecDescr_t vecX,
-                   UPTKsparseDnVecDescr_t      vecY,
-                   UPTKDataType              computeType,
-                   UPTKsparseSpSVAlg_t         alg,
-                   UPTKsparseSpSVDescr_t       spsvDescr);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSV_updateMatrix(UPTKsparseHandle_t      handle,
-				          UPTKsparseSpSVDescr_t   spsvDescr,
-                          void*                 newValues,
-                          UPTKsparseSpSVUpdate_t  updatePart);
-
-
+UPTKsparseSpSV_solve(UPTKsparseHandle_t     handle,
+                   UPTKsparseOperation_t  opA,
+                   const void*          alpha,
+                   UPTKsparseSpMatDescr_t matA,
+                   UPTKsparseDnVecDescr_t vecX,
+                   UPTKsparseDnVecDescr_t vecY,
+                   UPTKDataType         computeType,
+                   UPTKsparseSpSVAlg_t    alg,
+                   UPTKsparseSpSVDescr_t  spsvDescr);
 
 // #############################################################################
 // # SPARSE TRIANGULAR MATRIX SOLVE
@@ -4763,11 +6398,6 @@ UPTKsparseSpSV_updateMatrix(UPTKsparseHandle_t      handle,
 typedef enum {
     UPTKSPARSE_SPSM_ALG_DEFAULT = 0,
 } UPTKsparseSpSMAlg_t;
-
-typedef enum {
-    UPTKSPARSE_SPSM_UPDATE_GENERAL  = 0,
-    UPTKSPARSE_SPSM_UPDATE_DIAGONAL = 1
-} UPTKsparseSpSMUpdate_t;
 
 struct UPTKsparseSpSMDescr;
 typedef struct UPTKsparseSpSMDescr* UPTKsparseSpSMDescr_t;
@@ -4779,54 +6409,54 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpSM_destroyDescr(UPTKsparseSpSMDescr_t descr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSM_bufferSize(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        UPTKsparseOperation_t       opB,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnMatDescr_t matB,
-                        UPTKsparseDnMatDescr_t      matC,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpSMAlg_t         alg,
-                        UPTKsparseSpSMDescr_t       spsmDescr,
-                        size_t*                   bufferSize);
+UPTKsparseSpSM_bufferSize(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opA,
+                        UPTKsparseOperation_t  opB,
+                        const void*          alpha,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnMatDescr_t matB,
+                        UPTKsparseDnMatDescr_t matC,
+                        UPTKDataType         computeType,
+                        UPTKsparseSpSMAlg_t    alg,
+                        UPTKsparseSpSMDescr_t  spsmDescr,
+                        size_t*              bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSM_analysis(UPTKsparseHandle_t          handle,
-                      UPTKsparseOperation_t       opA,
-                      UPTKsparseOperation_t       opB,
-                      const void*               alpha,
-                      UPTKsparseConstSpMatDescr_t matA,
-                      UPTKsparseConstDnMatDescr_t matB,
-                      UPTKsparseDnMatDescr_t      matC,
-                      UPTKDataType              computeType,
-                      UPTKsparseSpSMAlg_t         alg,
-                      UPTKsparseSpSMDescr_t       spsmDescr,
-                      void*                     externalBuffer);
+UPTKsparseSpSM_analysis(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opA,
+                        UPTKsparseOperation_t  opB,
+                        const void*          alpha,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnMatDescr_t matB,
+                        UPTKsparseDnMatDescr_t matC,
+                        UPTKDataType         computeType,
+                        UPTKsparseSpSMAlg_t    alg,
+                        UPTKsparseSpSMDescr_t  spsmDescr,
+                        void*                externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSM_solve(UPTKsparseHandle_t          handle,
-                   UPTKsparseOperation_t       opA,
-                   UPTKsparseOperation_t       opB,
-                   const void*               alpha,
-                   UPTKsparseConstSpMatDescr_t matA,
-                   UPTKsparseConstDnMatDescr_t matB,
-                   UPTKsparseDnMatDescr_t      matC,
-                   UPTKDataType              computeType,
-                   UPTKsparseSpSMAlg_t         alg,
-                   UPTKsparseSpSMDescr_t       spsmDescr);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSM_updateMatrix(UPTKsparseHandle_t      handle,
-				          UPTKsparseSpSMDescr_t   spsmDescr,
-                          void*                 newValues,
-                          UPTKsparseSpSMUpdate_t  updatePart);
+UPTKsparseSpSM_solve(UPTKsparseHandle_t     handle,
+                    UPTKsparseOperation_t  opA,
+                    UPTKsparseOperation_t  opB,
+                    const void*          alpha,
+                    UPTKsparseSpMatDescr_t matA,
+                    UPTKsparseDnMatDescr_t matB,
+                    UPTKsparseDnMatDescr_t matC,
+                    UPTKDataType         computeType,
+                    UPTKsparseSpSMAlg_t    alg,
+                    UPTKsparseSpSMDescr_t  spsmDescr);
 
 // #############################################################################
 // # SPARSE MATRIX-MATRIX MULTIPLICATION
 // #############################################################################
 
 typedef enum {
+    UPTKSPARSE_MM_ALG_DEFAULT
+                        UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMM_ALG_DEFAULT) = 0,
+    UPTKSPARSE_COOMM_ALG1 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMM_COO_ALG1) = 1,
+    UPTKSPARSE_COOMM_ALG2 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMM_COO_ALG2) = 2,
+    UPTKSPARSE_COOMM_ALG3 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMM_COO_ALG3) = 3,
+    UPTKSPARSE_CSRMM_ALG1 UPTKSPARSE_DEPRECATED_ENUM(UPTKSPARSE_SPMM_CSR_ALG1) = 4,
     UPTKSPARSE_SPMM_ALG_DEFAULT      = 0,
     UPTKSPARSE_SPMM_COO_ALG1         = 1,
     UPTKSPARSE_SPMM_COO_ALG2         = 2,
@@ -4835,48 +6465,47 @@ typedef enum {
     UPTKSPARSE_SPMM_CSR_ALG1         = 4,
     UPTKSPARSE_SPMM_CSR_ALG2         = 6,
     UPTKSPARSE_SPMM_CSR_ALG3         = 12,
-    UPTKSPARSE_SPMM_BLOCKED_ELL_ALG1 = 13,
-    UPTKSPARSE_SPMM_BSR_ALG1         = 14
+    UPTKSPARSE_SPMM_BLOCKED_ELL_ALG1 = 13
 } UPTKsparseSpMMAlg_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMM_bufferSize(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        UPTKsparseOperation_t       opB,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnMatDescr_t matB,
-                        const void*               beta,
-                        UPTKsparseDnMatDescr_t      matC,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpMMAlg_t         alg,
-                        size_t*                   bufferSize);
+UPTKsparseSpMM_bufferSize(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opA,
+                        UPTKsparseOperation_t  opB,
+                        const void*          alpha,
+                        UPTKsparseSpMatDescr_t matA,
+                        UPTKsparseDnMatDescr_t matB,
+                        const void*          beta,
+                        UPTKsparseDnMatDescr_t matC,
+                        UPTKDataType         computeType,
+                        UPTKsparseSpMMAlg_t    alg,
+                        size_t*              bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMM_preprocess(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        UPTKsparseOperation_t       opB,
-                        const void*               alpha,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstDnMatDescr_t matB,
-                        const void*               beta,
-                        UPTKsparseDnMatDescr_t      matC,
-                        UPTKDataType              computeType,
-                        UPTKsparseSpMMAlg_t         alg,
-                        void*                     externalBuffer);
+UPTKsparseSpMM_preprocess(UPTKsparseHandle_t      handle,
+                        UPTKsparseOperation_t   opA,
+                        UPTKsparseOperation_t   opB,
+                        const void*           alpha,
+                        UPTKsparseSpMatDescr_t  matA,
+                        UPTKsparseDnMatDescr_t  matB,
+                        const void*           beta,
+                        UPTKsparseDnMatDescr_t  matC,
+                        UPTKDataType          computeType,
+                        UPTKsparseSpMMAlg_t     alg,
+                        void*                 externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMM(UPTKsparseHandle_t          handle,
-             UPTKsparseOperation_t       opA,
-             UPTKsparseOperation_t       opB,
-             const void*               alpha,
-             UPTKsparseConstSpMatDescr_t matA,
-             UPTKsparseConstDnMatDescr_t matB,
-             const void*               beta,
-             UPTKsparseDnMatDescr_t      matC,
-             UPTKDataType              computeType,
-             UPTKsparseSpMMAlg_t         alg,
-             void*                     externalBuffer);
+UPTKsparseSpMM(UPTKsparseHandle_t     handle,
+             UPTKsparseOperation_t  opA,
+             UPTKsparseOperation_t  opB,
+             const void*          alpha,
+             UPTKsparseSpMatDescr_t matA,
+             UPTKsparseDnMatDescr_t matB,
+             const void*          beta,
+             UPTKsparseDnMatDescr_t matC,
+             UPTKDataType         computeType,
+             UPTKsparseSpMMAlg_t    alg,
+             void*                externalBuffer);
 
 // #############################################################################
 // # SPARSE MATRIX - SPARSE MATRIX MULTIPLICATION (SpGEMM)
@@ -4885,10 +6514,7 @@ UPTKsparseSpMM(UPTKsparseHandle_t          handle,
 typedef enum {
     UPTKSPARSE_SPGEMM_DEFAULT                 = 0,
     UPTKSPARSE_SPGEMM_CSR_ALG_DETERMINITIC    = 1,
-    UPTKSPARSE_SPGEMM_CSR_ALG_NONDETERMINITIC = 2,
-    UPTKSPARSE_SPGEMM_ALG1                    = 3,
-    UPTKSPARSE_SPGEMM_ALG2                    = 4,
-    UPTKSPARSE_SPGEMM_ALG3                    = 5
+    UPTKSPARSE_SPGEMM_CSR_ALG_NONDETERMINITIC = 2
 } UPTKsparseSpGEMMAlg_t;
 
 struct UPTKsparseSpGEMMDescr;
@@ -4901,201 +6527,206 @@ UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpGEMM_destroyDescr(UPTKsparseSpGEMMDescr_t descr);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMM_workEstimation(UPTKsparseHandle_t          handle,
-                              UPTKsparseOperation_t       opA,
-                              UPTKsparseOperation_t       opB,
-                              const void*               alpha,
-                              UPTKsparseConstSpMatDescr_t matA,
-                              UPTKsparseConstSpMatDescr_t matB,
-                              const void*               beta,
-                              UPTKsparseSpMatDescr_t      matC,
-                              UPTKDataType              computeType,
-                              UPTKsparseSpGEMMAlg_t       alg,
-                              UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                              size_t*                   bufferSize1,
-                              void*                     externalBuffer1);
+UPTKsparseSpGEMM_workEstimation(UPTKsparseHandle_t      handle,
+                              UPTKsparseOperation_t   opA,
+                              UPTKsparseOperation_t   opB,
+                              const void*           alpha,
+                              UPTKsparseSpMatDescr_t  matA,
+                              UPTKsparseSpMatDescr_t  matB,
+                              const void*           beta,
+                              UPTKsparseSpMatDescr_t  matC,
+                              UPTKDataType          computeType,
+                              UPTKsparseSpGEMMAlg_t   alg,
+                              UPTKsparseSpGEMMDescr_t spgemmDescr,
+                              size_t*               bufferSize1,
+                              void*                 externalBuffer1);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMM_getNumProducts(UPTKsparseSpGEMMDescr_t spgemmDescr,
-                              int64_t*              num_prods);
+UPTKsparseSpGEMM_compute(UPTKsparseHandle_t      handle,
+                       UPTKsparseOperation_t   opA,
+                       UPTKsparseOperation_t   opB,
+                       const void*           alpha,
+                       UPTKsparseSpMatDescr_t  matA,
+                       UPTKsparseSpMatDescr_t  matB,
+                       const void*           beta,
+                       UPTKsparseSpMatDescr_t  matC,
+                       UPTKDataType          computeType,
+                       UPTKsparseSpGEMMAlg_t   alg,
+                       UPTKsparseSpGEMMDescr_t spgemmDescr,
+                       size_t*               bufferSize2,
+                       void*                 externalBuffer2);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMM_estimateMemory(UPTKsparseHandle_t          handle,
-                              UPTKsparseOperation_t       opA,
-                              UPTKsparseOperation_t       opB,
-                              const void*               alpha,
-                              UPTKsparseConstSpMatDescr_t matA,
-                              UPTKsparseConstSpMatDescr_t matB,
-                              const void*               beta,
-                              UPTKsparseSpMatDescr_t      matC,
-                              UPTKDataType              computeType,
-                              UPTKsparseSpGEMMAlg_t       alg,
-                              UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                              float                     chunk_fraction,
-                              size_t*                   bufferSize3,
-                              void*                     externalBuffer3,
-                              size_t*                   bufferSize2);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMM_compute(UPTKsparseHandle_t          handle,
-                       UPTKsparseOperation_t       opA,
-                       UPTKsparseOperation_t       opB,
-                       const void*               alpha,
-                       UPTKsparseConstSpMatDescr_t matA,
-                       UPTKsparseConstSpMatDescr_t matB,
-                       const void*               beta,
-                       UPTKsparseSpMatDescr_t      matC,
-                       UPTKDataType              computeType,
-                       UPTKsparseSpGEMMAlg_t       alg,
-                       UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                       size_t*                   bufferSize2,
-                       void*                     externalBuffer2);
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMM_copy(UPTKsparseHandle_t          handle,
-                    UPTKsparseOperation_t       opA,
-                    UPTKsparseOperation_t       opB,
-                    const void*               alpha,
-                    UPTKsparseConstSpMatDescr_t matA,
-                    UPTKsparseConstSpMatDescr_t matB,
-                    const void*               beta,
-                    UPTKsparseSpMatDescr_t      matC,
-                    UPTKDataType              computeType,
-                    UPTKsparseSpGEMMAlg_t       alg,
-                    UPTKsparseSpGEMMDescr_t     spgemmDescr);
+UPTKsparseSpGEMM_copy(UPTKsparseHandle_t      handle,
+                    UPTKsparseOperation_t   opA,
+                    UPTKsparseOperation_t   opB,
+                    const void*           alpha,
+                    UPTKsparseSpMatDescr_t  matA,
+                    UPTKsparseSpMatDescr_t  matB,
+                    const void*           beta,
+                    UPTKsparseSpMatDescr_t  matC,
+                    UPTKDataType          computeType,
+                    UPTKsparseSpGEMMAlg_t   alg,
+                    UPTKsparseSpGEMMDescr_t spgemmDescr);
 
 // #############################################################################
 // # SPARSE MATRIX - SPARSE MATRIX MULTIPLICATION (SpGEMM) STRUCTURE REUSE
 // #############################################################################
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMMreuse_workEstimation(UPTKsparseHandle_t          handle,
-                                   UPTKsparseOperation_t       opA,
-                                   UPTKsparseOperation_t       opB,
-                                   UPTKsparseConstSpMatDescr_t matA,
-                                   UPTKsparseConstSpMatDescr_t matB,
-                                   UPTKsparseSpMatDescr_t      matC,
-                                   UPTKsparseSpGEMMAlg_t       alg,
-                                   UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                                   size_t*                   bufferSize1,
-                                   void*                     externalBuffer1);
+UPTKsparseSpGEMMreuse_workEstimation(UPTKsparseHandle_t      handle,
+                                   UPTKsparseOperation_t   opA,
+                                   UPTKsparseOperation_t   opB,
+                                   UPTKsparseSpMatDescr_t  matA,
+                                   UPTKsparseSpMatDescr_t  matB,
+                                   UPTKsparseSpMatDescr_t  matC,
+                                   UPTKsparseSpGEMMAlg_t   alg,
+                                   UPTKsparseSpGEMMDescr_t spgemmDescr,
+                                   size_t*               bufferSize1,
+                                   void*                 externalBuffer1);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMMreuse_nnz(UPTKsparseHandle_t          handle,
-                        UPTKsparseOperation_t       opA,
-                        UPTKsparseOperation_t       opB,
-                        UPTKsparseConstSpMatDescr_t matA,
-                        UPTKsparseConstSpMatDescr_t matB,
-                        UPTKsparseSpMatDescr_t      matC,
-                        UPTKsparseSpGEMMAlg_t       alg,
-                        UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                        size_t*                   bufferSize2,
-                        void*                     externalBuffer2,
-                        size_t*                   bufferSize3,
-                        void*                     externalBuffer3,
-                        size_t*                   bufferSize4,
-                        void*                     externalBuffer4);
+UPTKsparseSpGEMMreuse_nnz(UPTKsparseHandle_t      handle,
+                        UPTKsparseOperation_t   opA,
+                        UPTKsparseOperation_t   opB,
+                        UPTKsparseSpMatDescr_t  matA,
+                        UPTKsparseSpMatDescr_t  matB,
+                        UPTKsparseSpMatDescr_t  matC,
+                        UPTKsparseSpGEMMAlg_t   alg,
+                        UPTKsparseSpGEMMDescr_t spgemmDescr,
+                        size_t*               bufferSize2,
+                        void*                 externalBuffer2,
+                        size_t*               bufferSize3,
+                        void*                 externalBuffer3,
+                        size_t*               bufferSize4,
+                        void*                 externalBuffer4);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMMreuse_copy(UPTKsparseHandle_t          handle,
-                         UPTKsparseOperation_t       opA,
-                         UPTKsparseOperation_t       opB,
-                         UPTKsparseConstSpMatDescr_t matA,
-                         UPTKsparseConstSpMatDescr_t matB,
-                         UPTKsparseSpMatDescr_t      matC,
-                         UPTKsparseSpGEMMAlg_t       alg,
-                         UPTKsparseSpGEMMDescr_t     spgemmDescr,
-                         size_t*                   bufferSize5,
-                         void*                     externalBuffer5);
+UPTKsparseSpGEMMreuse_copy(UPTKsparseHandle_t      handle,
+                         UPTKsparseOperation_t   opA,
+                         UPTKsparseOperation_t   opB,
+                         UPTKsparseSpMatDescr_t  matA,
+                         UPTKsparseSpMatDescr_t  matB,
+                         UPTKsparseSpMatDescr_t  matC,
+                         UPTKsparseSpGEMMAlg_t   alg,
+                         UPTKsparseSpGEMMDescr_t spgemmDescr,
+                         size_t*               bufferSize5,
+                         void*                 externalBuffer5);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpGEMMreuse_compute(UPTKsparseHandle_t          handle,
-                            UPTKsparseOperation_t       opA,
-                            UPTKsparseOperation_t       opB,
-                            const void*               alpha,
-                            UPTKsparseConstSpMatDescr_t matA,
-                            UPTKsparseConstSpMatDescr_t matB,
-                            const void*               beta,
-                            UPTKsparseSpMatDescr_t      matC,
-                            UPTKDataType              computeType,
-                            UPTKsparseSpGEMMAlg_t       alg,
-                            UPTKsparseSpGEMMDescr_t     spgemmDescr);
+UPTKsparseSpGEMMreuse_compute(UPTKsparseHandle_t      handle,
+                            UPTKsparseOperation_t   opA,
+                            UPTKsparseOperation_t   opB,
+                            const void*           alpha,
+                            UPTKsparseSpMatDescr_t  matA,
+                            UPTKsparseSpMatDescr_t  matB,
+                            const void*           beta,
+                            UPTKsparseSpMatDescr_t  matC,
+                            UPTKDataType          computeType,
+                            UPTKsparseSpGEMMAlg_t   alg,
+                            UPTKsparseSpGEMMDescr_t spgemmDescr);
 
 // #############################################################################
 // # SAMPLED DENSE-DENSE MATRIX MULTIPLICATION
 // #############################################################################
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSDDMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseConstrainedGeMM(UPTKsparseHandle_t     handle,
+                        UPTKsparseOperation_t  opA,
+                        UPTKsparseOperation_t  opB,
+                        const void*          alpha,
+                        UPTKsparseDnMatDescr_t matA,
+                        UPTKsparseDnMatDescr_t matB,
+                        const void*          beta,
+                        UPTKsparseSpMatDescr_t matC,
+                        UPTKDataType         computeType,
+                        void*                externalBuffer);
+
+UPTKSPARSE_DEPRECATED(UPTKsparseSDDMM)
+UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseConstrainedGeMM_bufferSize(UPTKsparseHandle_t     handle,
+                                   UPTKsparseOperation_t  opA,
+                                   UPTKsparseOperation_t  opB,
+                                   const void*          alpha,
+                                   UPTKsparseDnMatDescr_t matA,
+                                   UPTKsparseDnMatDescr_t matB,
+                                   const void*          beta,
+                                   UPTKsparseSpMatDescr_t matC,
+                                   UPTKDataType         computeType,
+                                   size_t*              bufferSize);
 
 typedef enum {
     UPTKSPARSE_SDDMM_ALG_DEFAULT = 0
 } UPTKsparseSDDMMAlg_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSDDMM_bufferSize(UPTKsparseHandle_t          handle,
-                         UPTKsparseOperation_t       opA,
-                         UPTKsparseOperation_t       opB,
-                         const void*               alpha,
-                         UPTKsparseConstDnMatDescr_t matA,
-                         UPTKsparseConstDnMatDescr_t matB,
-                         const void*               beta,
-                         UPTKsparseSpMatDescr_t      matC,
-                         UPTKDataType              computeType,
-                         UPTKsparseSDDMMAlg_t        alg,
-                         size_t*                   bufferSize);
+UPTKsparseSDDMM_bufferSize(UPTKsparseHandle_t     handle,
+                         UPTKsparseOperation_t  opA,
+                         UPTKsparseOperation_t  opB,
+                         const void*          alpha,
+                         UPTKsparseDnMatDescr_t matA,
+                         UPTKsparseDnMatDescr_t matB,
+                         const void*          beta,
+                         UPTKsparseSpMatDescr_t matC,
+                         UPTKDataType         computeType,
+                         UPTKsparseSDDMMAlg_t   alg,
+                         size_t*              bufferSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSDDMM_preprocess(UPTKsparseHandle_t          handle,
-                         UPTKsparseOperation_t       opA,
-                         UPTKsparseOperation_t       opB,
-                         const void*               alpha,
-                         UPTKsparseConstDnMatDescr_t matA,
-                         UPTKsparseConstDnMatDescr_t matB,
-                         const void*               beta,
-                         UPTKsparseSpMatDescr_t      matC,
-                         UPTKDataType              computeType,
-                         UPTKsparseSDDMMAlg_t        alg,
-                         void*                     externalBuffer);
+UPTKsparseSDDMM_preprocess(UPTKsparseHandle_t     handle,
+                         UPTKsparseOperation_t  opA,
+                         UPTKsparseOperation_t  opB,
+                         const void*          alpha,
+                         UPTKsparseDnMatDescr_t matA,
+                         UPTKsparseDnMatDescr_t matB,
+                         const void*          beta,
+                         UPTKsparseSpMatDescr_t matC,
+                         UPTKDataType         computeType,
+                         UPTKsparseSDDMMAlg_t   alg,
+                         void*                externalBuffer);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSDDMM(UPTKsparseHandle_t          handle,
-              UPTKsparseOperation_t       opA,
-              UPTKsparseOperation_t       opB,
-              const void*               alpha,
-              UPTKsparseConstDnMatDescr_t matA,
-              UPTKsparseConstDnMatDescr_t matB,
-              const void*               beta,
-              UPTKsparseSpMatDescr_t      matC,
-              UPTKDataType              computeType,
-              UPTKsparseSDDMMAlg_t        alg,
-              void*                     externalBuffer);
+UPTKsparseSDDMM(UPTKsparseHandle_t     handle,
+              UPTKsparseOperation_t  opA,
+              UPTKsparseOperation_t  opB,
+              const void*          alpha,
+              UPTKsparseDnMatDescr_t matA,
+              UPTKsparseDnMatDescr_t matB,
+              const void*          beta,
+              UPTKsparseSpMatDescr_t matC,
+              UPTKDataType         computeType,
+              UPTKsparseSDDMMAlg_t   alg,
+              void*                externalBuffer);
 
 // #############################################################################
 // # GENERIC APIs WITH CUSTOM OPERATORS (PREVIEW)
 // #############################################################################
 
 struct UPTKsparseSpMMOpPlan;
-typedef struct UPTKsparseSpMMOpPlan*       UPTKsparseSpMMOpPlan_t;
+typedef struct UPTKsparseSpMMOpPlan* UPTKsparseSpMMOpPlan_t;
 
 typedef enum {
     UPTKSPARSE_SPMM_OP_ALG_DEFAULT
 } UPTKsparseSpMMOpAlg_t;
 
 UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpMMOp_createPlan(UPTKsparseHandle_t          handle,
-                          UPTKsparseSpMMOpPlan_t*     plan,
-                          UPTKsparseOperation_t       opA,
-                          UPTKsparseOperation_t       opB,
-                          UPTKsparseConstSpMatDescr_t matA,
-                          UPTKsparseConstDnMatDescr_t matB,
-                          UPTKsparseDnMatDescr_t      matC,
-                          UPTKDataType              computeType,
-                          UPTKsparseSpMMOpAlg_t       alg,
-                          const void*               addOperationNvvmBuffer,
-                          size_t                    addOperationBufferSize,
-                          const void*               mulOperationNvvmBuffer,
-                          size_t                    mulOperationBufferSize,
-                          const void*               epilogueNvvmBuffer,
-                          size_t                    epilogueBufferSize,
-                          size_t*                   SpMMWorkspaceSize);
+UPTKsparseSpMMOp_createPlan(UPTKsparseHandle_t      handle,
+                          UPTKsparseSpMMOpPlan_t* plan,
+                          UPTKsparseOperation_t   opA,
+                          UPTKsparseOperation_t   opB,
+                          UPTKsparseSpMatDescr_t  matA,
+                          UPTKsparseDnMatDescr_t  matB,
+                          UPTKsparseDnMatDescr_t  matC,
+                          UPTKDataType          computeType,
+                          UPTKsparseSpMMOpAlg_t   alg,
+                          const void*           addOperationNvvmBuffer,
+                          size_t                addOperationBufferSize,
+                          const void*           mulOperationNvvmBuffer,
+                          size_t                mulOperationBufferSize,
+                          const void*           epilogueNvvmBuffer,
+                          size_t                epilogueBufferSize,
+                          size_t*               SpMMWorkspaceSize);
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseSpMMOp(UPTKsparseSpMMOpPlan_t plan,
@@ -5109,5 +6740,8 @@ UPTKsparseSpMMOp_destroyPlan(UPTKsparseSpMMOpPlan_t plan);
 #if defined(__cplusplus)
 } // extern "C"
 #endif // defined(__cplusplus)
+
+#undef UPTKSPARSE_DEPRECATED
+#undef UPTKSPARSE_PREVIEW
 
 #endif // !defined(UPTKSPARSE_H_)
