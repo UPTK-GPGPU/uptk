@@ -4,7 +4,7 @@
 #include "../runtime/runtime.hpp"
 
 #include <curand.h>
-#include <UPTKrand.h>
+#include <UPTK_rand.h>
 
 
 #if defined(__cplusplus)

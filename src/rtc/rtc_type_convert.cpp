@@ -1,0 +1,71 @@
+#include "rtc.hpp"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus */
+
+nvrtcResult UPTKrtcResultTonvrtcResult(UPTKrtcResult para) {
+    switch (para) {
+        case UPTKRTC_ERROR_BUILTIN_OPERATION_FAILURE:
+            return NVRTC_ERROR_BUILTIN_OPERATION_FAILURE;
+        case UPTKRTC_ERROR_COMPILATION:
+            return NVRTC_ERROR_COMPILATION;
+        case UPTKRTC_ERROR_INTERNAL_ERROR:
+            return NVRTC_ERROR_INTERNAL_ERROR;
+        case UPTKRTC_ERROR_INVALID_INPUT:
+            return NVRTC_ERROR_INVALID_INPUT;
+        case UPTKRTC_ERROR_INVALID_OPTION:
+            return NVRTC_ERROR_INVALID_OPTION;
+        case UPTKRTC_ERROR_INVALID_PROGRAM:
+            return NVRTC_ERROR_INVALID_PROGRAM;
+        case UPTKRTC_ERROR_NAME_EXPRESSION_NOT_VALID:
+            return NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID;
+        case UPTKRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION:
+            return NVRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION;
+        case UPTKRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION:
+            return NVRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION;
+        case UPTKRTC_ERROR_OUT_OF_MEMORY:
+            return NVRTC_ERROR_OUT_OF_MEMORY;
+        case UPTKRTC_ERROR_PROGRAM_CREATION_FAILURE:
+            return NVRTC_ERROR_PROGRAM_CREATION_FAILURE;
+        case UPTKRTC_SUCCESS:
+            return NVRTC_SUCCESS;
+        default:
+            throw RTC_INVALID_ENUM;
+    }
+}
+
+UPTKrtcResult nvrtcResultToUPTKrtcResult(nvrtcResult para) {
+    switch (para) {
+        case NVRTC_ERROR_BUILTIN_OPERATION_FAILURE:
+            return UPTKRTC_ERROR_BUILTIN_OPERATION_FAILURE;
+        case NVRTC_ERROR_COMPILATION:
+            return UPTKRTC_ERROR_COMPILATION;
+        case NVRTC_ERROR_INTERNAL_ERROR:
+            return UPTKRTC_ERROR_INTERNAL_ERROR;
+        case NVRTC_ERROR_INVALID_INPUT:
+            return UPTKRTC_ERROR_INVALID_INPUT;
+        case NVRTC_ERROR_INVALID_OPTION:
+            return UPTKRTC_ERROR_INVALID_OPTION;
+        case NVRTC_ERROR_INVALID_PROGRAM:
+            return UPTKRTC_ERROR_INVALID_PROGRAM;
+        case NVRTC_ERROR_NAME_EXPRESSION_NOT_VALID:
+            return UPTKRTC_ERROR_NAME_EXPRESSION_NOT_VALID;
+        case NVRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION:
+            return UPTKRTC_ERROR_NO_LOWERED_NAMES_BEFORE_COMPILATION;
+        case NVRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION:
+            return UPTKRTC_ERROR_NO_NAME_EXPRESSIONS_AFTER_COMPILATION;
+        case NVRTC_ERROR_OUT_OF_MEMORY:
+            return UPTKRTC_ERROR_OUT_OF_MEMORY;
+        case NVRTC_ERROR_PROGRAM_CREATION_FAILURE:
+            return UPTKRTC_ERROR_PROGRAM_CREATION_FAILURE;
+        case NVRTC_SUCCESS:
+            return UPTKRTC_SUCCESS;
+        default:
+            throw RTC_INVALID_ENUM;
+    }
+}
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */

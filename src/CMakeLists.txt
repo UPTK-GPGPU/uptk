@@ -11,10 +11,13 @@ add_subdirectory(fft)
 add_subdirectory(blas)
 
 #blas
-#add_subdirectory(sparse)
+add_subdirectory(sparse)
 
 #blas
-#add_subdirectory(rand)
+add_subdirectory(rand)
 
 #nccl
 add_subdirectory(nccl)
+
+#rtc
+add_subdirectory(rtc)

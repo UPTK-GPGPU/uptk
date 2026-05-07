@@ -143,7 +143,6 @@
 #endif
 
 #include "UPTK_driver_types.h"
-#include "cuda_gl_interop.h"
 
 #ifndef __UPTKCC_RTC_MINIMAL__
 #if defined(UPTK_API_PER_THREAD_DEFAULT_STREAM) || defined(__UPTK_API_VERSION_INTERNAL)

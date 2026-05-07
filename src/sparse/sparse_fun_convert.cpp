@@ -8,7 +8,7 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsr2csr(UPTKsparseHandle_t handle, U
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
-UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
+/*UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCbsric02(UPTKsparseHandle_t handle, UPTKsparseDirection_t dirA, int mb, int nnzb, const UPTKsparseMatDescr_t descrA, cuComplex *bsrSortedVal, const int *bsrSortedRowPtr, const int *bsrSortedColInd, int blockDim, UPTKbsric02Info_t info, UPTKsparseSolvePolicy_t policy, void *pBuffer)
 {
     cusparseDirection_t cuda_dirA = UPTKsparseDirectionTocusparseDirection(dirA);
     cusparseSolvePolicy_t cuda_policy = UPTKsparseSolvePolicyTocusparseSolvePolicy(policy);
@@ -4200,29 +4200,4 @@ UPTKsparseSpMV_preprocess(UPTKsparseHandle_t handle,
                                        (cusparseDnVecDescr_t)vecY, cudaType, cudaSpAlg, externalBuffer);
 
     return cusparseStatusToUPTKsparseStatus(cuda_res);
-}
-
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSM_updateMatrix(UPTKsparseHandle_t handle,
-                            UPTKsparseSpSMDescr_t spsmDescr,
-                            void *newValues,
-                            UPTKsparseSpSMUpdate_t updatePart)
-{
-    cusparseStatus_t cuda_res;
-    cusparseSpSMUpdate_t cudaUpdate = UPTKsparseSpSMUpdateTocusparseSpSMUpdate(updatePart);
-    cuda_res = cusparseSpSM_updateMatrix((cusparseHandle_t)handle, (cusparseSpSMDescr_t)spsmDescr, newValues, cudaUpdate);
-
-    return cusparseStatusToUPTKsparseStatus(cuda_res);
-}
-UPTKsparseStatus_t UPTKSPARSEAPI
-UPTKsparseSpSV_updateMatrix(UPTKsparseHandle_t handle,
-                            UPTKsparseSpSVDescr_t spsvDescr,
-                            void *newValues,
-                            UPTKsparseSpSVUpdate_t updatePart)
-{
-    cusparseStatus_t cuda_res;
-    cusparseSpSVUpdate_t cudaUpdate = UPTKsparseSpSVUpdateTocusparseSpSVUpdate(updatePart);
-    cuda_res = cusparseSpSV_updateMatrix((cusparseHandle_t)handle, (cusparseSpSVDescr_t)spsvDescr, newValues, cudaUpdate);
-
-    return cusparseStatusToUPTKsparseStatus(cuda_res);
-}
+}*/
