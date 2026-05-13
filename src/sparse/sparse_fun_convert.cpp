@@ -3083,7 +3083,7 @@ UPTKsparseCreateCsc(UPTKsparseSpMatDescr_t *spMatDescr,
                                                               UPTKsparseIndexTypeTocusparseIndexType(cscRowIndType), UPTKsparseIndexBaseTocusparseIndexBase(idxBase), UPTKDataTypeTocudaDataType(valueType)));
 }
 
-/*UPTKsparseStatus_t UPTKSPARSEAPI
+UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                  int64_t *rows,
                  int64_t *cols,
@@ -3096,23 +3096,8 @@ UPTKsparseCscGet(UPTKsparseSpMatDescr_t spMatDescr,
                  UPTKsparseIndexBase_t *idxBase,
                  UPTKDataType *valueType)
 {
-    cusparseStatus_t cuda_res;
-    cusparseIndexType_t cudaIdxRowType;
-    cusparseIndexType_t cudaIdxColType;
-    cusparseIndexBase_t cudaIdxBase;
-    cudaDataType cudaType;
-
-    cuda_res = cusparseCscGet((cusparseSpMatDescr_t)spMatDescr, rows,
-                                   cols, nnz, (void **)cscColOffsets,
-                                   (void **)cscRowInd, (void **)cscValues,
-                                   &cudaIdxRowType, &cudaIdxColType, &cudaIdxBase, &cudaType);
-    *cscColOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxRowType);
-    *cscRowIndType = cusparseIndexTypeToUPTKsparseIndexType(cudaIdxColType);
-    *idxBase = cusparseIndexBaseToUPTKsparseIndexBase(cudaIdxBase);
-    *valueType = cudaDataTypeToUPTKDataType(cudaType);
-
-    return cusparseStatusToUPTKsparseStatus(cuda_res);
-}*/
+    return cusparseStatusToUPTKsparseStatus(cusparseCscGet((cusparseSpMatDescr_t)spMatDescr, rows, cols, nnz, cscColOffsets, cscRowInd, cscValues, (cusparseIndexType_t*)cscColOffsetsType, (cusparseIndexType_t*)cscRowIndType, (cusparseIndexBase_t*)idxBase, (cudaDataType*)valueType));
+}
 
 UPTKsparseStatus_t UPTKSPARSEAPI
 UPTKsparseCsrSetPointers(UPTKsparseSpMatDescr_t spMatDescr,
