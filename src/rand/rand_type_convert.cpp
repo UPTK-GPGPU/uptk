@@ -69,7 +69,7 @@ UPTKrandDirectionVectorSet_t curandDirectionVectorSetToUPTKrandDirectionVectorSe
     }
 }
 
-/*curandOrdering_t UPTKrandOrderingTocurandOrdering(UPTKrandOrdering_t para) {
+curandOrdering_t UPTKrandOrderingTocurandOrdering(UPTKrandOrdering_t para) {
     switch (para) {
         case UPTKRAND_ORDERING_PSEUDO_BEST:
             return CURAND_ORDERING_PSEUDO_BEST;
@@ -79,14 +79,14 @@ UPTKrandDirectionVectorSet_t curandDirectionVectorSetToUPTKrandDirectionVectorSe
             return CURAND_ORDERING_PSEUDO_SEEDED;
         case UPTKRAND_ORDERING_QUASI_DEFAULT:
             return CURAND_ORDERING_QUASI_DEFAULT;
-        case UPTKRAND_ORDERING_PSEUDO_LEGACY:
-            return CURAND_ORDERING_PSEUDO_LEGACY;
-        case UPTKRAND_ORDERING_PSEUDO_DYNAMIC:
-            return CURAND_ORDERING_PSEUDO_DYNAMIC;
+        //case UPTKRAND_ORDERING_PSEUDO_LEGACY:
+        //    return CURAND_ORDERING_PSEUDO_LEGACY;
+        //case UPTKRAND_ORDERING_PSEUDO_DYNAMIC:
+        //    return CURAND_ORDERING_PSEUDO_DYNAMIC;
         default:
             ERROR_INVALID_ENUM();
     }
-}*/
+}
 
 curandRngType_t UPTKrandRngTypeTocurandRngType(UPTKrandRngType_t para) {
     switch (para) {
