@@ -157,7 +157,7 @@ UPTKError CUresultToUPTKError(CUresult para) {
         case CUDA_ERROR_UNSUPPORTED_LIMIT:
             return UPTKErrorUnsupportedLimit;
         //case CUDA_ERROR_INVALID_RESOURCE_TYPE:
-        //    return UPTKErrorInvalidResourcetype;   
+        //    return UPTKErrorInvalidResourcetype;
         case CUDA_SUCCESS:
             return UPTKSuccess;
         default:

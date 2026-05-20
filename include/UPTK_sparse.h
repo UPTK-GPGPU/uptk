@@ -9,6 +9,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#ifndef UPTKStream_t
+#define UPTKStream_t cudaStream_t
+#endif
+
 #define UPTKSPARSE_VER_MAJOR 11
 #define UPTKSPARSE_VER_MINOR 7
 #define UPTKSPARSE_VER_PATCH 5
