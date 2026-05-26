@@ -3680,6 +3680,13 @@ UPTKError UPTensorMapReplaceAddress(UPTKtensorMap * tensorMap, void * globalAddr
     return CUresultToUPTKError(cu_res);
 }
 
+/*UPTKError UPModuleGetGlobal(UPTKdeviceptr * dptr, size_t * bytes,UPTKmodule hmod,const char * name)
+{
+    CUresult cu_res;
+    cu_res = cuModuleGetGlobal_v2((CUdeviceptr *)dptr, bytes, (CUmodule)hmod, name);
+    return CUresultToUPTKError(cu_res);
+}*/
+
 #endif /* CUDA_VERSION >= 12000 */
 
 #if defined(__cplusplus)
