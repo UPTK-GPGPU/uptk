@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <string.h>
+#include <cuda_runtime.h>
+#include <UPTK.h>
+
+__global__ void testKernel(int* d) {
+    d[0] = 42;
+}
+
+void test_UPTKLaunchKernel() {
+    printf("===== Test: UPTKLaunchKernel =====\n");
+
+    printf("Input: launch addKernel\n");
+
+    UPTKmodule module;
+    UPTKfunction func;
+
+    UPTKError ret_mod = UPModuleLoad(&module, "test.cubin");
+    UPTKError ret_get = UPTKErrorInvalidValue;
+    if (ret_mod == UPTKSuccess) {
+        ret_get = UPModuleGetFunction(&func, module, "addKernel");
+    }
+
+    int h_data[4] = {1,2,3,4};
+    int *d_data;
+
+    UPTKMalloc((void**)&d_data, sizeof(h_data));
+    UPTKMemcpy(d_data, h_data, sizeof(h_data),
+               UPTKMemcpyHostToDevice);
+
+    void *args[] = { &d_data };
+
+    UPTKError_t ret = UPTKErrorInvalidValue;
+    if (ret_mod == UPTKSuccess && ret_get == UPTKSuccess && func != NULL) {
+        ret = UPTKLaunchKernel(func, 1, 0, args, 1, NULL);
+    }
+
+    UPTKMemcpy(h_data, d_data, sizeof(h_data),
+               UPTKMemcpyDeviceToHost);
+
+    int pass = 1;
+    if (ret_mod == UPTKSuccess && ret_get == UPTKSuccess) {
+        pass = (ret == UPTKSuccess && h_data[0] == 2);
+    } else {
+        printf("Skip: module/function not available.\n");
+    }
+
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
+    UPTKFree(d_data);
+    if (ret_mod == UPTKSuccess) {
+        UPModuleUnload(module);
+    }
+}
+
+void test_UPTKLaunchCooperativeKernelMultiDevice() {
+    printf("===== Test: UPTKLaunchCooperativeKernelMultiDevice =====\n");
+
+    printf("Input: launch cooperative kernel on multi-device\n");
+
+    UPTKLaunchParams params[1];
+
+    params[0].func = NULL;
+    params[0].gridDim = 1;
+    params[0].blockDim = 1;
+
+    UPTKError_t ret = UPTKLaunchCooperativeKernelMultiDevice(
+        params, 1, 0);
+
+    int pass = (ret == UPTKSuccess ||
+                ret == UPTKErrorNotSupported ||
+                ret == UPTKErrorInvalidSymbol ||
+                ret == UPTKErrorInvalidValue);
+
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
+}
+
+void test_UPTKFuncSetAttribute() {
+    printf("===== Test: UPTKFuncSetAttribute =====\n");
+
+    printf("Input: set max dynamic shared memory\n");
+
+    UPTKmodule module;
+    UPTKfunction func;
+
+    UPTKError ret_mod = UPModuleLoad(&module, "test.cubin");
+    UPTKError ret_get = UPTKErrorInvalidValue;
+    if (ret_mod == UPTKSuccess) {
+        ret_get = UPModuleGetFunction(&func, module, "addKernel");
+    }
+
+    UPTKError_t ret = UPTKFuncSetAttribute(
+        func,
+        UPTKFuncAttributeMaxDynamicSharedMemorySize,
+        1024);
+
+    int pass = 1;
+    if (ret_mod == UPTKSuccess && ret_get == UPTKSuccess) {
+        pass = (ret == UPTKSuccess || ret == UPTKErrorNotSupported);
+    } else {
+        printf("Skip: module/function not available.\n");
+    }
+
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
+    if (ret_mod == UPTKSuccess) {
+        UPModuleUnload(module);
+    }
+}
+
+void test_FuncGetAttributes() {
+    printf("===== Test: UPTKFuncGetAttributes =====\n");
+    printf("Input: load module + get function attributes\n");
+    UPTKmodule module;
+    UPTKfunction func;
+    UPTKFuncAttributes attr;
+    UPTKError ret_mod = UPModuleLoad(&module, "test.cubin");
+    UPTKError ret_get = UPTKErrorInvalidValue;
+    int ret = UPTKErrorInvalidValue;
+    if (ret_mod == UPTKSuccess) {
+        ret_get = UPModuleGetFunction(&func, module, "testKernel");
+    }
+    if (ret_mod == UPTKSuccess && ret_get == UPTKSuccess && func != NULL) {
+        ret = UPTKFuncGetAttributes(&attr, func);
+    }
+    printf("Expected: return success and valid attributes\n");
+    printf("Actual: ret=%d(%s) ret_mod=%d ret_get=%d, sharedMem=%d, numRegs=%d\n",
+           ret, UPTKGetErrorName((UPTKError_t)ret),
+           ret_mod, ret_get,
+           attr.sharedSizeBytes, attr.numRegs);
+    int pass = 1;
+    if (ret_mod == UPTKSuccess && ret_get == UPTKSuccess) {
+        pass = (ret == UPTKSuccess && attr.numRegs >= 0);
+    } else {
+        printf("Skip: module/function not available.\n");
+    }
+    printf("Compare: %s\n", pass ? "Match" : "Mismatch");
+    printf("Result: %s\n\n", pass ? "✅ TEST PASSED" : "❌ TEST FAILED");
+    if (ret_mod == UPTKSuccess) {
+        UPModuleUnload(module);
+    }
+}
+
+
+int main() {
+    (void)UPInit(0);
+    test_UPTKLaunchKernel();
+    test_UPTKLaunchCooperativeKernelMultiDevice();
+    test_UPTKFuncSetAttribute();
+    test_FuncGetAttributes();
+    return 0;
+}

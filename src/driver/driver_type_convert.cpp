@@ -30,8 +30,8 @@ UPTKError CUresultToUPTKError(CUresult para) {
         //    return UPTKErrorDeinitialized;
         //case CUDA_ERROR_ECC_UNCORRECTABLE:
         //    return UPTKErrorECCNotCorrectable;
-       // case CUDA_ERROR_FILE_NOT_FOUND:
-       //     return UPTKErrorFileNotFound;
+        case CUDA_ERROR_FILE_NOT_FOUND:
+            return UPTKErrorFileNotFound;
         case CUDA_ERROR_GRAPH_EXEC_UPDATE_FAILURE:
             return UPTKErrorGraphExecUpdateFailure;
 //         case CUDA_ERROR_HARDWARE_STACK_ERROR:
@@ -54,20 +54,20 @@ UPTKError CUresultToUPTKError(CUresult para) {
             return UPTKErrorInvalidDevice;
         case CUDA_ERROR_INVALID_GRAPHICS_CONTEXT:
             return UPTKErrorInvalidGraphicsContext;
-        //case CUDA_ERROR_INVALID_HANDLE:
-        //    return UPTKErrorInvalidHandle;
-        //case CUDA_ERROR_INVALID_IMAGE:
-        //    return UPTKErrorInvalidImage;
-//         case CUDA_ERROR_INVALID_PC:
-//             return UPTKErrorInvalidPc;
-        //case CUDA_ERROR_INVALID_PTX:
-        //    return UPTKErrorInvalidKernelFile;
+        case CUDA_ERROR_INVALID_HANDLE:
+            return UPTKErrorInvalidResourceHandle;
+        case CUDA_ERROR_INVALID_IMAGE:
+            return UPTKErrorInvalidKernelImage;
+        //case CUDA_ERROR_INVALID_PC:
+        //    return UPTKErrorInvalidPc;
+        case CUDA_ERROR_INVALID_PTX:
+            return UPTKErrorInvalidPtx;
         case CUDA_ERROR_INVALID_SOURCE:
             return UPTKErrorInvalidSource;
         case CUDA_ERROR_INVALID_VALUE:
             return UPTKErrorInvalidValue;
-//         case CUDA_ERROR_JIT_COMPILER_NOT_FOUND:
-//             return UPTKErrorJitCompilerNotFound;
+        case CUDA_ERROR_JIT_COMPILER_NOT_FOUND:
+            return UPTKErrorJitCompilerNotFound;
         case CUDA_ERROR_LAUNCH_FAILED:
             return UPTKErrorLaunchFailure;
 //         case CUDA_ERROR_LAUNCH_INCOMPATIBLE_TEXTURING:
@@ -80,10 +80,10 @@ UPTKError CUresultToUPTKError(CUresult para) {
         //    return UPTKErrorMapFailed;
 //         case CUDA_ERROR_MISALIGNED_ADDRESS:
 //             return UPTKErrorMisalignedAddress;
-        //case CUDA_ERROR_NOT_FOUND:
-        //    return UPTKErrorNotFound;
-        //case CUDA_ERROR_NOT_INITIALIZED:
-        //    return UPTKErrorNotInitialized;
+        case CUDA_ERROR_NOT_FOUND:
+            return UPTKErrorSymbolNotFound;
+        case CUDA_ERROR_NOT_INITIALIZED:
+            return UPTKErrorInitializationError;
         case CUDA_ERROR_NOT_MAPPED:
             return UPTKErrorNotMapped;
         case CUDA_ERROR_NOT_MAPPED_AS_ARRAY:
@@ -104,8 +104,8 @@ UPTKError CUresultToUPTKError(CUresult para) {
 //             return UPTKErrorNvlinkUncorrectable;
         case CUDA_ERROR_OPERATING_SYSTEM:
             return UPTKErrorOperatingSystem;
-        //case CUDA_ERROR_OUT_OF_MEMORY:
-        //    return UPTKErrorOutOfMemory;
+        case CUDA_ERROR_OUT_OF_MEMORY:
+            return UPTKErrorMemoryAllocation;
         case CUDA_ERROR_PEER_ACCESS_ALREADY_ENABLED:
             return UPTKErrorPeerAccessAlreadyEnabled;
         case CUDA_ERROR_PEER_ACCESS_NOT_ENABLED:
@@ -161,7 +161,7 @@ UPTKError CUresultToUPTKError(CUresult para) {
         case CUDA_SUCCESS:
             return UPTKSuccess;
         default:
-            ERROR_INVALID_ENUM();
+            return UPTKErrorUnknown;
     }
 }
 
