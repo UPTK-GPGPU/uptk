@@ -741,6 +741,7 @@ UPTKError UPGraphicsResourceSetMapFlags(UPTKGraphicsResource_t resource,unsigned
 
 UPTKError UPImportExternalMemory(UPTKExternalMemory_t * extMem_out,const UPTK_EXTERNAL_MEMORY_HANDLE_DESC * memHandleDesc)
 {
+    if (!extMem_out || !memHandleDesc) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuImportExternalMemory((CUexternalMemory *)extMem_out, (const CUDA_EXTERNAL_MEMORY_HANDLE_DESC *)memHandleDesc);
     return CUresultToUPTKError(cu_res);
@@ -748,6 +749,7 @@ UPTKError UPImportExternalMemory(UPTKExternalMemory_t * extMem_out,const UPTK_EX
 
 UPTKError UPImportExternalSemaphore(UPTKExternalSemaphore_t * extSem_out,const UPTK_EXTERNAL_SEMAPHORE_HANDLE_DESC * semHandleDesc)
 {
+    if (!extSem_out || !semHandleDesc) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuImportExternalSemaphore((CUexternalSemaphore *)extSem_out, (const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC *)semHandleDesc);
     return CUresultToUPTKError(cu_res);
@@ -769,6 +771,7 @@ UPTKError UPIpcCloseMemHandle(UPTKdeviceptr dptr)
 
 UPTKError UPIpcGetEventHandle(UPTKIpcEventHandle_t * pHandle,UPTKEvent_t event)
 {
+    if (!pHandle) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuIpcGetEventHandle((CUipcEventHandle *)pHandle, (CUevent)event);
     return CUresultToUPTKError(cu_res);
@@ -900,6 +903,7 @@ UPTKError UPMemAddressReserve(UPTKdeviceptr * ptr,size_t size,size_t alignment,U
 
 UPTKError UPMemAdvise(UPTKdeviceptr devPtr,size_t count,UPTKmem_advise advice,UPTKdevice device)
 {
+    if (count == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemAdvise((CUdeviceptr)devPtr, count, (CUmem_advise)advice, (CUdevice)device);
     return CUresultToUPTKError(cu_res);
@@ -1054,6 +1058,7 @@ UPTKError UPMemPrefetchAsync(UPTKdeviceptr devPtr,size_t count,UPTKdevice dstDev
 
 UPTKError UPMemRangeGetAttribute(void * data,size_t dataSize,UPTKmem_range_attribute attribute,UPTKdeviceptr devPtr,size_t count)
 {
+    if (!data || dataSize == 0 || count == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemRangeGetAttribute(data, dataSize, (CUmem_range_attribute)attribute, (CUdeviceptr)devPtr, count);
     return CUresultToUPTKError(cu_res);
@@ -1096,6 +1101,7 @@ UPTKError UPMemcpy(UPTKdeviceptr dst,UPTKdeviceptr src,size_t ByteCount)
 
 UPTKError UPMemcpy2DAsync_v2(const UPTK_MEMCPY2D * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2DAsync_v2((const CUDA_MEMCPY2D *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -1103,6 +1109,7 @@ UPTKError UPMemcpy2DAsync_v2(const UPTK_MEMCPY2D * pCopy,UPTKStream_t hStream)
 
 UPTKError UPMemcpy2DUnaligned_v2(const UPTK_MEMCPY2D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2DUnaligned_v2((const CUDA_MEMCPY2D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -1110,6 +1117,7 @@ UPTKError UPMemcpy2DUnaligned_v2(const UPTK_MEMCPY2D * pCopy)
 
 UPTKError UPMemcpy2D_v2(const UPTK_MEMCPY2D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2D_v2((const CUDA_MEMCPY2D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -1117,6 +1125,7 @@ UPTKError UPMemcpy2D_v2(const UPTK_MEMCPY2D * pCopy)
 
 UPTKError UPMemcpy3DAsync_v2(const UPTK_MEMCPY3D * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DAsync_v2((const CUDA_MEMCPY3D *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -1124,6 +1133,7 @@ UPTKError UPMemcpy3DAsync_v2(const UPTK_MEMCPY3D * pCopy,UPTKStream_t hStream)
 
 UPTKError UPMemcpy3DPeer(const UPTK_MEMCPY3D_PEER * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DPeer((const CUDA_MEMCPY3D_PEER *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -1131,6 +1141,7 @@ UPTKError UPMemcpy3DPeer(const UPTK_MEMCPY3D_PEER * pCopy)
 
 UPTKError UPMemcpy3DPeerAsync(const UPTK_MEMCPY3D_PEER * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DPeerAsync((const CUDA_MEMCPY3D_PEER *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -1138,6 +1149,7 @@ UPTKError UPMemcpy3DPeerAsync(const UPTK_MEMCPY3D_PEER * pCopy,UPTKStream_t hStr
 
 UPTKError UPMemcpy3D_v2(const UPTK_MEMCPY3D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3D_v2((const CUDA_MEMCPY3D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -1159,6 +1171,7 @@ UPTKError UPMemcpyAtoA_v2(UPTKarray dstArray,size_t dstOffset,UPTKarray srcArray
 
 UPTKError UPMemcpyAtoD_v2(UPTKdeviceptr dstDevice,UPTKarray srcArray,size_t srcOffset,size_t ByteCount)
 {
+    if (ByteCount == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpyAtoD_v2((CUdeviceptr)dstDevice, (CUarray)srcArray, srcOffset, ByteCount);
     return CUresultToUPTKError(cu_res);
@@ -1180,6 +1193,7 @@ UPTKError UPMemcpyAtoH_v2(void * dstHost,UPTKarray srcArray,size_t srcOffset,siz
 
 UPTKError UPMemcpyDtoA_v2(UPTKarray dstArray,size_t dstOffset,UPTKdeviceptr srcDevice,size_t ByteCount)
 {
+    if (ByteCount == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpyDtoA_v2((CUarray)dstArray, dstOffset, (CUdeviceptr)srcDevice, ByteCount);
     return CUresultToUPTKError(cu_res);
@@ -1341,6 +1355,7 @@ UPTKError UPMemsetD8_v2(UPTKdeviceptr dstDevice,unsigned char uc,size_t N)
 
 UPTKError UPMipmappedArrayCreate(UPTKMipmappedArray_t * pHandle,const UPTK_ARRAY3D_DESCRIPTOR * pMipmappedArrayDesc,unsigned int numMipmapLevels)
 {
+    if (!pHandle || !pMipmappedArrayDesc) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMipmappedArrayCreate((CUmipmappedArray *)pHandle, (const CUDA_ARRAY3D_DESCRIPTOR *)pMipmappedArrayDesc, numMipmapLevels);
     return CUresultToUPTKError(cu_res);
@@ -1488,6 +1503,7 @@ UPTKError UPParamSetv(UPTKfunction hfunc,int offset,void * ptr,unsigned int numb
 
 UPTKError UPPointerGetAttribute(void * data,UPTKpointer_attribute attribute,UPTKdeviceptr ptr)
 {
+    if (!data) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuPointerGetAttribute(data, (CUpointer_attribute)attribute, (CUdeviceptr)ptr);
     return CUresultToUPTKError(cu_res);
@@ -1502,6 +1518,7 @@ UPTKError UPPointerGetAttributes(unsigned int numAttributes,UPTKpointer_attribut
 
 UPTKError UPPointerSetAttribute(const void * value,UPTKpointer_attribute attribute,UPTKdeviceptr ptr)
 {
+    if (!value) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuPointerSetAttribute(value, (CUpointer_attribute)attribute, (CUdeviceptr)ptr);
     return CUresultToUPTKError(cu_res);
@@ -1747,6 +1764,7 @@ UPTKError UPTexRefDestroy(UPTKtexref hTexRef)
 
 UPTKError UPTexRefGetAddress(UPTKdeviceptr * pdptr,UPTKtexref hTexRef)
 {
+    if (!pdptr) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuTexRefGetAddress((CUdeviceptr *)pdptr, (CUtexref)hTexRef);
     return CUresultToUPTKError(cu_res);
@@ -1761,6 +1779,7 @@ UPTKError UPTexRefGetAddressMode(UPTKaddress_mode * pam,UPTKtexref hTexRef,int d
 
 UPTKError UPTexRefGetArray(UPTKarray * phArray, UPTKtexref hTexRef)
 {
+    if (!phArray) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuTexRefGetArray((CUarray *)phArray, (CUtexref)hTexRef);
     return CUresultToUPTKError(cu_res);
@@ -1838,6 +1857,7 @@ UPTKError UPTexRefSetAddress_v2(size_t * ByteOffset,UPTKtexref hTexRef,UPTKdevic
 
 UPTKError UPTexRefSetAddress2D_v3(UPTKtexref hTexRef,const UPTK_ARRAY_DESCRIPTOR * desc,UPTKdeviceptr dptr,size_t Pitch)
 {
+    if (!desc) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuTexRefSetAddress2D_v3((CUtexref)hTexRef, (const CUDA_ARRAY_DESCRIPTOR *)desc, (CUdeviceptr)dptr, Pitch);
     return CUresultToUPTKError(cu_res);
@@ -1880,6 +1900,7 @@ UPTKError UPTexRefSetFlags(UPTKtexref hTexRef,unsigned int Flags)
 
 UPTKError UPTexRefSetFormat(UPTKtexref hTexRef,UPTKarray_format fmt,int NumPackedComponents)
 {
+    if (NumPackedComponents <= 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuTexRefSetFormat((CUtexref)hTexRef, (CUarray_format)fmt, NumPackedComponents);
     return CUresultToUPTKError(cu_res);
@@ -2041,6 +2062,7 @@ UPTKError UPArrayGetPlane(UPTKarray * pPlaneArray, UPTKarray hArray, unsigned in
 
 UPTKError UPMemGetHandleForAddressRange(void * handle, UPTKdeviceptr dptr, size_t size, UPTKmemRangeHandleType handleType, unsigned long long flags)
 {
+    if (!handle || size == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemGetHandleForAddressRange(handle, (CUdeviceptr)dptr, size, (CUmemRangeHandleType)handleType, flags);
     return CUresultToUPTKError(cu_res);
@@ -2048,6 +2070,7 @@ UPTKError UPMemGetHandleForAddressRange(void * handle, UPTKdeviceptr dptr, size_
 
 UPTKError UPMemMapArrayAsync(UPTKarrayMapInfo * mapInfoList, unsigned int count, UPTKStream_t hStream)
 {
+    if (!mapInfoList || count == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemMapArrayAsync((CUarrayMapInfo *)mapInfoList, count, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -2279,6 +2302,7 @@ UPTKError UPGraphAddExternalSemaphoresSignalNode(UPTKGraphNode_t * phGraphNode, 
 
 UPTKError UPGraphExternalSemaphoresSignalNodeGetParams(UPTKGraphNode_t hNode, UPTK_EXT_SEM_SIGNAL_NODE_PARAMS * params_out)
 {
+    if (!hNode || !params_out) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExternalSemaphoresSignalNodeGetParams((CUgraphNode)hNode, (CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *)params_out);
     return CUresultToUPTKError(cu_res);
@@ -2286,6 +2310,7 @@ UPTKError UPGraphExternalSemaphoresSignalNodeGetParams(UPTKGraphNode_t hNode, UP
 
 UPTKError UPGraphExternalSemaphoresSignalNodeSetParams(UPTKGraphNode_t hNode, const UPTK_EXT_SEM_SIGNAL_NODE_PARAMS * nodeParams)
 {
+    if (!hNode || !nodeParams) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExternalSemaphoresSignalNodeSetParams((CUgraphNode)hNode, (const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *)nodeParams);
     return CUresultToUPTKError(cu_res);
@@ -2300,6 +2325,7 @@ UPTKError UPGraphAddExternalSemaphoresWaitNode(UPTKGraphNode_t * phGraphNode, UP
 
 UPTKError UPGraphExternalSemaphoresWaitNodeGetParams(UPTKGraphNode_t hNode, UPTK_EXT_SEM_WAIT_NODE_PARAMS * params_out)
 {
+    if (!hNode || !params_out) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExternalSemaphoresWaitNodeGetParams((CUgraphNode)hNode, (CUDA_EXT_SEM_WAIT_NODE_PARAMS *)params_out);
     return CUresultToUPTKError(cu_res);
@@ -2307,6 +2333,7 @@ UPTKError UPGraphExternalSemaphoresWaitNodeGetParams(UPTKGraphNode_t hNode, UPTK
 
 UPTKError UPGraphExternalSemaphoresWaitNodeSetParams(UPTKGraphNode_t hNode, const UPTK_EXT_SEM_WAIT_NODE_PARAMS * nodeParams)
 {
+    if (!hNode || !nodeParams) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExternalSemaphoresWaitNodeSetParams((CUgraphNode)hNode, (const CUDA_EXT_SEM_WAIT_NODE_PARAMS *)nodeParams);
     return CUresultToUPTKError(cu_res);
@@ -2321,6 +2348,7 @@ UPTKError UPGraphAddBatchMemOpNode(UPTKGraphNode_t * phGraphNode, UPTKGraph_t hG
 
 UPTKError UPGraphBatchMemOpNodeGetParams(UPTKGraphNode_t hNode, UPTK_BATCH_MEM_OP_NODE_PARAMS * nodeParams_out)
 {
+    if (!hNode || !nodeParams_out) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphBatchMemOpNodeGetParams((CUgraphNode)hNode, (CUDA_BATCH_MEM_OP_NODE_PARAMS *)nodeParams_out);
     return CUresultToUPTKError(cu_res);
@@ -2412,6 +2440,7 @@ UPTKError UPGraphExecEventWaitNodeSetEvent(UPTKGraphExec_t hGraphExec, UPTKGraph
 
 UPTKError UPGraphExecExternalSemaphoresSignalNodeSetParams(UPTKGraphExec_t hGraphExec, UPTKGraphNode_t hNode, const UPTK_EXT_SEM_SIGNAL_NODE_PARAMS * nodeParams)
 {
+    if (!hGraphExec || !hNode || !nodeParams) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExecExternalSemaphoresSignalNodeSetParams((CUgraphExec)hGraphExec, (CUgraphNode)hNode, (const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *)nodeParams);
     return CUresultToUPTKError(cu_res);
@@ -2419,6 +2448,7 @@ UPTKError UPGraphExecExternalSemaphoresSignalNodeSetParams(UPTKGraphExec_t hGrap
 
 UPTKError UPGraphExecExternalSemaphoresWaitNodeSetParams(UPTKGraphExec_t hGraphExec, UPTKGraphNode_t hNode, const UPTK_EXT_SEM_WAIT_NODE_PARAMS * nodeParams)
 {
+    if (!hGraphExec || !hNode || !nodeParams) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphExecExternalSemaphoresWaitNodeSetParams((CUgraphExec)hGraphExec, (CUgraphNode)hNode, (const CUDA_EXT_SEM_WAIT_NODE_PARAMS *)nodeParams);
     return CUresultToUPTKError(cu_res);
@@ -2440,6 +2470,7 @@ UPTKError UPGraphNodeGetEnabled(UPTKGraphExec_t hGraphExec, UPTKGraphNode_t hNod
 
 UPTKError UPGraphUpload(UPTKGraphExec_t hGraphExec, UPTKStream_t hStream)
 {
+    if (!hGraphExec) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphUpload((CUgraphExec)hGraphExec, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -2461,6 +2492,7 @@ UPTKError UPGraphKernelNodeGetAttribute(UPTKGraphNode_t hNode, UPTKKernelNodeAtt
 
 UPTKError UPGraphKernelNodeSetAttribute(UPTKGraphNode_t hNode, UPTKKernelNodeAttrID attr, const UPTKKernelNodeAttrValue * value)
 {
+    if (!hNode || !value) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphKernelNodeSetAttribute((CUgraphNode)hNode, (CUkernelNodeAttrID)attr, (const CUkernelNodeAttrValue *)value);
     return CUresultToUPTKError(cu_res);
@@ -2566,6 +2598,7 @@ UPTKError UPMemcpyDtoD_v2_ptds(UPTKdeviceptr dstDevice,UPTKdeviceptr srcDevice,s
 
 UPTKError UPMemcpyDtoA_v2_ptds(UPTKarray dstArray,size_t dstOffset,UPTKdeviceptr srcDevice,size_t ByteCount)
 {
+    if (ByteCount == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpyDtoA_v2((CUarray)dstArray, dstOffset, (CUdeviceptr)srcDevice, ByteCount);
     return CUresultToUPTKError(cu_res);
@@ -2573,6 +2606,7 @@ UPTKError UPMemcpyDtoA_v2_ptds(UPTKarray dstArray,size_t dstOffset,UPTKdeviceptr
 
 UPTKError UPMemcpyAtoD_v2_ptds(UPTKdeviceptr dstDevice,UPTKarray srcArray,size_t srcOffset,size_t ByteCount)
 {
+    if (ByteCount == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpyAtoD_v2((CUdeviceptr)dstDevice, (CUarray)srcArray, srcOffset, ByteCount);
     return CUresultToUPTKError(cu_res);
@@ -2615,6 +2649,7 @@ UPTKError UPMemcpyAtoHAsync_v2_ptsz(void * dstHost,UPTKarray srcArray,size_t src
 
 UPTKError UPMemcpy2D_v2_ptds(const UPTK_MEMCPY2D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2D_v2((const CUDA_MEMCPY2D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -2622,6 +2657,7 @@ UPTKError UPMemcpy2D_v2_ptds(const UPTK_MEMCPY2D * pCopy)
 
 UPTKError UPMemcpy2DUnaligned_v2_ptds(const UPTK_MEMCPY2D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2DUnaligned_v2((const CUDA_MEMCPY2D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -2629,6 +2665,7 @@ UPTKError UPMemcpy2DUnaligned_v2_ptds(const UPTK_MEMCPY2D * pCopy)
 
 UPTKError UPMemcpy3D_v2_ptds(const UPTK_MEMCPY3D * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3D_v2((const CUDA_MEMCPY3D *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -2657,6 +2694,7 @@ UPTKError UPMemcpyDtoDAsync_v2_ptsz(UPTKdeviceptr dstDevice,UPTKdeviceptr srcDev
 
 UPTKError UPMemcpy2DAsync_v2_ptsz(const UPTK_MEMCPY2D * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy2DAsync_v2((const CUDA_MEMCPY2D *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -2664,6 +2702,7 @@ UPTKError UPMemcpy2DAsync_v2_ptsz(const UPTK_MEMCPY2D * pCopy,UPTKStream_t hStre
 
 UPTKError UPMemcpy3DAsync_v2_ptsz(const UPTK_MEMCPY3D * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DAsync_v2((const CUDA_MEMCPY3D *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -2748,6 +2787,7 @@ UPTKError UPMemcpyPeerAsync_ptsz(UPTKdeviceptr dstDevice,UPTKcontext dstContext,
 
 UPTKError UPMemcpy3DPeer_ptds(const UPTK_MEMCPY3D_PEER * pCopy)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DPeer((const CUDA_MEMCPY3D_PEER *)pCopy);
     return CUresultToUPTKError(cu_res);
@@ -2755,6 +2795,7 @@ UPTKError UPMemcpy3DPeer_ptds(const UPTK_MEMCPY3D_PEER * pCopy)
 
 UPTKError UPMemcpy3DPeerAsync_ptsz(const UPTK_MEMCPY3D_PEER * pCopy,UPTKStream_t hStream)
 {
+    if (!pCopy || pCopy->WidthInBytes == 0 || pCopy->Height == 0 || pCopy->Depth == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemcpy3DPeerAsync((const CUDA_MEMCPY3D_PEER *)pCopy, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -3000,6 +3041,7 @@ UPTKError UPWaitExternalSemaphoresAsync_ptsz(const UPTKExternalSemaphore_t * ext
 
 UPTKError UPGraphUpload_ptsz(UPTKGraphExec_t hGraphExec, UPTKStream_t hStream)
 {
+    if (!hGraphExec) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuGraphUpload((CUgraphExec)hGraphExec, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);
@@ -3035,6 +3077,7 @@ UPTKError UPStreamSetAttribute_ptsz(UPTKStream_t hStream, UPTKStreamAttrID attr,
 
 UPTKError UPMemMapArrayAsync_ptsz(UPTKarrayMapInfo * mapInfoList, unsigned int count, UPTKStream_t hStream)
 {
+    if (!mapInfoList || count == 0) return UPTKErrorInvalidValue;
     CUresult cu_res;
     cu_res = cuMemMapArrayAsync((CUarrayMapInfo *)mapInfoList, count, (CUstream)hStream);
     return CUresultToUPTKError(cu_res);

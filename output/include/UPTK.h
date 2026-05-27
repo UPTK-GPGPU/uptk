@@ -4037,6 +4037,7 @@ typedef enum UPTKarray_format_enum {
 typedef struct UPTKarray_st *UPTKarray;                          /**< UPTK array */
 typedef struct UPTKmod_st *UPTKmodule;                           /**< UPTK module */
 typedef struct UPTKfunc_st *UPTKfunction;                        /**< UPTK function */
+typedef CUtexref UPTKtexref;                                     /**< UPTK texture reference */
 typedef enum UPTKjit_option_enum
 {
     /**
@@ -4663,6 +4664,8 @@ UPTKError  UPCtxSynchronize(void);
 UPTKError  UPCtxGetLimit(size_t * pvalue,UPTKlimit limit);
 UPTKError  UPCtxSetLimit(UPTKlimit limit,size_t value);
 UPTKError  UPCtxDestroy(UPTKcontext ctx);
+UPTKError  UPTexRefSetFormat(UPTKtexref hTexRef,UPTKarray_format fmt,int NumPackedComponents);
+UPTKError UPTexRefGetArray(UPTKarray * phArray, UPTKtexref hTexRef);
 
 #if defined(__cplusplus)
 }
