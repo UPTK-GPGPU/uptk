@@ -449,14 +449,19 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCnnz_compress(UPTKsparseHandle_t hand
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCooGet(const UPTKsparseSpMatDescr_t spMatDescr, int64_t *rows, int64_t *cols, int64_t *nnz, void **cooRowInd, void **cooColInd, void **cooValues, UPTKsparseIndexType_t *idxType, UPTKsparseIndexBase_t *idxBase, UPTKDataType *valueType)
 {
+    if (!spMatDescr) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    int64_t local_rows, local_cols, local_nnz;
     cusparseIndexType_t cuda_idxType;
     cusparseIndexBase_t cuda_idxBase;
     cudaDataType cuda_valueType;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseCooGet((const cusparseSpMatDescr_t)spMatDescr, rows, cols, nnz, cooRowInd, cooColInd, cooValues, &cuda_idxType, &cuda_idxBase, &cuda_valueType);
-    *idxType = cusparseIndexTypeToUPTKsparseIndexType(cuda_idxType);
-    *idxBase = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
-    *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
+    cuda_res = cusparseCooGet((const cusparseSpMatDescr_t)spMatDescr, &local_rows, &local_cols, &local_nnz, cooRowInd, cooColInd, cooValues, &cuda_idxType, &cuda_idxBase, &cuda_valueType);
+    if (rows)   *rows   = local_rows;
+    if (cols)   *cols   = local_cols;
+    if (nnz)    *nnz    = local_nnz;
+    if (idxType)   *idxType   = cusparseIndexTypeToUPTKsparseIndexType(cuda_idxType);
+    if (idxBase)   *idxBase   = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
+    if (valueType) *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -546,6 +551,8 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateCsru2csrInfo(csru2csrInfo_t *in
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateDnMat(UPTKsparseDnMatDescr_t *dnMatDescr, int64_t rows, int64_t cols, int64_t ld, void *values, UPTKDataType valueType, UPTKsparseOrder_t order)
 {
+    if (!dnMatDescr) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    if (rows < 0 || cols < 0 || ld < 0) return UPTKSPARSE_STATUS_INVALID_VALUE;
     cudaDataType cuda_valueType = UPTKDataTypeTocudaDataType(valueType);
     cusparseOrder_t cuda_order = UPTKsparseOrderTocusparseOrder(order);
     cusparseStatus_t cuda_res;
@@ -594,16 +601,21 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCreateSpVec(UPTKsparseSpVecDescr_t *s
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCsrGet(const UPTKsparseSpMatDescr_t spMatDescr, int64_t *rows, int64_t *cols, int64_t *nnz, void **csrRowOffsets, void **csrColInd, void **csrValues, UPTKsparseIndexType_t *csrRowOffsetsType, UPTKsparseIndexType_t *csrColIndType, UPTKsparseIndexBase_t *idxBase, UPTKDataType *valueType)
 {
+    if (!spMatDescr) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    int64_t local_rows, local_cols, local_nnz;
     cusparseIndexType_t cuda_csrRowOffsetsType;
     cusparseIndexType_t cuda_csrColIndType;
     cusparseIndexBase_t cuda_idxBase;
     cudaDataType cuda_valueType;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseCsrGet((const cusparseSpMatDescr_t)spMatDescr, rows, cols, nnz, csrRowOffsets, csrColInd, csrValues, &cuda_csrRowOffsetsType, &cuda_csrColIndType, &cuda_idxBase, &cuda_valueType);
-    *csrRowOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cuda_csrRowOffsetsType);
-    *csrColIndType = cusparseIndexTypeToUPTKsparseIndexType(cuda_csrColIndType);
-    *idxBase = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
-    *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
+    cuda_res = cusparseCsrGet((const cusparseSpMatDescr_t)spMatDescr, &local_rows, &local_cols, &local_nnz, csrRowOffsets, csrColInd, csrValues, &cuda_csrRowOffsetsType, &cuda_csrColIndType, &cuda_idxBase, &cuda_valueType);
+    if (rows)   *rows   = local_rows;
+    if (cols)   *cols   = local_cols;
+    if (nnz)    *nnz    = local_nnz;
+    if (csrRowOffsetsType) *csrRowOffsetsType = cusparseIndexTypeToUPTKsparseIndexType(cuda_csrRowOffsetsType);
+    if (csrColIndType)     *csrColIndType     = cusparseIndexTypeToUPTKsparseIndexType(cuda_csrColIndType);
+    if (idxBase)   *idxBase   = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
+    if (valueType) *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -1146,12 +1158,17 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDgtsvInterleavedBatch_bufferSizeExt(U
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseDnMatGet(const UPTKsparseDnMatDescr_t dnMatDescr, int64_t *rows, int64_t *cols, int64_t *ld, void **values, UPTKDataType *type, UPTKsparseOrder_t *order)
 {
+    if (!dnMatDescr) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    int64_t local_rows, local_cols, local_ld;
     cudaDataType cuda_valueType;
     cusparseOrder_t cuda_order;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseDnMatGet((const cusparseDnMatDescr_t)dnMatDescr, rows, cols, ld, values, &cuda_valueType, &cuda_order);
-    *type = cudaDataTypeToUPTKDataType(cuda_valueType);
-    *order = cusparseOrderToUPTKsparseOrder(cuda_order);
+    cuda_res = cusparseDnMatGet((const cusparseDnMatDescr_t)dnMatDescr, &local_rows, &local_cols, &local_ld, values, &cuda_valueType, &cuda_order);
+    if (rows)  *rows  = local_rows;
+    if (cols)  *cols  = local_cols;
+    if (ld)    *ld    = local_ld;
+    if (type)  *type  = cudaDataTypeToUPTKDataType(cuda_valueType);
+    if (order) *order = cusparseOrderToUPTKsparseOrder(cuda_order);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -2053,14 +2070,18 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVV_bufferSize(UPTKsparseHandle_t ha
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseSpVecGet(const UPTKsparseSpVecDescr_t spVecDescr, int64_t *size, int64_t *nnz, void **indices, void **values, UPTKsparseIndexType_t *idxType, UPTKsparseIndexBase_t *idxBase, UPTKDataType *valueType)
 {
+    if (!spVecDescr) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    int64_t local_size, local_nnz;
     cusparseIndexType_t cuda_idxType;
     cusparseIndexBase_t cuda_idxBase;
     cudaDataType cuda_valueType;
     cusparseStatus_t cuda_res;
-    cuda_res = cusparseSpVecGet((const cusparseSpVecDescr_t)spVecDescr, size, nnz, indices, values, &cuda_idxType, &cuda_idxBase, &cuda_valueType);
-    *idxType = cusparseIndexTypeToUPTKsparseIndexType(cuda_idxType);
-    *idxBase = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
-    *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
+    cuda_res = cusparseSpVecGet((const cusparseSpVecDescr_t)spVecDescr, &local_size, &local_nnz, indices, values, &cuda_idxType, &cuda_idxBase, &cuda_valueType);
+    if (size)      *size      = local_size;
+    if (nnz)       *nnz       = local_nnz;
+    if (idxType)   *idxType   = cusparseIndexTypeToUPTKsparseIndexType(cuda_idxType);
+    if (idxBase)   *idxBase   = cusparseIndexBaseToUPTKsparseIndexBase(cuda_idxBase);
+    if (valueType) *valueType = cudaDataTypeToUPTKDataType(cuda_valueType);
     return cusparseStatusToUPTKsparseStatus(cuda_res);
 }
 
@@ -2758,11 +2779,20 @@ UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseZnnz_compress(UPTKsparseHandle_t hand
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCsr2cscEx2(UPTKsparseHandle_t handle, int m, int n, int nnz, const void *csrVal, const int *csrRowPtr, const int *csrColInd, void *cscVal, int *cscColPtr, int *cscRowInd, UPTKDataType valType, UPTKsparseAction_t copyValues, UPTKsparseIndexBase_t idxBase, UPTKsparseCsr2CscAlg_t alg, void *buffer)
 {
+    if (!handle || m < 0 || n < 0 || nnz < 0) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    if (nnz == 0 || m == 0 || n == 0) return UPTKSPARSE_STATUS_SUCCESS;
+    if (!csrVal || !csrRowPtr || !csrColInd) return UPTKSPARSE_STATUS_INVALID_VALUE;
     return cusparseStatusToUPTKsparseStatus(cusparseCsr2cscEx2((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, cscVal, cscColPtr, cscRowInd, UPTKDataTypeTocudaDataType(valType), UPTKsparseActionTocusparseAction(copyValues), UPTKsparseIndexBaseTocusparseIndexBase(idxBase), UPTKsparseCsr2CscAlgTocusparseCsr2CscAlg(alg), buffer));
 }
 
 UPTKsparseStatus_t UPTKSPARSEAPI UPTKsparseCsr2cscEx2_bufferSize(UPTKsparseHandle_t handle, int m, int n, int nnz, const void *csrVal, const int *csrRowPtr, const int *csrColInd, void *cscVal, int *cscColPtr, int *cscRowInd, UPTKDataType valType, UPTKsparseAction_t copyValues, UPTKsparseIndexBase_t idxBase, UPTKsparseCsr2CscAlg_t alg, size_t *bufferSize)
 {
+    if (!handle || m < 0 || n < 0 || nnz < 0) return UPTKSPARSE_STATUS_INVALID_VALUE;
+    if (nnz == 0 || m == 0 || n == 0) {
+        if (bufferSize) *bufferSize = 0;
+        return UPTKSPARSE_STATUS_SUCCESS;
+    }
+    if (!csrVal || !csrRowPtr || !csrColInd || !bufferSize) return UPTKSPARSE_STATUS_INVALID_VALUE;
     return cusparseStatusToUPTKsparseStatus(cusparseCsr2cscEx2_bufferSize((cusparseHandle_t)handle, m, n, nnz, csrVal, csrRowPtr, csrColInd, cscVal, cscColPtr, cscRowInd, UPTKDataTypeTocudaDataType(valType), UPTKsparseActionTocusparseAction(copyValues), UPTKsparseIndexBaseTocusparseIndexBase(idxBase), UPTKsparseCsr2CscAlgTocusparseCsr2CscAlg(alg), bufferSize));
 }
 
