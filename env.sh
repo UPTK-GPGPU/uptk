@@ -24,3 +24,10 @@ echo "  UPTK environment set:"
 echo "  UPTK_ROOT: $UPTK_ROOT"
 echo "  include path: $UPTK_INCLUDE_PATH"
 echo "  library path: $UPTK_LIB_PATH"
+
+if [ -n "$UPTK_ROOT" ] && [ -n "$UPTK_INCLUDE_PATH" ] && [ -n "$UPTK_LIB_PATH" ]; then
+    echo "  UPTK load success"
+else
+    echo "  UPTK load failed: critical environment variables not set"
+    exit 1  
+fi
