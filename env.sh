@@ -29,5 +29,5 @@ if [ -n "$UPTK_ROOT" ] && [ -n "$UPTK_INCLUDE_PATH" ] && [ -n "$UPTK_LIB_PATH" ]
     echo "  UPTK load success"
 else
     echo "  UPTK load failed: critical environment variables not set"
-    exit 1  
+    exit 1
 fi
